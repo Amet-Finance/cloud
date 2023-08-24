@@ -1,0 +1,17 @@
+const ZCB_ISSUER = "0x0b889Cf48cE3808EaeC3CA313F55765A4e5d1ABA"
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+const DEFAULT_CHAIN = `80001`
+
+const CONTRACT_TYPES = {
+    ZcbIssuer: "zcb-issuer",
+    ZcbBond: "zcb-bond"
+}
+
+
+
+export {
+    ZCB_ISSUER,
+    ZERO_ADDRESS,
+    DEFAULT_CHAIN,
+    CONTRACT_TYPES
+}
