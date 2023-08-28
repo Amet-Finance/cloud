@@ -6,6 +6,7 @@ import connection from './db/main';
 import BlockchainListener from './listener/index';
 import ContractV1 from './routes/contract/v1'
 import StatisticsV1 from './routes/statistics/v1'
+import BalanceV1 from './routes/balance/v1'
 
 config();
 
@@ -13,9 +14,9 @@ const app = express();
 
 app.use(cors());
 
-app.use('/v1/contract', ContractV1)
-app.use('/v1/statistics', StatisticsV1)
-
+app.use('/v1/contract', ContractV1);
+app.use('/v1/balance', BalanceV1)
+app.use('/v1/statistics', StatisticsV1);
 
 connection.connect()
     .then(async () => {

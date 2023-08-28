@@ -5,6 +5,7 @@ import {TransactionReceipt} from 'web3-core'
 import {getWeb3} from "../../modules/web3/utils";
 import {CONTRACT_TYPES, DEFAULT_CHAIN, ZERO_ADDRESS} from "../constants";
 import {getInfo, getTokenInfo} from "./index";
+import {AnyBulkWriteOperation} from "mongodb";
 
 async function extractIssuer(transaction: TransactionReceipt) {
     const web3 = getWeb3();
@@ -69,9 +70,10 @@ async function extractBond(transaction: TransactionReceipt) {
             };
         }
         return acc;
-    }, {} as any)
+    }, {} as any);
+    const contractAddress = transaction.to.toLowerCase();
 
-    const balances: any = {}
+    const balances: { [key: string]: { add: any, remove: any } } = {}
 
     for (const log of transaction.logs) {
         try {
@@ -83,54 +85,99 @@ async function extractBond(transaction: TransactionReceipt) {
                     log.topics.slice(1)
                 );
 
+                const tokenId = decodedData.tokenId;
+                const fromAddress = decodedData.from?.toLowerCase();
+                const toAddress = decodedData.to?.toLowerCase()
+
                 if (abi.name === "Transfer") {
-                    if (!balances[decodedData.to]) {
-                        balances[decodedData.to] = {
-                            add: [],
-                            remove: []
+                    if (!balances[toAddress]) {
+                        balances[toAddress] = {
+                            add: {},
+                            remove: {}
                         }
                     }
 
-                    if (!balances[decodedData.from]) {
-                        balances[decodedData.from] = {
-                            add: [],
-                            remove: []
+                    if (!balances[fromAddress]) {
+                        balances[fromAddress] = {
+                            add: {},
+                            remove: {}
                         }
                     }
 
 
-                    if (decodedData.to !== ZERO_ADDRESS) {
-                        balances[decodedData.to].add.push(decodedData.tokenId);
+                    if (toAddress) {
+                        balances[toAddress].add[tokenId] = true
                     }
 
-                    if (decodedData.from !== ZERO_ADDRESS) {
-                        balances[decodedData.from].remove.push(decodedData.tokenId);
+                    if (fromAddress) {
+                        balances[fromAddress].remove[tokenId] = true
                     }
-
                 }
             }
         } catch (error) {
 
         }
-}
+    }
 
-//
-// for (const address in balances) {
-//     const {add, remove} = balances[address];
-//
-//     await connection.db.collection(`Balance_${DEFAULT_CHAIN}`).updateOne({
-//         _id: address.toLowerCase() as any
-//     }, {
-//         $push: {
-//             [transaction.to.toLowerCase()]: {
-//                 $each: add
-//             }
-//         },
-//     }, {
-//         upsert: true
-//     })
-// }
+    delete balances[ZERO_ADDRESS];
 
+    if (Object.keys(balances)) {
+
+        const addressBalancesDb = await connection.db
+            .collection(`Balance_${DEFAULT_CHAIN}`)
+            .find({
+                _id: {
+                    $in: Object.keys(balances) as any
+                }
+            })
+            .toArray();
+
+        const addressBalances = addressBalancesDb.reduce((acc: any, item: any) => {
+            const address = item._id.toLowerCase();
+            if (item[contractAddress]) {
+                acc[address] = item[contractAddress];
+            }
+            return acc;
+        }, {} as any)
+
+        const response: any[] = [];
+
+        for (const address in balances) {
+            const {add, remove} = balances[address];
+            const addressLower = address.toLowerCase()
+            const historicalTokenIds = addressBalances[address] || [];
+
+            const concated = [...historicalTokenIds, ...Object.keys(add)];
+            for (const tokenId in remove) {
+                const index = concated.indexOf(tokenId);
+                if (index !== -1) {
+                    concated.splice(index, 1);
+                }
+            }
+
+            const object = {
+                updateOne: {
+                    filter: {
+                        _id: addressLower
+                    },
+                    update: {
+                        $set: {
+                            [contractAddress]: concated
+                        }
+                    },
+                    upsert: true
+                }
+            }
+
+
+            response.push(object);
+        }
+
+
+        if (response.length) {
+            await connection.db.collection(`Balance_${DEFAULT_CHAIN}`).bulkWrite(response);
+        }
+    }
 }
 
 export {
