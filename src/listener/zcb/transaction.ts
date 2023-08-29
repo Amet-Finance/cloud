@@ -5,7 +5,6 @@ import {TransactionReceipt} from 'web3-core'
 import {getWeb3} from "../../modules/web3/utils";
 import {CONTRACT_TYPES, DEFAULT_CHAIN, ZERO_ADDRESS} from "../constants";
 import {getInfo, getTokenInfo} from "./index";
-import {AnyBulkWriteOperation} from "mongodb";
 
 async function extractIssuer(transaction: TransactionReceipt) {
     const web3 = getWeb3();
@@ -119,7 +118,16 @@ async function extractBond(transaction: TransactionReceipt) {
         }
     }
 
-    delete balances[ZERO_ADDRESS];
+    // todo update here the purchased and redeemed part as well
+    // if(balances[ZERO_ADDRESS]) {
+    //
+    //     if(balances[ZERO_ADDRESS]){
+    //
+    //     }
+    //
+    //         delete balances[ZERO_ADDRESS];
+    // }
+
 
     if (Object.keys(balances)) {
 

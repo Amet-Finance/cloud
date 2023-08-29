@@ -9,12 +9,13 @@ async function getInfo(contractAddress: string) {
     return {
         issuer: info[0],
         total: info[1],
-        current: info[2],
-        redeemLockPeriod: info[3],
-        investmentToken: info[4],
-        investmentTokenAmount: info[5],
-        interestToken: info[6],
-        interestTokenAmount: info[7]
+        purchased: info[2],
+        redeemed: info[3],
+        redeemLockPeriod: info[4],
+        investmentToken: info[5],
+        investmentTokenAmount: info[6],
+        interestToken: info[7],
+        interestTokenAmount: info[8],
     };
 }
 
