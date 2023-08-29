@@ -53,7 +53,7 @@ async function extractIssuer(transaction: TransactionReceipt) {
                 }
             }
         } catch (error) {
-
+            console.error(`Error while extracting`, error)
         }
     }
 }
