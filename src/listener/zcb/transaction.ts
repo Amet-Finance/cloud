@@ -122,16 +122,18 @@ async function extractBond(transaction: TransactionReceipt) {
     if (zeroBalance) {
 
         const updateQuery: any = {};
-        if (zeroBalance.remove?.length) {
+        const removeQty = Object.keys(zeroBalance.remove).length
+        if (removeQty) {
             updateQuery["$inc"] = {
-                purchased: zeroBalance.remove.length
+                purchased: removeQty
             }
         }
 
-        if (zeroBalance.add?.length) {
+        const addQty =  Object.keys(zeroBalance.add).length;
+        if (addQty) {
             updateQuery["$inc"] = {
                 ...(updateQuery["$inc"] || {}),
-                redeemed: zeroBalance.add?.length
+                redeemed: addQty
             }
         }
 
