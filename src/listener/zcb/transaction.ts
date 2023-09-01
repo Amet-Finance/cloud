@@ -118,15 +118,31 @@ async function extractBond(transaction: TransactionReceipt) {
         }
     }
 
-    // todo update here the purchased and redeemed part as well
-    // if(balances[ZERO_ADDRESS]) {
-    //
-    //     if(balances[ZERO_ADDRESS]){
-    //
-    //     }
-    //
-    //         delete balances[ZERO_ADDRESS];
-    // }
+    const zeroBalance = balances[ZERO_ADDRESS];
+    if (zeroBalance) {
+
+        const updateQuery: any = {};
+        if (zeroBalance.remove?.length) {
+            updateQuery["$inc"] = {
+                purchased: zeroBalance.remove.length
+            }
+        }
+
+        if (zeroBalance.add?.length) {
+            updateQuery["$inc"] = {
+                ...(updateQuery["$inc"] || {}),
+                redeemed: zeroBalance.add?.length
+            }
+        }
+
+        if (Object.keys(updateQuery).length) {
+            await connection.db.collection(`Contract_${DEFAULT_CHAIN}`).updateOne({
+                _id: contractAddress.toLowerCase() as any
+            }, updateQuery)
+        }
+
+        delete balances[ZERO_ADDRESS];
+    }
 
 
     if (Object.keys(balances)) {
