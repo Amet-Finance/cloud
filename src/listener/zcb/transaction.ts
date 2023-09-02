@@ -5,6 +5,7 @@ import {TransactionReceipt} from 'web3-core'
 import {getWeb3} from "../../modules/web3/utils";
 import {CONTRACT_TYPES, DEFAULT_CHAIN, ZERO_ADDRESS} from "../constants";
 import {getInfo, getTokenInfo} from "./index";
+import {updateTokens} from "./abi-jsons/token";
 
 async function extractIssuer(transaction: TransactionReceipt) {
     const web3 = getWeb3();
@@ -38,18 +39,7 @@ async function extractIssuer(transaction: TransactionReceipt) {
                         ...info
                     })
 
-                    const insertArray = [];
-                    const investmentTokenInfo = await getTokenInfo(info.investmentToken);
-                    const interestTokenInfo = await getTokenInfo(info.interestToken);
-
-                    if (investmentTokenInfo) {
-                        insertArray.push(investmentTokenInfo)
-                    }
-                    if (interestTokenInfo) {
-                        insertArray.push(interestTokenInfo)
-                    }
-
-                    await connection.db.collection(`Token_${DEFAULT_CHAIN}`).insertMany(insertArray as any);
+                    await updateTokens([...info.investmentToken, ...info.interestToken])
                 }
             }
         } catch (error) {
@@ -129,7 +119,7 @@ async function extractBond(transaction: TransactionReceipt) {
             }
         }
 
-        const addQty =  Object.keys(zeroBalance.add).length;
+        const addQty = Object.keys(zeroBalance.add).length;
         if (addQty) {
             updateQuery["$inc"] = {
                 ...(updateQuery["$inc"] || {}),
