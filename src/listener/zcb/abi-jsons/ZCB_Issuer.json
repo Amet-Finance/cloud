@@ -30,6 +30,11 @@
         "internalType": "uint256",
         "name": "_interestTokenAmount",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
       }
     ],
     "name": "create",

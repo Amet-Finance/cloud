@@ -40,6 +40,11 @@
         "internalType": "uint256",
         "name": "_feePercentage",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_denomination",
+        "type": "string"
       }
     ],
     "stateMutability": "nonpayable",
