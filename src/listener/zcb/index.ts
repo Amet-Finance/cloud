@@ -16,6 +16,7 @@ async function getInfo(contractAddress: string) {
         investmentTokenAmount: info[6],
         interestToken: info[7],
         interestTokenAmount: info[8],
+        issuanceDate: Number(info[9])
     };
 }
 
