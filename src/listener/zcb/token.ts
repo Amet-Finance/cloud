@@ -1,6 +1,6 @@
-import {getTokenInfo} from "../index";
-import connection from "../../../db/main";
-import {DEFAULT_CHAIN} from "../../constants";
+import {getTokenInfo} from "./index";
+import connection from "../../db/main";
+import {DEFAULT_CHAIN} from "../constants";
 
 async function updateTokens(contractAddresses: string[]) {
 

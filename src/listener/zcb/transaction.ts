@@ -5,7 +5,7 @@ import {TransactionReceipt} from 'web3-core'
 import {getWeb3} from "../../modules/web3/utils";
 import {CONTRACT_TYPES, DEFAULT_CHAIN, ZERO_ADDRESS} from "../constants";
 import {getInfo, getTokenInfo} from "./index";
-import {updateTokens} from "./abi-jsons/token";
+import {updateTokens} from "./token";
 
 async function extractIssuer(transaction: TransactionReceipt) {
     const web3 = getWeb3();
