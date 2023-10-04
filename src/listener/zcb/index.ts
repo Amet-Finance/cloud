@@ -36,7 +36,7 @@ async function getTokenInfo(chainId:string,contractAddress: string) {
             _id: contractAddress.toLowerCase(),
             name,
             symbol,
-            decimals
+            decimals: Number(decimals)
         };
     } catch (e) {
         return

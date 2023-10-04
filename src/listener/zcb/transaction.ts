@@ -39,7 +39,7 @@ async function extractIssuer(chainId: string, transaction: TransactionReceipt) {
                         _id: decodedData.contractAddress.toLowerCase() as any,
                     })
 
-                    await updateTokens(chainId, [...info.investmentToken, ...info.interestToken])
+                    await updateTokens(chainId, [info.investmentToken, info.interestToken])
                 }
             }
         } catch (error) {
