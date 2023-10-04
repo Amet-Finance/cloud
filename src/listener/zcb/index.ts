@@ -7,16 +7,18 @@ async function getInfo(chainId: string, contractAddress: string) {
     const contract = new web3.eth.Contract(ZCB_ABI as any, contractAddress);
     const info = await contract.methods.getInfo().call();
     return {
+        _id: contractAddress,
         issuer: info[0],
-        total: Number(info[1]),
-        purchased: Number(info[2]),
-        redeemed: Number(info[3]),
-        redeemLockPeriod: Number(info[4]),
+        total: info[1],
+        purchased: info[2],
+        redeemed: info[3],
+        redeemLockPeriod: info[4],
         investmentToken: info[5],
         investmentTokenAmount: info[6],
         interestToken: info[7],
         interestTokenAmount: info[8],
-        issuanceDate: Number(info[9])
+        feePercentage: Number(info[9]),
+        issuanceDate: Number(info[10])
     };
 }
 
