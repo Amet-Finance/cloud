@@ -34,9 +34,9 @@ async function extractIssuer(chainId: string, transaction: TransactionReceipt) {
                 if (abi.name === "Create") {
                     const info = await getInfo(chainId, decodedData.contractAddress)
                     await connection.db.collection(`Contract_${chainId}`).insertOne({
-                        _id: decodedData.contractAddress.toLowerCase() as any,
                         type: CONTRACT_TYPES.ZcbBond,
-                        ...info
+                        ...info,
+                        _id: decodedData.contractAddress.toLowerCase() as any,
                     })
 
                     await updateTokens(chainId, [...info.investmentToken, ...info.interestToken])
