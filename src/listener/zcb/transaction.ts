@@ -4,7 +4,7 @@ import ZCB_V1 from './abi-jsons/ZCB_V1.json'
 import {TransactionReceipt} from 'web3-core'
 import {getWeb3} from "../../modules/web3/utils";
 import {CONTRACT_TYPES, ZERO_ADDRESS} from "../constants";
-import {getInfo, getTokenInfo} from "./index";
+import {getInfo} from "./index";
 import {updateTokens} from "./token";
 
 async function extractIssuer(chainId: string, transaction: TransactionReceipt) {

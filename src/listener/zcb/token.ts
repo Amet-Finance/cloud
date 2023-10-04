@@ -26,7 +26,7 @@ async function updateTokens(chainId: string, contractAddresses: string[]) {
                 insertObject[token._id] = token
             }
         }
-        
+
     }
 
     if (Object.values(insertObject).length) {
