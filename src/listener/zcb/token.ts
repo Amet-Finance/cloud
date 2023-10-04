@@ -17,16 +17,20 @@ async function updateTokens(chainId: string, contractAddresses: string[]) {
         }
     })
 
-    const insertArray = [];
+    const insertObject: { [key: string]: any } = {};
     for (const contractAddress of filteredContracts) {
-        const token = await getTokenInfo(chainId, contractAddress);
-        if (token) {
-            insertArray.push(token);
+
+        if (!insertObject[contractAddress]) {
+            const token = await getTokenInfo(chainId, contractAddress);
+            if (token) {
+                insertObject[token._id] = token
+            }
         }
+        
     }
 
-    if (insertArray.length) {
-        await connection.db.collection(`Token_${chainId}`).insertMany(insertArray as any);
+    if (Object.values(insertObject).length) {
+        await connection.db.collection(`Token_${chainId}`).insertMany(Object.values(insertObject));
     }
 }
 
