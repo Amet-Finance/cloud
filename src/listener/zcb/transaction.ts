@@ -3,12 +3,12 @@ import ZCB_ISSUER_V1 from './abi-jsons/ZCB_Issuer.json'
 import ZCB_V1 from './abi-jsons/ZCB_V1.json'
 import {TransactionReceipt} from 'web3-core'
 import {getWeb3} from "../../modules/web3/utils";
-import {CONTRACT_TYPES, DEFAULT_CHAIN, ZERO_ADDRESS} from "../constants";
+import {CONTRACT_TYPES, ZERO_ADDRESS} from "../constants";
 import {getInfo, getTokenInfo} from "./index";
 import {updateTokens} from "./token";
 
-async function extractIssuer(transaction: TransactionReceipt) {
-    const web3 = getWeb3();
+async function extractIssuer(chainId: string, transaction: TransactionReceipt) {
+    const web3 = getWeb3(chainId);
     const signatures = ZCB_ISSUER_V1.reduce((acc: any, item: any) => {
         if (item.name) {
             const eventSignature = web3.eth.abi.encodeEventSignature(item);
@@ -32,14 +32,14 @@ async function extractIssuer(transaction: TransactionReceipt) {
                 );
 
                 if (abi.name === "Create") {
-                    const info = await getInfo(decodedData.contractAddress)
-                    await connection.db.collection(`Contract_${DEFAULT_CHAIN}`).insertOne({
+                    const info = await getInfo(chainId, decodedData.contractAddress)
+                    await connection.db.collection(`Contract_${chainId}`).insertOne({
                         _id: decodedData.contractAddress.toLowerCase() as any,
                         type: CONTRACT_TYPES.ZcbBond,
                         ...info
                     })
 
-                    await updateTokens([...info.investmentToken, ...info.interestToken])
+                    await updateTokens(chainId, [...info.investmentToken, ...info.interestToken])
                 }
             }
         } catch (error) {
@@ -48,8 +48,8 @@ async function extractIssuer(transaction: TransactionReceipt) {
     }
 }
 
-async function extractBond(transaction: TransactionReceipt) {
-    const web3 = getWeb3();
+async function extractBond(chainId: string, transaction: TransactionReceipt) {
+    const web3 = getWeb3(chainId);
     const signatures = ZCB_V1.reduce((acc: any, item: any) => {
         if (item.name) {
             const eventSignature = web3.eth.abi.encodeEventSignature(item);
@@ -128,7 +128,7 @@ async function extractBond(transaction: TransactionReceipt) {
         }
 
         if (Object.keys(updateQuery).length) {
-            await connection.db.collection(`Contract_${DEFAULT_CHAIN}`).updateOne({
+            await connection.db.collection(`Contract_${chainId}`).updateOne({
                 _id: contractAddress.toLowerCase() as any
             }, updateQuery)
         }
@@ -140,7 +140,7 @@ async function extractBond(transaction: TransactionReceipt) {
     if (Object.keys(balances)) {
 
         const addressBalancesDb = await connection.db
-            .collection(`Balance_${DEFAULT_CHAIN}`)
+            .collection(`Balance_${chainId}`)
             .find({
                 _id: {
                     $in: Object.keys(balances) as any
@@ -191,7 +191,7 @@ async function extractBond(transaction: TransactionReceipt) {
 
 
         if (response.length) {
-            await connection.db.collection(`Balance_${DEFAULT_CHAIN}`).bulkWrite(response);
+            await connection.db.collection(`Balance_${chainId}`).bulkWrite(response);
         }
     }
 }

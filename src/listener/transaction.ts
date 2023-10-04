@@ -5,23 +5,23 @@ import {extractBond, extractIssuer} from "./zcb/transaction";
 import {getContract} from "./cache";
 import {Contract} from "./types";
 
-async function extractTransaction(transaction: Transaction): Promise<void> {
+async function extractTransaction(chainId: string, transaction: Transaction): Promise<void> {
     const toAddress = transaction.to || ""
-    const contract = getContract(toAddress);
+    const contract = getContract(chainId, toAddress);
 
     if (!contract) {
         return;
     }
 
-    const web3 = getWeb3()
+    const web3 = getWeb3(chainId)
     const transactionReceipt = await web3.eth.getTransactionReceipt(transaction.hash);
 
     switch (contract.type) {
         case CONTRACT_TYPES.ZcbIssuer: {
-            await extractIssuer(transactionReceipt)
+            await extractIssuer(chainId, transactionReceipt)
         }
         case CONTRACT_TYPES.ZcbBond: {
-            await extractBond(transactionReceipt)
+            await extractBond(chainId, transactionReceipt)
         }
     }
 }

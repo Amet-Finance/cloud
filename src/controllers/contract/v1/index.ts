@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import connection from '../../../db/main'
-import {CONTRACT_TYPES, DEFAULT_CHAIN} from "../../../listener/constants";
+import {CONTRACT_TYPES} from "../../../listener/constants";
 
 
 async function getBonds(req: Request, res: Response) {
@@ -21,7 +21,7 @@ async function getBonds(req: Request, res: Response) {
     }, new Set())
 
 
-    const tokenInfosTmp = await connection.db.collection(`Token_${DEFAULT_CHAIN}`).find({
+    const tokenInfosTmp = await connection.db.collection(`Token_${chainId}`).find({
         _id: {$in: Array.from(tokenContracts) as any}
     }).toArray();
 

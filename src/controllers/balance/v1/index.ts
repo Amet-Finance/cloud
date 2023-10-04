@@ -1,7 +1,6 @@
 import {Request, Response} from "express";
 import {toChecksumAddress} from "web3-utils"
 import connection from '../../../db/main'
-import {DEFAULT_CHAIN} from "../../../listener/constants";
 
 async function getBalance(req: Request, res: Response) {
 

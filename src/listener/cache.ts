@@ -1,18 +1,23 @@
 import connection from '../db/main'
-import {DEFAULT_CHAIN} from "./constants";
 import {Contract} from "./types";
 
-// LowerCased
-const contracts: { [key: string]: any } = {}
+const contracts: {
+    [chainId: string]: {
+        [contractAddress: string]: Contract
+    }
+} = {}
 
-async function cache() {
+async function cache(chainId: string) {
     let timeout = 5000;
     try {
-        const contractsTmp = await connection.db.collection(`Contract_${DEFAULT_CHAIN}`).find().toArray();
+        // todo make this better with re-caching(deleting previous objects in memory)
+        const contractsTmp = await connection.db.collection(`Contract_${chainId}`).find().toArray();
+        contracts[chainId] = {};
 
         for (const contract of contractsTmp) {
-            const id = contract._id.toString()
-            contracts[id] = {
+            const contractAddress = contract._id.toString().toLowerCase()
+            contracts[chainId][contractAddress] = {
+                _id: contractAddress,
                 type: contract.type
             }
         }
@@ -21,12 +26,12 @@ async function cache() {
         console.error(`Cache contract`, error)
     }
 
-    setTimeout(cache, timeout)
+    setTimeout(() => cache(chainId), timeout)
 }
 
-function getContract(contractAddress: string): Contract|undefined {
+function getContract(chainId: string, contractAddress: string): Contract | undefined {
     const lowercase = contractAddress.toLowerCase()
-    return contracts[lowercase];
+    return contracts[chainId][lowercase];
 }
 
 export {

@@ -2,8 +2,8 @@ import ZCB_ABI from './abi-jsons/ZCB_V1.json'
 import ERC_20 from './abi-jsons/ERC20.json'
 import {getWeb3} from "../../modules/web3/utils";
 
-async function getInfo(contractAddress: string) {
-    const web3 = getWeb3()
+async function getInfo(chainId: string, contractAddress: string) {
+    const web3 = getWeb3(chainId)
     const contract = new web3.eth.Contract(ZCB_ABI as any, contractAddress);
     const info = await contract.methods.getInfo().call();
     return {
@@ -20,9 +20,9 @@ async function getInfo(contractAddress: string) {
     };
 }
 
-async function getTokenInfo(contractAddress: string) {
+async function getTokenInfo(chainId:string,contractAddress: string) {
     try {
-        const web3 = getWeb3();
+        const web3 = getWeb3(chainId);
 
         const contract = new web3.eth.Contract(ERC_20 as any, contractAddress);
 

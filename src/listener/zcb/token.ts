@@ -1,12 +1,11 @@
 import {getTokenInfo} from "./index";
 import connection from "../../db/main";
-import {DEFAULT_CHAIN} from "../constants";
 
-async function updateTokens(contractAddresses: string[]) {
+async function updateTokens(chainId: string, contractAddresses: string[]) {
 
     const contractsLoweCased = contractAddresses.map(item => item.toLowerCase())
 
-    const dbHistory = await connection.db.collection(`Token_${DEFAULT_CHAIN}`).distinct("_id", {
+    const dbHistory = await connection.db.collection(`Token_${chainId}`).distinct("_id", {
         _id: {
             $in: contractsLoweCased as any
         }
@@ -20,14 +19,14 @@ async function updateTokens(contractAddresses: string[]) {
 
     const insertArray = [];
     for (const contractAddress of filteredContracts) {
-        const token = await getTokenInfo(contractAddress);
+        const token = await getTokenInfo(chainId, contractAddress);
         if (token) {
             insertArray.push(token);
         }
     }
 
     if (insertArray.length) {
-        await connection.db.collection(`Token_${DEFAULT_CHAIN}`).insertMany(insertArray as any);
+        await connection.db.collection(`Token_${chainId}`).insertMany(insertArray as any);
     }
 }
 

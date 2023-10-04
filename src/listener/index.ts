@@ -2,18 +2,17 @@ import {getWeb3} from "../modules/web3/utils";
 import BlockInitializer from "./block";
 import * as CacheService from "./cache";
 
-async function init() {
-
-    await CacheService.cache()
-    return listen();
+async function init(chainId: string) {
+    await CacheService.cache(chainId)
+    return listen(chainId);
 }
-
-function listen() {
-    const web3 = getWeb3(true);
+// todo continue from here
+function listen(chainId: string) {
+    const web3 = getWeb3(chainId, true);
 
     const subscription = web3.eth.subscribe("newBlockHeaders");
 
-    subscription.on("data", BlockInitializer);
+    subscription.on("data", (blockHeader) => BlockInitializer(chainId, blockHeader));
     subscription.on("changed", (data) => [
         console.log(`Data changed`, data)
     ]);
