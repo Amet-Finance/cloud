@@ -67,3 +67,7 @@ async function historicalSync(chainId: string, fromBlock: number, toBlock?: numb
 }
 
 export default init;
+export {
+    historicalSync,
+    listen
+}

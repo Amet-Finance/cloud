@@ -6,7 +6,7 @@ import {sleep} from "../modules/utils/dates";
 
 async function init(chainId: string, block: BlockHeader): Promise<any> {
     try {
-        if (block.number % 10) {
+        if (block.number % 10 === 0) {
             console.log(`Block: ${block.number}`)
         }
         // sleep in order to have the most up-to-date data in def rpc's
