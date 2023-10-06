@@ -6,7 +6,7 @@ async function init(chainId: string) {
     await CacheService.cache(chainId)
     return listen(chainId);
 }
-// todo continue from here
+
 function listen(chainId: string) {
     const web3 = getWeb3(chainId, true);
 
@@ -18,12 +18,6 @@ function listen(chainId: string) {
     ]);
     subscription.on("error", (error: Error) => {
         console.error(`Listener error`, error)
-        // subscription.unsubscribe(function (error, success) {
-        //     if (success) {
-        //         console.log('Successfully unsubscribed!');
-        //         return listen();
-        //     }
-        // });
     });
     subscription.on("connected", (subscriptionId) => {
         console.log(`Connected to ${subscriptionId}`);
