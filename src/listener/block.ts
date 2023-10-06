@@ -4,9 +4,11 @@ import {getBlock} from "../modules/web3";
 import * as TransactionService from './transaction';
 import {sleep} from "../modules/utils/dates";
 
-async function init(chainId: string, block: BlockHeader) {
+async function init(chainId: string, block: BlockHeader): Promise<any> {
     try {
-        console.log(`Block: ${block.number}`)
+        if (block.number % 10) {
+            console.log(`Block: ${block.number}`)
+        }
         // sleep in order to have the most up-to-date data in def rpc's
         await sleep(1500);
 
@@ -19,7 +21,9 @@ async function init(chainId: string, block: BlockHeader) {
             await TransactionService.extractTransaction(chainId, transaction);
         }
     } catch (error: any) {
-        console.error(`Error in BlockInitializer`, error)
+        console.error(`Error in BlockInitializer ${block.number}`, error)
+        await sleep(1500);
+        return init(chainId, block)
     }
 }
 
