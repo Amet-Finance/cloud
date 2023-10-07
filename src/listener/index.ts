@@ -1,5 +1,5 @@
 import {getWeb3} from "../modules/web3/utils";
-import BlockInitializer from "./block";
+import BlockInitializer, {updateBlock} from "./block";
 import * as CacheService from "./cache";
 
 async function init(chainId: string) {
@@ -17,7 +17,11 @@ async function listen(chainId: string): Promise<any> {
         const subscription = web3.eth.subscribe("newBlockHeaders");
 
         subscription.on("data", (blockHeader) => {
-            BlockInitializer(chainId, blockHeader).catch(error => null);
+            BlockInitializer(chainId, blockHeader)
+                .then(async () => {
+                    config.fromBlock = blockHeader.number;
+                    await updateBlock(chainId, blockHeader); // todo use this data as well
+                });
             config.lastDate = Date.now()
         });
         subscription.on("changed", (data) => [

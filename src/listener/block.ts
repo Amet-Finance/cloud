@@ -9,13 +9,11 @@ async function init(chainId: string, block: BlockHeader): Promise<any> {
         if (block.number % 10 === 0) {
             console.log(`Block: ${block.number}`)
         }
-        // sleep in order to have the most up-to-date data in def rpc's
-        await sleep(1500);
 
+        // sleep in order to have the most up-to-date data in def rpc's
+        await sleep(2000);
 
         const blockInfo = await getBlock(chainId, block.number)
-
-        await updateBlock(chainId, block); // todo use this data as well
 
         for (const transaction of blockInfo.transactions) {
             await TransactionService.extractTransaction(chainId, transaction);
@@ -43,3 +41,7 @@ async function updateBlock(chainId: string, block: BlockHeader) {
 }
 
 export default init;
+
+export  {
+    updateBlock
+}
