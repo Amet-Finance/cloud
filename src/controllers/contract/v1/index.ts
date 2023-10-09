@@ -4,11 +4,14 @@ import {CONTRACT_TYPES} from "../../../listener/constants";
 
 
 async function getBonds(req: Request, res: Response) {
-    const {chainId} = req.query;
+    const {chainId, skip, limit} = req.query;
     const bonds = await connection.db.collection(`Contract_${chainId}`)
         .find({
             type: CONTRACT_TYPES.ZcbBond
-        }).toArray();
+        })
+        .skip(Number(skip) || 0)
+        .limit(Number(limit) || 20)
+        .toArray();
 
     const tokenContracts = bonds.reduce((acc, item: any) => {
         if (item.investmentToken) {
