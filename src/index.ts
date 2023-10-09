@@ -4,6 +4,7 @@ import {config} from "dotenv";
 import express from 'express';
 import connection from './db/main';
 import BlockchainListener, {historicalSync} from './listener/index';
+import InitiateJobs from './jobs/index'
 import ContractV1 from './routes/contract/v1'
 import StatisticsV1 from './routes/statistics/v1'
 import BalanceV1 from './routes/balance/v1'
@@ -23,6 +24,7 @@ connection.connect()
     .then(async () => {
         // await historicalSync() //todo add it here
         await BlockchainListener(CHAINS.Mumbai);
+        InitiateJobs();
         app.listen(process.env.PORT, () => {
             console.log(`Amet Cloud is listening at PORT=${process.env.PORT}| ${new Date().toLocaleTimeString()}`)
         });
