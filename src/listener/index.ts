@@ -1,3 +1,4 @@
+import connection from '../db/main'
 import {getWeb3} from "../modules/web3/utils";
 import BlockInitializer, {updateBlock} from "./block";
 import * as CacheService from "./cache";
@@ -10,38 +11,34 @@ async function init(chainId: string) {
 async function listen(chainId: string): Promise<any> {
     try {
         const web3 = getWeb3(chainId, true);
-        const config = {
-            lastDate: Date.now(),
-            fromBlock: 0
-        }
-        const subscription = web3.eth.subscribe("newBlockHeaders");
+        let lastDate = Date.now()
 
-        subscription.on("data", (blockHeader) => {
-            BlockInitializer(chainId, blockHeader)
-                .then(async () => {
-                    config.fromBlock = blockHeader.number;
-                    await updateBlock(chainId, blockHeader); // todo use this data as well
-                });
-            config.lastDate = Date.now()
-        });
-        subscription.on("changed", (data) => [
-            console.log(`Data changed`, data)
-        ]);
-        subscription.on("error", (error: Error) => {
-            console.error(`Listener error`, error)
-        });
-        subscription.on("connected", (subscriptionId) => {
-            console.log(`Connected to ${subscriptionId}`);
-        });
+        const subscription = web3.eth.subscribe("newBlockHeaders");
+        subscription
+            .on("data", async (blockHeader) => {
+                await BlockInitializer(chainId, blockHeader)
+                await updateBlock(chainId, blockHeader)
+                lastDate = Date.now()
+            })
+            .on("changed", (data) => [
+                console.log(`Data changed`, data)
+            ])
+            .on("error", (error: Error) => {
+                console.error(`Listener error`, error)
+            })
+            .on("connected", (subscriptionId) => {
+                console.log(`Subscribed to ${subscriptionId}`);
+            });
 
 
         const interval = setInterval(async () => {
-            if (config.lastDate + 5000 < Date.now()) {
+            if (lastDate + 5000 < Date.now()) {
                 await subscription.unsubscribe();
+                console.log(`Unsubscribed from ${subscription.id}`)
                 clearInterval(interval);
 
+                historicalSync(chainId).catch(() => null);
                 listen(chainId).catch(() => null);
-                historicalSync(chainId, config.fromBlock).catch(() => null);
             }
         }, 1000);
 
@@ -51,15 +48,21 @@ async function listen(chainId: string): Promise<any> {
 
 }
 
-async function historicalSync(chainId: string, fromBlock: number, toBlock?: number) {
+async function historicalSync(chainId: string, fromBlock?: number, toBlock?: number) {
     try {
+        console.log(`Historical blocks syncing...`)
         const web3 = getWeb3(chainId);
 
-        if (!toBlock) {
+        if (typeof fromBlock === "undefined") {
+            const chainInfo: any = await connection.db.collection('Listener').findOne({_id: chainId as any})
+            fromBlock = chainInfo.lastBlock;
+        }
+
+        if (typeof toBlock === "undefined") {
             toBlock = await web3.eth.getBlockNumber()
         }
 
-        for (let from = fromBlock; from <= toBlock; from++) {
+        for (let from: any = fromBlock; from <= toBlock; from++) {
             const blockHeader = await web3.eth.getBlock(from, true)
             await BlockInitializer(chainId, blockHeader)
         }
