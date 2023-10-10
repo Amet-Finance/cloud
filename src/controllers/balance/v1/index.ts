@@ -1,19 +1,17 @@
 import {Request, Response} from "express";
 import {toChecksumAddress} from "web3-utils"
 import connection from '../../../db/main'
-import {CHAINS} from "../../../modules/web3/constants";
 
 async function getBalance(req: Request, res: Response) {
 
     try {
         const {chainId} = req.query;
-        // todo if no chainId get all the bonds
         const addressTmp = req.params.address;
 
         const address = toChecksumAddress(addressTmp);
 
         const balance = await connection.db
-            .collection(`Balance_${chainId || CHAINS.Mumbai}`)
+            .collection(`Balance_${chainId}`)
             .findOne({
                 _id: address.toLowerCase() as any
             })
