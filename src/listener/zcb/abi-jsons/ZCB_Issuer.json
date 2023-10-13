@@ -39,9 +39,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint8",
+        "internalType": "uint16",
         "name": "percent",
-        "type": "uint8"
+        "type": "uint16"
       }
     ],
     "name": "changeCreationFeePercentage",
@@ -123,9 +123,9 @@
     "name": "creationFeePercentage",
     "outputs": [
       {
-        "internalType": "uint8",
+        "internalType": "uint16",
         "name": "",
-        "type": "uint8"
+        "type": "uint16"
       }
     ],
     "stateMutability": "view",
