@@ -37,6 +37,7 @@ async function getBonds(req: Request, res: Response) {
 
     const bondsMapped = bonds.map(item => ({
         ...item,
+        chainId,
         investmentTokenInfo: tokenInfos[item.investmentToken.toLowerCase()],
         interestTokenInfo: tokenInfos[item.interestToken.toLowerCase()]
     }))
