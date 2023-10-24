@@ -2,6 +2,7 @@ import connection from "../../db/main";
 import {CONTRACT_TYPES} from "../../listener/constants";
 import {CHAINS} from "../../modules/web3/constants";
 
+// todo update this logic as well, maybe take from the Token collection with isStable or price updating regularly
 const Stables: { [key: string]: { [key: string]: { symbol: string, decimals: number } } } = {
     [CHAINS.Mumbai]: {
         "0x4714816Fa7cf2B52c789D243BEab4d58ca79e35B": {

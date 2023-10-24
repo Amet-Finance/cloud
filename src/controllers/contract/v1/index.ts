@@ -35,12 +35,21 @@ async function getBonds(req: Request, res: Response) {
         return acc;
     }, {} as any);
 
-    const bondsMapped = bonds.map(item => ({
-        ...item,
-        chainId,
-        investmentTokenInfo: tokenInfos[item.investmentToken.toLowerCase()],
-        interestTokenInfo: tokenInfos[item.interestToken.toLowerCase()]
-    }))
+    const bondsMapped = bonds.reduce((acc, item) => {
+
+        const bondDetailedInfo = {
+            ...item,
+            chainId,
+            investmentTokenInfo: tokenInfos[item.investmentToken.toLowerCase()],
+            interestTokenInfo: tokenInfos[item.interestToken.toLowerCase()]
+        }
+
+        if (bondDetailedInfo.interestTokenInfo && bondDetailedInfo.investmentTokenInfo) {
+            acc.push(bondDetailedInfo)
+        }
+
+        return acc;
+    }, [] as any)
 
 
     return res.json({
