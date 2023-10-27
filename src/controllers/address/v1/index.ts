@@ -8,7 +8,8 @@ async function get(req: Request, res: Response) {
     try {
         const {address} = req.query as any;
         validateAddress(address);
-        return await connection.db.collection("Address").findOne({_id: address})
+        const addressInfo = await connection.db.collection("Address").findOne({_id: address})
+        return res.json(addressInfo)
     } catch (error: any) {
         return res.status(400).json({
             message: error.message
