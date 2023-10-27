@@ -4,7 +4,6 @@ import {validateAddress, validateSignature} from "./util";
 import {uploadFile} from "./ipfs";
 
 async function get(req: Request, res: Response) {
-
     try {
         const {address} = req.query as any;
         validateAddress(address);
