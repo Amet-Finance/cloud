@@ -4,6 +4,7 @@ import BlockInitializer, {updateBlock} from "./block";
 import * as CacheService from "./cache";
 
 async function init(chainId: string) {
+    // await historicalSync() //todo add it here
     await CacheService.cache(chainId)
     return listen(chainId);
 }
