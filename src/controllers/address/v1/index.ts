@@ -7,7 +7,7 @@ async function get(req: Request, res: Response) {
     try {
         const {address} = req.query as any;
         validateAddress(address);
-        const addressInfo = await connection.db.collection("Address").findOne({_id: address})
+        const addressInfo = await connection.db.collection("Address").findOne({_id: address.toLowerCase()})
         return res.json(addressInfo)
     } catch (error: any) {
         return res.status(400).json({
@@ -33,7 +33,11 @@ async function post(req: Request, res: Response) {
         }
 
         if (telegram) {
-            addressInfo.twitter = telegram
+            addressInfo.telegram = telegram
+        }
+
+        if (reddit) {
+            addressInfo.reddit = reddit
         }
 
         if (image) {

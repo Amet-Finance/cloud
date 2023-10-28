@@ -1,6 +1,8 @@
+import {config} from "dotenv";
+config();
+
 import "./handler";
 import cors from 'cors';
-import {config} from "dotenv";
 import express from 'express';
 import connection from './db/main';
 import BlockchainListener from './listener/index';
@@ -12,7 +14,6 @@ import BalanceV1 from './routes/balance/v1'
 import {CHAINS} from "./modules/web3/constants";
 import rateLimit from "express-rate-limit";
 
-config();
 
 const app = express();
 
