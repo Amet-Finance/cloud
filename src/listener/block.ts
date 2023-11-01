@@ -16,8 +16,6 @@ async function initializeBlockInfo(chainId: number, blockInfo: BlockTransactionO
             await TransactionService.extractTransaction(chainId, transaction);
         }
 
-
-        // todo if you receive transaction related to bond, it is better to call getInfo() and update in database!
     } catch (error: any) {
         console.error(`Error in BlockInitializer ${blockInfo.number}`, error)
         await sleep(1500);
@@ -25,19 +23,24 @@ async function initializeBlockInfo(chainId: number, blockInfo: BlockTransactionO
     }
 }
 
-async function updateBlock(chainId: number, block: BlockHeader) {
-    if (block.number % 10 === 0) {
-        await connection.db.collection(`Listener`).updateOne({
-            _id: chainId as any
-        }, {
-            $set: {
-                lastBlock: block.number
-            }
-        }, {
-            upsert: true
-        })
+async function updateBlock(chainId: number, block: BlockHeader): Promise<void> {
+    try {
+        if (block.number % 10 === 0) {
+            await connection.db.collection(`Listener`).updateOne({
+                _id: chainId as any
+            }, {
+                $set: {
+                    lastBlock: block.number
+                }
+            }, {
+                upsert: true
+            })
+        }
+    } catch (error: any) {
+        console.error(`updateBlock`, block.number);
+        await sleep(1500);
+        return updateBlock(chainId, block);
     }
-
 }
 
 export {
