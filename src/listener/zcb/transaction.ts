@@ -110,33 +110,17 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
         }
     }
 
-    const zeroBalance = balances[ZERO_ADDRESS];
-    if (zeroBalance) {
-
-        const updateQuery: any = {};
-        const removeQty = Object.keys(zeroBalance.remove).length
-        if (removeQty) {
-            updateQuery["$inc"] = {
-                purchased: removeQty
-            }
+    const contractInfo = await getInfo(chainId, contractAddress)
+    await connection.db.collection(`Contract_${chainId}`).updateOne({
+        _id: contractAddress.toLowerCase() as any
+    }, {
+        $set: {
+            issuer: contractInfo.issuer,
+            purchased: contractInfo.purchased,
+            redeemed: contractInfo.redeemed,
+            feePercentage: contractInfo.feePercentage,
         }
-
-        const addQty = Object.keys(zeroBalance.add).length;
-        if (addQty) {
-            updateQuery["$inc"] = {
-                ...(updateQuery["$inc"] || {}),
-                redeemed: addQty
-            }
-        }
-
-        if (Object.keys(updateQuery).length) {
-            await connection.db.collection(`Contract_${chainId}`).updateOne({
-                _id: contractAddress.toLowerCase() as any
-            }, updateQuery)
-        }
-
-        delete balances[ZERO_ADDRESS];
-    }
+    })
 
 
     if (Object.keys(balances)) {
@@ -165,7 +149,7 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
             const addressLower = address.toLowerCase()
             const historicalTokenIds = addressBalances[address] || [];
 
-            const concated = [...historicalTokenIds, ...Object.keys(add)];
+            const concated = Array.from(new Set([...historicalTokenIds, ...Object.keys(add)]))
             for (const tokenId in remove) {
                 const index = concated.indexOf(tokenId);
                 if (index !== -1) {
