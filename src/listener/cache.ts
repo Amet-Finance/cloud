@@ -10,17 +10,18 @@ const contracts: {
 async function cache(chainId: number) {
     let timeout = 5000;
     try {
-        // todo make this better with re-caching(deleting previous objects in memory)
         const contractsTmp = await connection.db.collection(`Contract_${chainId}`).find().toArray();
-        contracts[chainId] = {};
+        const contractsTmpCache: any = {}
 
         for (const contract of contractsTmp) {
             const contractAddress = contract._id.toString().toLowerCase()
-            contracts[chainId][contractAddress] = {
+            contractsTmpCache[contractAddress] = {
                 _id: contractAddress,
                 type: contract.type
             }
         }
+
+        contracts[chainId] = contractsTmpCache;
     } catch (error) {
         timeout = 1000;
         console.error(`Cache contract`, error)
