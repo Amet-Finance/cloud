@@ -1,19 +1,16 @@
 import connection from '../db/main'
-import {BlockHeader} from "web3-eth";
-import {getBlock} from "../modules/web3";
+import {BlockHeader, BlockTransactionObject} from "web3-eth";
 import * as TransactionService from './transaction';
 import {sleep} from "../modules/utils/dates";
 
-async function init(chainId: number, block: BlockHeader): Promise<any> {
+async function initializeBlockInfo(chainId: number, blockInfo: BlockTransactionObject): Promise<any> {
     try {
-        if (block.number % 10 === 0) {
-            console.log(`Block: ${block.number}`)
+        if (blockInfo.number % 10 === 0) {
+            console.log(`Block: ${blockInfo.number}`)
         }
 
         // sleep in order to have the most up-to-date data in def rpc's
         await sleep(2000);
-
-        const blockInfo = await getBlock(chainId, block.number)
 
         for (const transaction of blockInfo.transactions) {
             await TransactionService.extractTransaction(chainId, transaction);
@@ -22,9 +19,9 @@ async function init(chainId: number, block: BlockHeader): Promise<any> {
 
         // todo if you receive transaction related to bond, it is better to call getInfo() and update in database!
     } catch (error: any) {
-        console.error(`Error in BlockInitializer ${block.number}`, error)
+        console.error(`Error in BlockInitializer ${blockInfo.number}`, error)
         await sleep(1500);
-        return init(chainId, block)
+        return initializeBlockInfo(chainId, blockInfo)
     }
 }
 
@@ -43,8 +40,7 @@ async function updateBlock(chainId: number, block: BlockHeader) {
 
 }
 
-export default init;
-
 export {
+    initializeBlockInfo,
     updateBlock
 }
