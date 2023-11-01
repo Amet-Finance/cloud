@@ -4,50 +4,10 @@ import {initializeBlockInfo, updateBlock} from "./block";
 import * as CacheService from "./cache";
 import {getBlock} from "../modules/web3";
 
-async function init(chainId: number) {
+async function initializeBlockchainListener(chainId: number) {
     // await historicalSync() //todo add it here
     await CacheService.cache(chainId)
     return listenWithInterval(chainId);
-}
-
-async function listen(chainId: number): Promise<any> {
-    // try {
-    //     const web3 = getWeb3(chainId, true);
-    //     let lastDate = Date.now()
-    //
-    //     const subscription = web3.eth.subscribe("newBlockHeaders");
-    //     subscription
-    //         .on("data", async (blockHeader) => {
-    //             await BlockInitializer(chainId, blockHeader)
-    //             await updateBlock(chainId, blockHeader)
-    //             lastDate = Date.now()
-    //         })
-    //         .on("changed", (data) => [
-    //             console.log(`Data changed`, data)
-    //         ])
-    //         .on("error", (error: Error) => {
-    //             console.error(`Listener error`, error)
-    //         })
-    //         .on("connected", (subscriptionId) => {
-    //             console.log(`Subscribed to ${subscriptionId}`);
-    //         });
-    //
-    //
-    //     const interval = setInterval(async () => {
-    //         if (lastDate + 5000 < Date.now()) {
-    //             await subscription.unsubscribe();
-    //             console.log(`Unsubscribed from ${subscription.id}`)
-    //             clearInterval(interval);
-    //
-    //             historicalSync(chainId).catch(() => null);
-    //             listen(chainId).catch(() => null);
-    //         }
-    //     }, 1000);
-    //
-    // } catch (error) {
-    //     console.error(`Listener error for ${chainId}`, error);
-    // }
-
 }
 
 async function listenWithInterval(chainId: number) {
@@ -92,8 +52,4 @@ async function historicalSync(chainId: number, fromBlock?: number, toBlock?: num
     }
 }
 
-export default init;
-export {
-    historicalSync,
-    listen
-}
+export default initializeBlockchainListener;
