@@ -20,7 +20,6 @@ async function extractIssuer(chainId: number, transaction: TransactionReceipt) {
         return acc;
     }, {} as any)
 
-
     for (const log of transaction.logs) {
         try {
             const abi = signatures[log.topics[0]]
@@ -48,6 +47,8 @@ async function extractIssuer(chainId: number, transaction: TransactionReceipt) {
             console.error(`Error while extracting`, error)
         }
     }
+
+    console.log(`Contract inserted to: ${chainId}`)
 }
 
 async function extractBond(chainId: number, transaction: TransactionReceipt) {
@@ -122,7 +123,6 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
         }
     })
 
-
     if (Object.keys(balances)) {
 
         const addressBalancesDb = await connection.db
@@ -180,6 +180,8 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
             await connection.db.collection(`Balance_${chainId}`).bulkWrite(response);
         }
     }
+
+    console.log(`Contract interaction| chainId: ${chainId}| contract: ${transaction.to}`)
 }
 
 export {
