@@ -111,6 +111,8 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
         }
     }
 
+    delete balances[ZERO_ADDRESS];
+
     const contractInfo = await getInfo(chainId, contractAddress)
     await connection.db.collection(`Contract_${chainId}`).updateOne({
         _id: contractAddress.toLowerCase() as any
@@ -147,25 +149,25 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
 
         for (const address in balances) {
             const {add, remove} = balances[address];
-            const addressLower = address.toLowerCase()
             const historicalTokenIds = addressBalances[address] || [];
 
-            const concated = Array.from(new Set([...historicalTokenIds, ...Object.keys(add)]))
-            for (const tokenId in remove) {
-                const index = concated.indexOf(tokenId);
-                if (index !== -1) {
-                    concated.splice(index, 1);
+            const concatenatedTokenIds = Array.from(new Set([...historicalTokenIds, ...Object.keys(add)]))
+            const totalTokenIds = []
+
+            for (const tokenId of concatenatedTokenIds) {
+                if (!remove[tokenId]) {
+                    totalTokenIds.push(tokenId)
                 }
             }
 
             const object = {
                 updateOne: {
                     filter: {
-                        _id: addressLower
+                        _id: address.toLowerCase()
                     },
                     update: {
                         $set: {
-                            [contractAddress]: concated
+                            [contractAddress]: totalTokenIds
                         }
                     },
                     upsert: true
