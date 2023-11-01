@@ -117,6 +117,7 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
     }, {
         $set: {
             issuer: contractInfo.issuer,
+            total: contractInfo.total,
             purchased: contractInfo.purchased,
             redeemed: contractInfo.redeemed,
             feePercentage: contractInfo.feePercentage,
