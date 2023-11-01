@@ -3,13 +3,13 @@ import {getWeb3} from "../modules/web3/utils";
 import BlockInitializer, {updateBlock} from "./block";
 import * as CacheService from "./cache";
 
-async function init(chainId: string) {
+async function init(chainId: number) {
     // await historicalSync() //todo add it here
     await CacheService.cache(chainId)
     return listen(chainId);
 }
 
-async function listen(chainId: string): Promise<any> {
+async function listen(chainId: number): Promise<any> {
     try {
         const web3 = getWeb3(chainId, true);
         let lastDate = Date.now()
@@ -49,7 +49,7 @@ async function listen(chainId: string): Promise<any> {
 
 }
 
-async function historicalSync(chainId: string, fromBlock?: number, toBlock?: number) {
+async function historicalSync(chainId: number, fromBlock?: number, toBlock?: number) {
     try {
         console.log(`Historical blocks syncing...`)
         const web3 = getWeb3(chainId);

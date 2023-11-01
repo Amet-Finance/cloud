@@ -5,7 +5,7 @@ import {extractBond, extractIssuer} from "./zcb/transaction";
 import {getContract} from "./cache";
 import {Contract} from "./types";
 
-async function extractTransaction(chainId: string, transaction: Transaction): Promise<void> {
+async function extractTransaction(chainId: number, transaction: Transaction): Promise<void> {
     const toAddress = transaction.to || ""
     const contract = getContract(chainId, toAddress);
 

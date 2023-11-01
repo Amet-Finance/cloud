@@ -4,7 +4,7 @@ import {getBlock} from "../modules/web3";
 import * as TransactionService from './transaction';
 import {sleep} from "../modules/utils/dates";
 
-async function init(chainId: string, block: BlockHeader): Promise<any> {
+async function init(chainId: number, block: BlockHeader): Promise<any> {
     try {
         if (block.number % 10 === 0) {
             console.log(`Block: ${block.number}`)
@@ -18,6 +18,9 @@ async function init(chainId: string, block: BlockHeader): Promise<any> {
         for (const transaction of blockInfo.transactions) {
             await TransactionService.extractTransaction(chainId, transaction);
         }
+
+
+        // todo if you receive transaction related to bond, it is better to call getInfo() and update in database!
     } catch (error: any) {
         console.error(`Error in BlockInitializer ${block.number}`, error)
         await sleep(1500);
@@ -25,7 +28,7 @@ async function init(chainId: string, block: BlockHeader): Promise<any> {
     }
 }
 
-async function updateBlock(chainId: string, block: BlockHeader) {
+async function updateBlock(chainId: number, block: BlockHeader) {
     if (block.number % 10 === 0) {
         await connection.db.collection(`Listener`).updateOne({
             _id: chainId as any
@@ -42,6 +45,6 @@ async function updateBlock(chainId: string, block: BlockHeader) {
 
 export default init;
 
-export  {
+export {
     updateBlock
 }

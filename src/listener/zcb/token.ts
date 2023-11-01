@@ -1,7 +1,7 @@
 import {getTokenInfo} from "./index";
 import connection from "../../db/main";
 
-async function updateTokens(chainId: string, contractAddresses: string[]) {
+async function updateTokens(chainId: number, contractAddresses: string[]) {
 
     const contractsLoweCased = contractAddresses.map(item => item.toLowerCase())
 

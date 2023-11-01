@@ -7,7 +7,7 @@ import {CONTRACT_TYPES, ZERO_ADDRESS} from "../constants";
 import {getInfo} from "./index";
 import {updateTokens} from "./token";
 
-async function extractIssuer(chainId: string, transaction: TransactionReceipt) {
+async function extractIssuer(chainId: number, transaction: TransactionReceipt) {
     const web3 = getWeb3(chainId);
     const signatures = ZCB_ISSUER_V1.reduce((acc: any, item: any) => {
         if (item.name) {
@@ -39,6 +39,8 @@ async function extractIssuer(chainId: string, transaction: TransactionReceipt) {
                         _id: decodedData.contractAddress.toLowerCase() as any,
                     })
 
+                    // todo here add a META INFO to S3
+
                     await updateTokens(chainId, [info.investmentToken, info.interestToken])
                 }
             }
@@ -48,7 +50,7 @@ async function extractIssuer(chainId: string, transaction: TransactionReceipt) {
     }
 }
 
-async function extractBond(chainId: string, transaction: TransactionReceipt) {
+async function extractBond(chainId: number, transaction: TransactionReceipt) {
     const web3 = getWeb3(chainId);
     const signatures = ZCB_V1.reduce((acc: any, item: any) => {
         if (item.name) {

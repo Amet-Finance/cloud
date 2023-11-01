@@ -1,9 +1,17 @@
 const CHAINS = {
-    Ethereum: "0x1",
-    Mumbai: "0x13881"
+    Ethereum: 1,
+    Mumbai: 80001,
+    Polygon: 137,
+    Bsc: 56
 }
 
-const RPCsByChain = {
+const RPCsByChain: {
+    [key: number]: {
+        def: string[],
+        ws: string[],
+        fallback: string[]
+    }
+} = {
     [CHAINS.Mumbai]: {
         def: [
             "https://rpc.ankr.com/polygon_mumbai",

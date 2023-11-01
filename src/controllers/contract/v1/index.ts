@@ -4,8 +4,9 @@ import {CONTRACT_TYPES} from "../../../listener/constants";
 
 
 async function getBonds(req: Request, res: Response) {
-    const {chainId, skip, limit} = req.query;
+    const {chainId, skip, limit, address} = req.query;
     // todo implement proper pagination
+    // todo add address as well for the issuer query
     const bonds = await connection.db.collection(`Contract_${chainId}`)
         .find({
             type: CONTRACT_TYPES.ZcbBond
