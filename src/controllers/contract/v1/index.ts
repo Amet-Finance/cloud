@@ -5,15 +5,27 @@ import {toChecksumAddress} from "web3-utils";
 
 
 async function getBonds(req: Request, res: Response) {
-    const {chainId, skip, limit, issuer} = req.query;
+    const {
+        chainId,
+        skip,
+        limit,
+        issuer,
+        _id
+    } = req.query;
     // todo implement proper pagination
     // todo add address as well for the issuer query
-    const findQuery: { [key: string]: string | number } = {
+    const findQuery: { [key: string]: string | number| any } = {
         type: CONTRACT_TYPES.ZcbBond
     };
 
     if (issuer && typeof issuer === "string") {
         findQuery.issuer = toChecksumAddress(issuer)
+    }
+
+    if (_id && Array.isArray(_id)) {
+        findQuery._id = {
+            "$in": _id
+        }
     }
 
     const bonds = await connection.db.collection(`Contract_${chainId}`)
