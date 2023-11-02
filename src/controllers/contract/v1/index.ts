@@ -1,16 +1,23 @@
 import {Request, Response} from "express";
 import connection from '../../../db/main'
 import {CONTRACT_TYPES} from "../../../listener/constants";
+import {toChecksumAddress} from "web3-utils";
 
 
 async function getBonds(req: Request, res: Response) {
-    const {chainId, skip, limit, address} = req.query;
+    const {chainId, skip, limit, issuer} = req.query;
     // todo implement proper pagination
     // todo add address as well for the issuer query
+    const findQuery: { [key: string]: string | number } = {
+        type: CONTRACT_TYPES.ZcbBond
+    };
+
+    if (issuer && typeof issuer === "string") {
+        findQuery.issuer = toChecksumAddress(issuer)
+    }
+
     const bonds = await connection.db.collection(`Contract_${chainId}`)
-        .find({
-            type: CONTRACT_TYPES.ZcbBond
-        })
+        .find(findQuery)
         .skip(Number(skip) || 0)
         .limit(Number(limit) || 20)
         .toArray();
