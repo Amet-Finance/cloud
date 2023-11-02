@@ -23,7 +23,6 @@ async function post(req: Request, res: Response) {
         const {twitter, telegram, reddit, image} = req.body;
         validateSignature(address, signature, message);
 
-        // const addressInfoTmp = await connection.db.collection("Address").findOne({_id: address})
 
         const addressInfo: any = {}
 
@@ -46,9 +45,7 @@ async function post(req: Request, res: Response) {
         await connection.db.collection("Address").updateOne({
             _id: address.toLowerCase()
         }, {
-            $set: {
-                ...addressInfo
-            }
+            $set: addressInfo
         }, {
             upsert: true
         })
@@ -67,12 +64,16 @@ async function post(req: Request, res: Response) {
 async function del(req: Request, res: Response) {
     try {
 
-        const {address} = req.query as any;
-        validateAddress(address);
+        const {address, signature, message} = req.query as any;
+        validateSignature(address, signature, message);
 
-        return await connection.db.collection("Address").findOne({_id: address})
+        await connection.db.collection("Address").deleteOne({_id: address})
+        return res.json({
+            success: true
+        })
     } catch (error: any) {
         return res.status(400).json({
+            success: false,
             message: error.message
         })
     }
