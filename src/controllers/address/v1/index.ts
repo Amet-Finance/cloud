@@ -1,7 +1,6 @@
 import {Request, Response} from "express";
 import connection from '../../../db/main'
 import {validateAddress, validateSignature} from "./util";
-import {uploadFile} from "./ipfs";
 
 async function get(req: Request, res: Response) {
     try {
@@ -44,18 +43,15 @@ async function post(req: Request, res: Response) {
             addressInfo.image = image
         }
 
-        const response = await uploadFile({name: address.toLowerCase(), pinataContent: addressInfo})
-        if (response.IpfsHash) {
-            await connection.db.collection("Address").updateOne({
-                _id: address.toLowerCase()
-            }, {
-                $set: {
-                    ipfsHash: response.IpfsHash
-                }
-            }, {
-                upsert: true
-            })
-        }
+        await connection.db.collection("Address").updateOne({
+            _id: address.toLowerCase()
+        }, {
+            $set: {
+                ...addressInfo
+            }
+        }, {
+            upsert: true
+        })
 
         return res.json({
             success: true
