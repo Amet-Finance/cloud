@@ -6,6 +6,7 @@ import {getWeb3} from "../../modules/web3/utils";
 import {CONTRACT_TYPES, ZERO_ADDRESS} from "../constants";
 import {getInfo} from "./index";
 import {updateTokens} from "./token";
+import {AnyBulkWriteOperation} from "mongodb";
 
 async function extractIssuer(chainId: number, transaction: TransactionReceipt) {
     const web3 = getWeb3(chainId);
@@ -119,6 +120,7 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
     }, {
         $set: {
             issuer: contractInfo.issuer,
+            redeemLockPeriod: contractInfo.redeemLockPeriod,
             total: contractInfo.total,
             purchased: contractInfo.purchased,
             redeemed: contractInfo.redeemed,
@@ -148,6 +150,17 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
         const response: any[] = [];
 
         for (const address in balances) {
+            const object: AnyBulkWriteOperation = {
+                updateOne: {
+                    filter: {
+                        _id: address.toLowerCase() as any
+                    },
+                    update: {},
+                    upsert: true
+                }
+            }
+
+
             const {add, remove} = balances[address];
             const historicalTokenIds = addressBalances[address] || [];
 
@@ -160,17 +173,17 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
                 }
             }
 
-            const object = {
-                updateOne: {
-                    filter: {
-                        _id: address.toLowerCase()
-                    },
-                    update: {
-                        $set: {
-                            [contractAddress]: totalTokenIds
-                        }
-                    },
-                    upsert: true
+            if (!totalTokenIds.length) { // if no length, then unset it from db
+                object.updateOne.update = {
+                    $unset: {
+                        [contractAddress]: 1
+                    }
+                }
+            } else {
+                object.updateOne.update = {
+                    $set: {
+                        [contractAddress]: totalTokenIds
+                    }
                 }
             }
 
