@@ -11,6 +11,7 @@ import ContractV1 from './routes/contract/v1'
 import AddressV1 from './routes/address/v1'
 import StatisticsV1 from './routes/statistics/v1'
 import BalanceV1 from './routes/balance/v1'
+import TokenV1 from './routes/token/v1'
 import {CHAINS} from "./modules/web3/constants";
 import rateLimit from "express-rate-limit";
 
@@ -28,6 +29,7 @@ app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+app.use('/v1/token', TokenV1);
 app.use('/v1/address', AddressV1);
 app.use('/v1/contract', ContractV1);
 app.use('/v1/balance', BalanceV1)

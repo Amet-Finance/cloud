@@ -5,7 +5,7 @@ import {BondInfo} from "../types";
 
 async function getInfo(chainId: number, contractAddress: string, isFallback?: boolean): Promise<BondInfo> {
     try {
-        const web3 = getWeb3(chainId, false, isFallback)
+        const web3 = getWeb3(chainId,  isFallback)
         const contract = new web3.eth.Contract(ZCB_ABI as any, contractAddress);
         const info = await contract.methods.getInfo().call();
         return {

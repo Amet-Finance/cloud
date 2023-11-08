@@ -1,20 +1,17 @@
 import Web3 from "web3";
 import {RPCsByChain} from "./constants";
 
-function getWeb3(chainId: number, isWS?: boolean, isFallback?: boolean) {
+function getWeb3(chainId: number, isFallback?: boolean) {
 
-    const rpc = getRPC(chainId, isWS, isFallback)
+    const rpc = getRPC(chainId, isFallback)
     return new Web3(rpc);
 }
 
-function getRPC(chainId: number, isWS?: boolean, isFallback?: boolean): string {
+function getRPC(chainId: number, isFallback?: boolean): string {
     const rpcs = RPCsByChain[chainId]
     let rpcArray = [];
 
-
-    if (isWS) {
-        rpcArray = rpcs.ws
-    } else if (isFallback) {
+    if (isFallback) {
         rpcArray = rpcs.fallback
     } else {
         rpcArray = rpcs.def

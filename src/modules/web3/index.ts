@@ -4,7 +4,7 @@ import {sleep} from "../utils/dates";
 
 async function getBlock(chainId: number, number: number | "latest", isFallback?: boolean): Promise<BlockTransactionObject> {
     try {
-        const web3 = getWeb3(chainId, false, isFallback);
+        const web3 = getWeb3(chainId,  isFallback);
         return await web3.eth.getBlock(number, true);
     } catch (error) {
         await sleep(1000);
