@@ -7,8 +7,7 @@ import {OptionalUnlessRequiredId} from "mongodb";
 
 async function get(req: Request, res: Response) {
     try {
-        const {chainId} = req.query as any;
-        const contractAddresses = JSON.parse(req.query.contractAddresses as any);
+        const {chainId, contractAddresses} = req.query as any;
 
         if (!contractAddresses?.length || !Array.isArray(contractAddresses)) {
             throw Error("Missing Contract Addresses")
@@ -34,9 +33,9 @@ async function get(req: Request, res: Response) {
             tokenKeyValue[_id.toLowerCase()] = {
                 name,
                 symbol,
-                icon,
+                icon: icon || getIcon(chainId, _id),
                 decimals,
-                isVerified
+                isVerified: Boolean(isVerified)
             }
         }
 
@@ -50,6 +49,7 @@ async function get(req: Request, res: Response) {
                         insertInTheDatabase.push(tokenInfo);
                         tokenKeyValue[tokenInfo._id.toLowerCase()] = {
                             isVerified: false,
+                            icon: getIcon(chainId, icon),
                             name: tokenInfo.name,
                             symbol: tokenInfo.symbol,
                             decimals: tokenInfo.decimals
@@ -73,6 +73,11 @@ async function get(req: Request, res: Response) {
     }
 }
 
+
+function getIcon(chainId: number, contractAddress: string) {
+    const lastCommit = "c125b8b9f5c108c475714c7c476ce8481a77f8e4"
+    return `https://raw.githubusercontent.com/Amet-Finance/public-meta/${lastCommit}/${chainId}/${contractAddress.toLowerCase()}/logo.svg`
+}
 
 export {
     get
