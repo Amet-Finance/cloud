@@ -5,7 +5,7 @@ import {BondInfo} from "../types";
 
 async function getInfo(chainId: number, contractAddress: string, isFallback?: boolean): Promise<BondInfo> {
     try {
-        const web3 = getWeb3(chainId,  isFallback)
+        const web3 = getWeb3(chainId, isFallback)
         const contract = new web3.eth.Contract(ZCB_ABI as any, contractAddress);
         const info = await contract.methods.getInfo().call();
         return {
@@ -24,13 +24,16 @@ async function getInfo(chainId: number, contractAddress: string, isFallback?: bo
         };
     } catch (error: any) {
         console.error(`getInfo`, error.message);
+        if (isFallback) {
+            throw Error(error)
+        }
         return getInfo(chainId, contractAddress, true);
     }
 }
 
-async function getTokenInfo(chainId: number, contractAddress: string): Promise<any> {
+async function getTokenInfo(chainId: number, contractAddress: string, isFallback?: boolean): Promise<any> {
     try {
-        const web3 = getWeb3(chainId);
+        const web3 = getWeb3(chainId, isFallback);
 
         const contract = new web3.eth.Contract(ERC_20 as any, contractAddress);
 
@@ -44,8 +47,12 @@ async function getTokenInfo(chainId: number, contractAddress: string): Promise<a
             symbol,
             decimals: Number(decimals)
         };
-    } catch (e) {
-        return
+    } catch (error: any) {
+        console.error(`getTokenInfo`, error.message)
+        if (isFallback) {
+            throw Error(error)
+        }
+        return getTokenInfo(chainId, contractAddress, true)
     }
 }
 

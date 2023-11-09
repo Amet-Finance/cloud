@@ -53,7 +53,7 @@ async function updateContractMetaInfo(chainId: number, bondInfo: BondInfo) {
     const imageUrl = `https://storage.amet.finance/${objectKey}`
 
     const metaInfo = {
-        "name": "Dave Starbelly",
+        "name": `${name} | ZCB | Amet Finance`,
         "description": `This NFT represents ownership of an Amet Finance Zero Coupon Bonds (ZCB) bond. The bond consists of ${investmentAmount} in ${investmentToken} and offers ${interestAmount} in ${interestToken}. Redeemable after ${redeemLockPeriod} seconds, this NFT embodies trust in decentralized finance.\nMake sure token addresses match the expected tokens, as token symbols may be imitated. Verify the contract details and double-check before making any transactions.`,
         "external_url": `https://amet.finance/bonds/${_id}?chainId=${chainId}`,
         "image": imageUrl,
