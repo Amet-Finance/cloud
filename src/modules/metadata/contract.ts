@@ -40,7 +40,7 @@ async function updateContractMetaInfo(chainId: number, bondInfo: BondInfo) {
     fs.writeFileSync('output.svg', image, {encoding: "utf-8"})
     const file = fs.readFileSync("output.svg");
 
-    const objectKey = `images/${toChecksumAddress(issuer)}.svg`
+    const objectKey = `images/${_id.toLowerCase()}.svg`
 
     const commandImage = new PutObjectCommand({
         Bucket: bucketName,
@@ -62,7 +62,7 @@ async function updateContractMetaInfo(chainId: number, bondInfo: BondInfo) {
 
     const commandJson = new PutObjectCommand({
         Bucket: bucketName,
-        Key: `contracts/${toChecksumAddress(_id)}.json`,
+        Key: `contracts/${_id.toLowerCase()}.json`,
         Body: JSON.stringify(metaInfo),
         ContentType: "application/json",
     })
