@@ -49,7 +49,7 @@ async function get(req: Request, res: Response) {
                         insertInTheDatabase.push(tokenInfo);
                         tokenKeyValue[tokenInfo._id.toLowerCase()] = {
                             isVerified: false,
-                            icon: getIcon(chainId, icon),
+                            icon: getIcon(chainId, tokenInfo._id),
                             name: tokenInfo.name,
                             symbol: tokenInfo.symbol,
                             decimals: tokenInfo.decimals

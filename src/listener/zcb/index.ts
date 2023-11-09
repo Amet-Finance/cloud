@@ -28,7 +28,7 @@ async function getInfo(chainId: number, contractAddress: string, isFallback?: bo
     }
 }
 
-async function getTokenInfo(chainId: number, contractAddress: string) {
+async function getTokenInfo(chainId: number, contractAddress: string): Promise<any> {
     try {
         const web3 = getWeb3(chainId);
 

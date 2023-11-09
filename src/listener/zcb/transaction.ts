@@ -7,23 +7,38 @@ import {CONTRACT_TYPES, ZERO_ADDRESS} from "../constants";
 import {getInfo} from "./index";
 import {updateTokens} from "./token";
 import {AnyBulkWriteOperation} from "mongodb";
+import Web3 from "web3";
+import {updateContractMetaInfo} from "../../modules/metadata/contract";
+
+const ZCB_ISSUER_SIGNATURES = ZCB_ISSUER_V1.reduce((acc: any, item: any) => {
+    const web3 = new Web3()
+    if (item.name) {
+        const eventSignature = web3.eth.abi.encodeEventSignature(item);
+        acc[eventSignature] = {
+            name: item.name,
+            inputs: item.inputs
+        };
+    }
+    return acc;
+}, {} as any)
+const ZCB_SIGNATURES = ZCB_V1.reduce((acc: any, item: any) => {
+    const web3 = new Web3();
+    if (item.name) {
+        const eventSignature = web3.eth.abi.encodeEventSignature(item);
+        acc[eventSignature] = {
+            name: item.name,
+            inputs: item.inputs
+        };
+    }
+    return acc;
+}, {} as any);
 
 async function extractIssuer(chainId: number, transaction: TransactionReceipt) {
     const web3 = getWeb3(chainId);
-    const signatures = ZCB_ISSUER_V1.reduce((acc: any, item: any) => {
-        if (item.name) {
-            const eventSignature = web3.eth.abi.encodeEventSignature(item);
-            acc[eventSignature] = {
-                name: item.name,
-                inputs: item.inputs
-            };
-        }
-        return acc;
-    }, {} as any)
 
     for (const log of transaction.logs) {
         try {
-            const abi = signatures[log.topics[0]]
+            const abi = ZCB_ISSUER_SIGNATURES[log.topics[0]]
             if (abi) {
                 const decodedData = web3.eth.abi.decodeLog(
                     abi.inputs,
@@ -32,16 +47,7 @@ async function extractIssuer(chainId: number, transaction: TransactionReceipt) {
                 );
 
                 if (abi.name === "Create") {
-                    const info = await getInfo(chainId, decodedData.contractAddress)
-                    await connection.db.collection(`Contract_${chainId}`).insertOne({
-                        type: CONTRACT_TYPES.ZcbBond,
-                        ...info,
-                        _id: decodedData.contractAddress.toLowerCase() as any,
-                    })
-
-                    // todo here add a META INFO to S3
-
-                    await updateTokens(chainId, [info.investmentToken, info.interestToken])
+                    await insertNewContract(chainId, decodedData)
                 }
             }
         } catch (error) {
@@ -54,23 +60,13 @@ async function extractIssuer(chainId: number, transaction: TransactionReceipt) {
 
 async function extractBond(chainId: number, transaction: TransactionReceipt) {
     const web3 = getWeb3(chainId);
-    const signatures = ZCB_V1.reduce((acc: any, item: any) => {
-        if (item.name) {
-            const eventSignature = web3.eth.abi.encodeEventSignature(item);
-            acc[eventSignature] = {
-                name: item.name,
-                inputs: item.inputs
-            };
-        }
-        return acc;
-    }, {} as any);
     const contractAddress = transaction.to.toLowerCase();
 
     const balances: { [key: string]: { add: any, remove: any } } = {}
 
     for (const log of transaction.logs) {
         try {
-            const abi = signatures[log.topics[0]]
+            const abi = ZCB_SIGNATURES[log.topics[0]]
             if (abi) {
                 const decodedData = web3.eth.abi.decodeLog(
                     abi.inputs,
@@ -198,6 +194,23 @@ async function extractBond(chainId: number, transaction: TransactionReceipt) {
     }
 
     console.log(`Contract interaction| chainId: ${chainId}| contract: ${transaction.to}`)
+}
+
+
+async function insertNewContract(chainId: number, decodedData: any) {
+    const info = await getInfo(chainId, decodedData.contractAddress)
+
+    const bondInfo = {
+        type: CONTRACT_TYPES.ZcbBond,
+        ...info,
+        _id: decodedData.contractAddress.toLowerCase()
+    }
+
+    await connection.db.collection(`Contract_${chainId}`).insertOne(bondInfo)
+    await updateTokens(chainId, [info.investmentToken, info.interestToken]);
+
+    await updateContractMetaInfo(chainId, bondInfo)
+
 }
 
 export {
