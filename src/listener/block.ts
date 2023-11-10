@@ -2,6 +2,7 @@ import connection from '../db/main'
 import {BlockHeader, BlockTransactionObject} from "web3-eth";
 import * as TransactionService from './transaction';
 import {sleep} from "../modules/utils/dates";
+import {getBlock} from "../modules/web3";
 
 async function initializeBlockInfo(chainId: number, blockInfo: BlockTransactionObject): Promise<any> {
     try {
@@ -19,7 +20,8 @@ async function initializeBlockInfo(chainId: number, blockInfo: BlockTransactionO
     } catch (error: any) {
         console.error(`Error in BlockInitializer ${blockInfo.number}`, error.message)
         await sleep(1500);
-        return initializeBlockInfo(chainId, blockInfo)
+        const blockInfoUpdated = await getBlock(chainId, blockInfo.number)
+        return initializeBlockInfo(chainId, blockInfoUpdated)
     }
 }
 
