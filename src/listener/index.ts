@@ -13,16 +13,15 @@ async function initializeBlockchainListener(chainId: number) {
 async function listenWithInterval(chainId: number) {
 
     let lastBlockNumber = 0
-
     setInterval(async () => {
 
         const blockHeader = await getBlock(chainId, "latest")
-        if (lastBlockNumber !== blockHeader.number) {
+        if (blockHeader.number > lastBlockNumber) {
             lastBlockNumber = blockHeader.number;
             await initializeBlockInfo(chainId, blockHeader);
             await updateBlock(chainId, blockHeader);
         }
-    }, 1500)
+    }, 1800)
 
 
 }
@@ -48,7 +47,7 @@ async function historicalSync(chainId: number, fromBlock?: number, toBlock?: num
 
         console.log(`Historical blocks were synced| ${fromBlock}-${toBlock}`)
     } catch (error: any) {
-        console.error(`Error while syncing historical blocks`, error)
+        console.error(`Error while syncing historical blocks`, error.message)
     }
 }
 

@@ -22,9 +22,9 @@ async function cache(chainId: number) {
         }
 
         contracts[chainId] = contractsTmpCache;
-    } catch (error) {
+    } catch (error: any) {
         timeout = 1000;
-        console.error(`Cache contract`, error)
+        console.error(`Cache contract`, error.message)
     }
 
     setTimeout(() => cache(chainId), timeout)

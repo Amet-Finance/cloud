@@ -54,8 +54,6 @@ async function extractIssuer(chainId: number, transaction: TransactionReceipt) {
             console.error(`Error while extracting`, error.message)
         }
     }
-
-    console.log(`Contract inserted to: ${chainId}`)
 }
 
 async function extractBond(chainId: number, transaction: TransactionReceipt) {
@@ -210,6 +208,7 @@ async function insertNewContract(chainId: number, decodedData: any) {
     await updateTokens(chainId, [info.investmentToken, info.interestToken]);
 
     await updateContractMetaInfo(chainId, bondInfo)
+    console.log(`Contract inserted to: ${chainId}`)
 
 }
 

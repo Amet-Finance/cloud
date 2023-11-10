@@ -65,8 +65,8 @@ async function updateGeneralStats() {
         }, {
             $set: generalStats
         }, {upsert: true})
-    } catch (error) {
-        console.error(`Updating general stats error`, error)
+    } catch (error: any) {
+        console.error(`Updating general stats error`, error.message)
     }
 }
 

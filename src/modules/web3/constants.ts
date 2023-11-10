@@ -15,7 +15,9 @@ const RPCsByChain: {
         def: [
             "https://rpc.ankr.com/polygon_mumbai",
             'https://polygon-mumbai-bor.publicnode.com',
-            'https://polygon-testnet.public.blastapi.io'
+            'https://polygon-testnet.public.blastapi.io',
+            'https://polygon-mumbai-pokt.nodies.app',
+            'https://polygon-mumbai.blockpi.network/v1/rpc/public'
         ],
         fallback: [
             "https://polygon-mumbai.g.alchemy.com/v2/HtUSvOmpwz-7yU8XArdaY1hNulHm-4Qf", // amet-cloud-mumbai-2
