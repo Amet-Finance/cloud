@@ -3,7 +3,6 @@ import {getWeb3} from "../modules/web3/utils";
 import {CONTRACT_TYPES} from "./constants";
 import {extractBond, extractIssuer} from "./zcb/transaction";
 import {getContract} from "./cache";
-import {Contract} from "./types";
 
 async function extractTransaction(chainId: number, transaction: Transaction): Promise<void> {
     const toAddress = transaction.to || ""

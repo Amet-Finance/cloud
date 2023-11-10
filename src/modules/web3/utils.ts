@@ -11,7 +11,7 @@ function getRPC(chainId: number, isFallback?: boolean): string {
     const rpcs = RPCsByChain[chainId]
     let rpcArray = [];
 
-    if (isFallback) {
+    if (isFallback && rpcs.fallback.length) {
         rpcArray = rpcs.fallback
     } else {
         rpcArray = rpcs.def

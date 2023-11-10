@@ -18,7 +18,7 @@ async function initializeBlockInfo(chainId: number, blockInfo: BlockTransactionO
         }
 
     } catch (error: any) {
-        console.error(`Error in BlockInitializer ${blockInfo.number}`, error.message)
+        console.error(`initializeBlockInfo ${blockInfo.number}`, error.message)
         await sleep(1500);
         const blockInfoUpdated = await getBlock(chainId, blockInfo.number)
         return initializeBlockInfo(chainId, blockInfoUpdated)
