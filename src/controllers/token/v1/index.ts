@@ -4,10 +4,13 @@ import {validateAddress} from "./util";
 import {TokenResponse} from "../../../modules/web3/type";
 import {getTokenInfo} from "../../../listener/zcb";
 import {OptionalUnlessRequiredId} from "mongodb";
+import {getBalance} from "../../../listener/zcb/token";
 
 async function get(req: Request, res: Response) {
     try {
-        const {chainId, contractAddresses} = req.query as any;
+        // todo implement here security checks as well
+        const {chainId, contractAddresses, returnBalance, address} = req.query as any;
+        const requestBalance = returnBalance === "true" && address;
 
         if (!contractAddresses?.length || !Array.isArray(contractAddresses)) {
             throw Error("Missing Contract Addresses")
@@ -31,6 +34,7 @@ async function get(req: Request, res: Response) {
         for (const contractInfo of addressesInfo) {
             const {_id, name, symbol, decimals, icon, isVerified} = contractInfo as any
             tokenKeyValue[_id.toLowerCase()] = {
+                _id: _id.toLowerCase(),
                 name,
                 symbol,
                 icon: icon || getIcon(chainId, _id),
@@ -48,6 +52,7 @@ async function get(req: Request, res: Response) {
                     if (tokenInfo) {
                         insertInTheDatabase.push(tokenInfo);
                         tokenKeyValue[tokenInfo._id.toLowerCase()] = {
+                            _id: tokenInfo._id.toLowerCase(),
                             isVerified: false,
                             icon: getIcon(chainId, tokenInfo._id),
                             name: tokenInfo.name,
@@ -63,6 +68,16 @@ async function get(req: Request, res: Response) {
 
         if (insertInTheDatabase.length) {
             await connection.db.collection(`Token_${Number(chainId)}`).insertMany(insertInTheDatabase);
+        }
+
+        if (requestBalance) {
+            for (const contractAddress in tokenKeyValue) {
+                const balance = await getBalance(chainId, contractAddress, address, tokenKeyValue[contractAddress].decimals)
+                tokenKeyValue[contractAddress] = {
+                    ...tokenKeyValue[contractAddress],
+                    ...balance
+                }
+            }
         }
 
         return res.json(tokenKeyValue)

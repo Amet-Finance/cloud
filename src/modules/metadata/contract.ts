@@ -37,10 +37,12 @@ async function updateContractMetaInfo(chainId: number, bondInfo: BondInfo) {
         shorten(issuer),
         issuanceDate)
 
-    fs.writeFileSync('output.svg', image, {encoding: "utf-8"})
-    const file = fs.readFileSync("output.svg");
+    const imageName = `${_id.toLowerCase()}.svg`;
+    fs.writeFileSync(imageName, image, {encoding: "utf-8"})
+    
+    const file = fs.readFileSync(imageName);
 
-    const objectKey = `images/${_id.toLowerCase()}.svg`
+    const objectKey = `images/${imageName}`
 
     const commandImage = new PutObjectCommand({
         Bucket: bucketName,
@@ -49,12 +51,12 @@ async function updateContractMetaInfo(chainId: number, bondInfo: BondInfo) {
         ContentType: "image/svg+xml",
     })
 
-    const response = await s3Client.send(commandImage)
+    await s3Client.send(commandImage)
     const imageUrl = `https://storage.amet.finance/${objectKey}`
 
     const metaInfo = {
         "name": `${name} | ZCB | Amet Finance`,
-        "description": `This NFT represents ownership of an Amet Finance Zero Coupon Bonds (ZCB) bond. The bond consists of ${investmentAmount} in ${investmentToken} and offers ${interestAmount} in ${interestToken}. Redeemable after ${redeemLockPeriod} seconds, this NFT embodies trust in decentralized finance.\nMake sure token addresses match the expected tokens, as token symbols may be imitated. Verify the contract details and double-check before making any transactions.`,
+        "description": `This NFT represents ownership of an Amet Finance Zero Coupon Bonds (ZCB) bond. The bond consists of ${investmentAmount} in ${investmentToken} and offers ${interestAmount} in ${interestToken}. Redeemable after ${redeemLockPeriod} seconds, this NFT embodies trust in decentralized finance. Issuer: ${issuer}.\nMake sure token addresses match the expected tokens, as token symbols may be imitated. Verify the contract details and double-check before making any transactions.`,
         "external_url": `https://amet.finance/bonds/${_id}?chainId=${chainId}`,
         "image": imageUrl,
     }
@@ -67,9 +69,9 @@ async function updateContractMetaInfo(chainId: number, bondInfo: BondInfo) {
         ContentType: "application/json",
     })
 
-    const responseJson = await s3Client.send(commandJson)
-    console.log(`Updated the issuer contract`)
-
+    await s3Client.send(commandJson)
+    console.log(`Updated the issuer contract in S3`)
+    fs.unlinkSync(imageName);
 }
 
 

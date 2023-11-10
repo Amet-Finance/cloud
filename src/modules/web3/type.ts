@@ -7,6 +7,7 @@ type Token = {
 }
 
 type TokenResponse = {
+    _id: string,
     name: string,
     symbol: string,
     decimals: number,

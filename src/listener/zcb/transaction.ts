@@ -50,8 +50,8 @@ async function extractIssuer(chainId: number, transaction: TransactionReceipt) {
                     await insertNewContract(chainId, decodedData)
                 }
             }
-        } catch (error) {
-            console.error(`Error while extracting`, error)
+        } catch (error: any) {
+            console.error(`Error while extracting`, error.message)
         }
     }
 
