@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import connection from '../../../db/main'
-import {validateAddress} from "./util";
+import {generateTokenResponse, validateAddress} from "./util";
 import {TokenResponse} from "../../../modules/web3/type";
 import {getTokenInfo} from "../../../listener/zcb";
 import {OptionalUnlessRequiredId} from "mongodb";
@@ -14,6 +14,10 @@ async function get(req: Request, res: Response) {
 
         if (!contractAddresses?.length || !Array.isArray(contractAddresses)) {
             throw Error("Missing Contract Addresses")
+        }
+
+        if (contractAddresses.length > 50) {
+            throw Error("Too Many Contract Addresses")
         }
 
         const contractsAddressesLowerCased: any = contractAddresses.map(address => {
@@ -32,15 +36,8 @@ async function get(req: Request, res: Response) {
         const tokenKeyValue: { [key: string]: TokenResponse } = {}
 
         for (const contractInfo of addressesInfo) {
-            const {_id, name, symbol, decimals, icon, isVerified} = contractInfo as any
-            tokenKeyValue[_id.toLowerCase()] = {
-                _id: _id.toLowerCase(),
-                name,
-                symbol,
-                icon: icon || Boolean(isVerified) && getIcon(chainId, _id) || "",
-                decimals,
-                isVerified: Boolean(isVerified)
-            }
+            const contractAddress = contractInfo._id.toString().toLowerCase()
+            tokenKeyValue[contractAddress] = generateTokenResponse(chainId, contractInfo)
         }
 
         const insertInTheDatabase: OptionalUnlessRequiredId<any>[] = []
@@ -51,14 +48,7 @@ async function get(req: Request, res: Response) {
                     const tokenInfo = await getTokenInfo(chainId, contractAddress);
                     if (tokenInfo) {
                         insertInTheDatabase.push(tokenInfo);
-                        tokenKeyValue[tokenInfo._id.toLowerCase()] = {
-                            _id: tokenInfo._id.toLowerCase(),
-                            isVerified: false,
-                            icon: getIcon(chainId, tokenInfo._id),
-                            name: tokenInfo.name,
-                            symbol: tokenInfo.symbol,
-                            decimals: tokenInfo.decimals
-                        };
+                        tokenKeyValue[tokenInfo._id.toLowerCase()] = generateTokenResponse(chainId, tokenInfo)
                     }
                 }
             } catch (error) {
@@ -86,12 +76,6 @@ async function get(req: Request, res: Response) {
             message: error.message
         })
     }
-}
-
-
-function getIcon(chainId: number, contractAddress: string) {
-    const lastCommit = "c125b8b9f5c108c475714c7c476ce8481a77f8e4"
-    return `https://raw.githubusercontent.com/Amet-Finance/public-meta/${lastCommit}/${chainId}/${contractAddress.toLowerCase()}/logo.svg`
 }
 
 export {

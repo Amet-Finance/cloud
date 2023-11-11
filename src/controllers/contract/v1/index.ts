@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import connection from '../../../db/main'
 import {CONTRACT_TYPES} from "../../../listener/constants";
 import {toChecksumAddress} from "web3-utils";
+import {generateTokenResponse} from "../../token/v1/util";
 
 
 async function getBonds(req: Request, res: Response) {
@@ -14,7 +15,7 @@ async function getBonds(req: Request, res: Response) {
     } = req.query;
     // todo implement proper pagination
     // todo add address as well for the issuer query
-    const findQuery: { [key: string]: string | number| any } = {
+    const findQuery: { [key: string]: string | number | any } = {
         type: CONTRACT_TYPES.ZcbBond
     };
 
@@ -49,10 +50,12 @@ async function getBonds(req: Request, res: Response) {
         _id: {$in: Array.from(tokenContracts) as any}
     }).toArray();
 
+    // todo also handle if the token data is missing
     const tokenInfos = tokenInfosTmp.reduce((acc: any, item: any) => {
-        const itemWithoutId = {...item};
-        delete itemWithoutId._id;
-        acc[item._id] = itemWithoutId;
+
+        const token = generateTokenResponse(Number(chainId), item);
+        acc[token._id.toLowerCase()] = token;
+
         return acc;
     }, {} as any);
 
