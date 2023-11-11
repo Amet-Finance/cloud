@@ -37,7 +37,7 @@ async function get(req: Request, res: Response) {
                 _id: _id.toLowerCase(),
                 name,
                 symbol,
-                icon: icon || getIcon(chainId, _id),
+                icon: icon || Boolean(isVerified) && getIcon(chainId, _id) || "",
                 decimals,
                 isVerified: Boolean(isVerified)
             }
