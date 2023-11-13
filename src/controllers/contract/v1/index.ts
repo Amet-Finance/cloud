@@ -11,10 +11,14 @@ async function getBonds(req: Request, res: Response) {
         skip,
         limit,
         issuer,
+        isTrending,
         _id
     } = req.query;
+
     // todo implement proper pagination
     // todo add address as well for the issuer query
+
+
     const findQuery: { [key: string]: string | number | any } = {
         type: CONTRACT_TYPES.ZcbBond
     };
@@ -27,6 +31,10 @@ async function getBonds(req: Request, res: Response) {
         findQuery._id = {
             "$in": _id
         }
+    }
+
+    if (isTrending) {
+        findQuery.trending = true;
     }
 
     const bonds = await connection.db.collection(`Contract_${chainId}`)
