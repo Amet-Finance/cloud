@@ -38,6 +38,7 @@ app.use('/v1/statistics', StatisticsV1);
 connection.connect()
     .then(async () => {
         await BlockchainListener(CHAINS.Mumbai);
+        await BlockchainListener(CHAINS.MantaPacific);
         InitiateJobs();
 
         app.listen(process.env.PORT, () => {

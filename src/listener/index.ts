@@ -12,6 +12,7 @@ async function initializeBlockchainListener(chainId: number) {
 
 async function listenWithInterval(chainId: number) {
 
+    console.log(`Started listening to chainId: ${chainId}`)
     let lastBlockNumber = 0
     setInterval(async () => {
 

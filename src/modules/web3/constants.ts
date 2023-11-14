@@ -1,6 +1,7 @@
 const CHAINS = {
     Ethereum: 1,
     Mumbai: 80001,
+    MantaPacific: 169,
     Polygon: 137,
     Bsc: 56
 }
@@ -23,6 +24,14 @@ const RPCsByChain: {
             'https://polygon-mumbai.g.alchemy.com/v2/vdCSMJlB9ng8e6v7FwDel0vlyjAtD7bo'
         ]
     },
+    [CHAINS.MantaPacific]: {
+        def: [
+            "https://pacific-rpc.manta.network/http",
+            "https://1rpc.io/manta"
+        ],
+        fallback: []
+    },
+
     [CHAINS.Ethereum]: {
         def: [
             "https://rpc.ankr.com/eth",

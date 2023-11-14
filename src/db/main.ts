@@ -28,4 +28,5 @@ class Main {
     }
 }
 
-export default new Main();
+const connection = new Main()
+export default connection;
