@@ -1,5 +1,6 @@
 import connection from "../../db/main";
 import {CONTRACT_TYPES} from "../../listener/constants";
+import {CHAINS} from "../../modules/web3/constants";
 
 async function updateGeneralStats() {
 
@@ -14,6 +15,11 @@ async function updateGeneralStats() {
 
         for (const collection of collections) {
             if (collection.collectionName.startsWith("Contract_")) {
+                const isTestnet = collection.collectionName.includes(CHAINS.Mumbai.toString())
+                if (isTestnet) {
+                    continue;
+                }
+
                 const chainId = collection.collectionName.replace("Contract_", "")
                 const chainStats = await collection.find().project({
                     purchased: 1,
