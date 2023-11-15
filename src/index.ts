@@ -40,7 +40,7 @@ app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with
 
 connection.connect()
     .then(async () => {
-        // await BlockchainListener(CHAINS.Mumbai);
+        await BlockchainListener(CHAINS.Mumbai);
         await BlockchainListener(CHAINS.MantaPacific);
         InitiateJobs();
 
