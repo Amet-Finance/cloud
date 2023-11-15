@@ -17,10 +17,12 @@ async function extractTransaction(chainId: number, transaction: Transaction): Pr
 
     switch (contract.type) {
         case CONTRACT_TYPES.ZcbIssuer: {
-            await extractIssuer(chainId, transactionReceipt)
+            await extractIssuer(chainId, transactionReceipt);
+            break;
         }
         case CONTRACT_TYPES.ZcbBond: {
             await extractBond(chainId, transactionReceipt)
+            break;
         }
     }
 }

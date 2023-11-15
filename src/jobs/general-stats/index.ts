@@ -1,6 +1,5 @@
 import connection from "../../db/main";
 import {CONTRACT_TYPES} from "../../listener/constants";
-import {CHAINS} from "../../modules/web3/constants";
 
 async function updateGeneralStats() {
 

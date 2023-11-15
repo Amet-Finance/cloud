@@ -1,9 +1,10 @@
 import {config} from "dotenv";
+
 config();
 
 import "./handler";
 import cors from 'cors';
-import express from 'express';
+import express, {Request, Response} from 'express';
 import connection from './db/main';
 import BlockchainListener from './listener/index';
 import InitiateJobs from './jobs/index'
@@ -34,6 +35,8 @@ app.use('/v1/address', AddressV1);
 app.use('/v1/contract', ContractV1);
 app.use('/v1/balance', BalanceV1)
 app.use('/v1/statistics', StatisticsV1);
+
+app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with On-Chain Bonds | Amet Finance"))
 
 connection.connect()
     .then(async () => {
