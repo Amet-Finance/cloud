@@ -9,8 +9,11 @@ import {getBalance} from "../../../listener/zcb/token";
 async function get(req: Request, res: Response) {
     try {
         // todo implement here security checks as well
-        const {chainId, contractAddresses, returnBalance, address} = req.query as any;
+        const {chainId, contractAddresses, returnBalance, address, verified} = req.query as any;
         const requestBalance = returnBalance === "true" && address;
+        const isVerified = verified === "true";
+
+        let findQuery: any = {}
 
         if (!contractAddresses?.length || !Array.isArray(contractAddresses)) {
             throw Error("Missing Contract Addresses")
@@ -25,12 +28,24 @@ async function get(req: Request, res: Response) {
             return address.toLowerCase();
         })
 
-
-        const addressesInfo = await connection.db.collection(`Token_${Number(chainId)}`).find({
-            _id: {
+        if (contractsAddressesLowerCased.length) {
+            findQuery["_id"] = {
                 $in: contractsAddressesLowerCased
             }
-        }).toArray()
+        }
+
+        if (isVerified) {
+            if (!contractsAddressesLowerCased.length) {
+                findQuery = {
+                    isVerified: true
+                }
+            } else {
+                findQuery.isVerified = true
+            }
+        }
+
+
+        const addressesInfo = await connection.db.collection(`Token_${Number(chainId)}`).find(findQuery).toArray()
 
 
         const tokenKeyValue: { [key: string]: TokenResponse } = {}
