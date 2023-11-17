@@ -15,15 +15,7 @@ async function get(req: Request, res: Response) {
 
         let findQuery: any = {}
 
-        if (!contractAddresses?.length || !Array.isArray(contractAddresses)) {
-            throw Error("Missing Contract Addresses")
-        }
-
-        if (contractAddresses.length > 50) {
-            throw Error("Too Many Contract Addresses")
-        }
-
-        const contractsAddressesLowerCased: any = contractAddresses.map(address => {
+        const contractsAddressesLowerCased: any = contractAddresses.map((address: string) => {
             validateAddress(address);
             return address.toLowerCase();
         })
