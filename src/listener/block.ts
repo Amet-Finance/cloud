@@ -7,7 +7,7 @@ import {getBlock} from "../modules/web3";
 async function initializeBlockInfo(chainId: number, blockInfo: BlockTransactionObject): Promise<any> {
     try {
         if (blockInfo.number % 10 === 0) {
-            console.log(`Block: ${blockInfo.number}`)
+            console.log(`Block ${chainId}: ${blockInfo.number}`)
         }
 
         // sleep in order to have the most up-to-date data in def rpc's
