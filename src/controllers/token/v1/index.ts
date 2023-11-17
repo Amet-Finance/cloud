@@ -12,10 +12,11 @@ async function get(req: Request, res: Response) {
         const {chainId, contractAddresses, returnBalance, address, verified} = req.query as any;
         const requestBalance = returnBalance === "true" && address;
         const isVerified = verified === "true";
+        const contractAddressesUpdated = contractAddresses ? JSON.parse(contractAddresses) : [];
 
         let findQuery: any = {}
 
-        const contractsAddressesLowerCased: any = (contractAddresses || []).map((address: string) => {
+        const contractsAddressesLowerCased: any = contractAddressesUpdated.map((address: string) => {
             validateAddress(address);
             return address.toLowerCase();
         })
