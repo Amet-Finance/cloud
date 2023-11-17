@@ -15,7 +15,7 @@ async function get(req: Request, res: Response) {
 
         let findQuery: any = {}
 
-        const contractsAddressesLowerCased: any = contractAddresses.map((address: string) => {
+        const contractsAddressesLowerCased: any = (contractAddresses || []).map((address: string) => {
             validateAddress(address);
             return address.toLowerCase();
         })
