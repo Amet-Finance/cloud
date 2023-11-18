@@ -29,9 +29,13 @@ async function cache(chainIds: number[]) {
 }
 
 
+function getTokensByChain(chainId: number) {
+    return globalCache[chainId] || {}
+}
+
 async function get(chainId: number, contractAddress: string, options?: TokenGetOptions): Promise<TokenResponse | null> {
     validateAddress(contractAddress);
-    const local = globalCache[chainId][contractAddress.toLowerCase()]
+    const local = getTokensByChain(chainId)?.[contractAddress.toLowerCase()]
     if (local) {
         if (options?.isVerified && !local.isVerified) {
             return null;
@@ -59,7 +63,7 @@ async function getMultiple(chainId: number, contractAddresses: string[], options
 }
 
 function getVerifiedTokens(chainId: number, limit?: number): TokenResponse[] {
-    const tokensByChain = globalCache[chainId];
+    const tokensByChain = getTokensByChain(chainId);
 
     const response = []
     for (const contractAddress in tokensByChain) {
@@ -76,7 +80,7 @@ function getVerifiedTokens(chainId: number, limit?: number): TokenResponse[] {
 }
 
 function getStableTokens(chainId: number, limit?: number): TokenResponse[] {
-    const tokensByChain = globalCache[chainId];
+    const tokensByChain = getTokensByChain(chainId);
 
     const response = []
     for (const contractAddress in tokensByChain) {
