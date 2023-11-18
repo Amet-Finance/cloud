@@ -36,7 +36,7 @@ async function get(chainId: number, contractAddress: string, options?: TokenGetO
         if (options?.isVerified && !local.isVerified) {
             return null;
         }
-        return local
+        return generateTokenResponse(chainId, local);
     }
 
     const tokenFromBlockchain = await getTokenInfo(chainId, contractAddress);

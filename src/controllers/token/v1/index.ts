@@ -20,7 +20,6 @@ async function get(req: Request, res: Response) {
             tokens = TokenService.getVerifiedTokens(chainId)
         }
 
-
         for (const token of tokens) {
             tokenKeyValue[token._id] = {
                 ...token,
