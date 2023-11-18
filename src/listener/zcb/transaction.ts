@@ -5,10 +5,10 @@ import {TransactionReceipt} from 'web3-core'
 import {getWeb3} from "../../modules/web3/utils";
 import {CONTRACT_TYPES, ZERO_ADDRESS} from "../constants";
 import {getInfo} from "./index";
-import {updateTokens} from "./token";
 import {AnyBulkWriteOperation} from "mongodb";
 import Web3 from "web3";
 import {updateContractMetaInfo} from "../../modules/metadata/contract";
+import TokenService from "../../modules/token";
 
 const ZCB_ISSUER_SIGNATURES = ZCB_ISSUER_V1.reduce((acc: any, item: any) => {
     const web3 = new Web3()
@@ -209,7 +209,7 @@ async function insertNewContract(chainId: number, decodedData: any) {
     }
 
     await connection.db.collection(`Contract_${chainId}`).insertOne(bondInfo)
-    await updateTokens(chainId, [info.investmentToken, info.interestToken]);
+    await TokenService.getMultiple(chainId, [info.investmentToken, info.interestToken])
 
     await updateContractMetaInfo(chainId, bondInfo)
     console.log(`Contract inserted to: ${chainId}`)

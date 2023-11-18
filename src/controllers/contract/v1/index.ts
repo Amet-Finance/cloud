@@ -3,6 +3,7 @@ import connection from '../../../db/main'
 import {CONTRACT_TYPES} from "../../../listener/constants";
 import {toChecksumAddress} from "web3-utils";
 import {generateTokenResponse} from "../../token/v1/util";
+import TokenService from "../../../modules/token";
 
 
 async function getBonds(req: Request, res: Response) {
@@ -17,7 +18,6 @@ async function getBonds(req: Request, res: Response) {
 
     // todo implement proper pagination
     // todo add address as well for the issuer query
-
 
     const findQuery: { [key: string]: string | number | any } = {
         type: CONTRACT_TYPES.ZcbBond
@@ -43,49 +43,28 @@ async function getBonds(req: Request, res: Response) {
         .limit(Number(limit) || 20)
         .toArray();
 
-    const tokenContracts = bonds.reduce((acc, item: any) => {
-        if (item.investmentToken) {
-            acc.add(item.investmentToken.toLowerCase())
-        }
-        if (item.interestToken) {
-            acc.add(item.interestToken.toLowerCase())
-        }
-        return acc;
-    }, new Set())
 
+    const bondsDetailed = []
 
-    const tokenInfosTmp = await connection.db.collection(`Token_${chainId}`).find({
-        _id: {$in: Array.from(tokenContracts) as any}
-    }).toArray();
+    for (const bond of bonds) {
+        const investmentTokenInfo = await TokenService.get(Number(chainId), bond.investmentToken);
+        const interestTokenInfo = await TokenService.get(Number(chainId), bond.interestToken);
 
-    // todo also handle if the token data is missing
-    const tokenInfos = tokenInfosTmp.reduce((acc: any, item: any) => {
-
-        const token = generateTokenResponse(Number(chainId), item);
-        acc[token._id.toLowerCase()] = token;
-
-        return acc;
-    }, {} as any);
-
-    const bondsMapped = bonds.reduce((acc, item) => {
-
-        const bondDetailedInfo = {
-            ...item,
+        const bondInfo = {
+            ...bond,
             chainId,
-            investmentTokenInfo: tokenInfos[item.investmentToken.toLowerCase()],
-            interestTokenInfo: tokenInfos[item.interestToken.toLowerCase()]
+            investmentTokenInfo,
+            interestTokenInfo
         }
 
-        if (bondDetailedInfo.interestTokenInfo && bondDetailedInfo.investmentTokenInfo) {
-            acc.push(bondDetailedInfo)
+        if (!bondInfo.investmentTokenInfo || !bondInfo.interestTokenInfo) {
+            continue;
         }
-
-        return acc;
-    }, [] as any)
-
+        bondsDetailed.push(bondInfo)
+    }
 
     return res.json({
-        data: bondsMapped
+        data: bondsDetailed
     })
 }
 

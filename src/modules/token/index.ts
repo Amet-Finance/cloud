@@ -13,7 +13,7 @@ async function cache(chainIds: number[]) {
 
         for (const chainId of chainIds) {
             localCacheTmp[chainId] = {}
-            const verifiedTokens: any = await connection.db.collection(`Token_${chainId}`).find({isVerified: true}).toArray();
+            const verifiedTokens: any = await connection.db.collection(`Token_${chainId}`).find({}).toArray();
             verifiedTokens.forEach((token: TokenResponse) => {
                 localCacheTmp[chainId][token._id.toLowerCase()] = {
                     ...token,
@@ -75,6 +75,22 @@ function getVerifiedTokens(chainId: number, limit?: number): TokenResponse[] {
     return response;
 }
 
+function getStableTokens(chainId: number, limit?: number): TokenResponse[] {
+    const tokensByChain = globalCache[chainId];
+
+    const response = []
+    for (const contractAddress in tokensByChain) {
+        if (tokensByChain[contractAddress].isStable) {
+            response.push(tokensByChain[contractAddress]);
+        }
+
+        if (limit && response.length === limit) {
+            break;
+        }
+    }
+
+    return response;
+}
 
 async function updateInDatabase(chainId: number, token: TokenResponse) {
     await connection.db.collection(`Token_${chainId}`).insertOne({
@@ -93,7 +109,8 @@ const TokenService = {
     cache,
     get,
     getMultiple,
-    getVerifiedTokens
+    getVerifiedTokens,
+    getStableTokens
 }
 export default TokenService;
 

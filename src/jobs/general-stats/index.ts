@@ -1,6 +1,7 @@
 import connection from "../../db/main";
 import {CONTRACT_TYPES} from "../../listener/constants";
 import {CHAINS} from "../../modules/web3/constants";
+import TokenService from "../../modules/token";
 
 async function updateGeneralStats() {
 
@@ -32,9 +33,7 @@ async function updateGeneralStats() {
                 }).toArray()
 
 
-                const tokensArray = await connection.db.collection(`Token_${chainId}`).find({
-                    isStable: true
-                }).toArray()
+                const tokensArray = TokenService.getStableTokens(Number(chainId));
 
                 const stables = tokensArray.reduce((acc, item) => {
                     acc[item._id.toString().toLowerCase()] = {

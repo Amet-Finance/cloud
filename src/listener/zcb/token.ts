@@ -4,6 +4,7 @@ import {getWeb3} from "../../modules/web3/utils";
 import ERC20_ABI from './abi-jsons/ERC20.json'
 import {toBN} from "web3-utils";
 import {TokenBalance} from "./type";
+import TokenService from "../../modules/token";
 
 async function getBalance(chainId: number, contractAddress: string, address: string, decimals: number): Promise<TokenBalance> {
     const web3 = getWeb3(chainId);
@@ -16,40 +17,6 @@ async function getBalance(chainId: number, contractAddress: string, address: str
     };
 }
 
-async function updateTokens(chainId: number, contractAddresses: string[]) {
-
-    const contractsLoweCased = contractAddresses.map(item => item.toLowerCase())
-
-    const dbHistory = await connection.db.collection(`Token_${chainId}`).distinct("_id", {
-        _id: {
-            $in: contractsLoweCased as any
-        }
-    })
-
-    const filteredContracts = contractsLoweCased.filter((address: any) => {
-        if (!dbHistory.includes(address)) {
-            return true
-        }
-    })
-
-    const insertObject: { [key: string]: any } = {};
-    for (const contractAddress of filteredContracts) {
-
-        if (!insertObject[contractAddress]) {
-            const token = await getTokenInfo(chainId, contractAddress);
-            if (token) {
-                insertObject[token._id] = token
-            }
-        }
-
-    }
-
-    if (Object.values(insertObject).length) {
-        await connection.db.collection(`Token_${chainId}`).insertMany(Object.values(insertObject));
-    }
-}
-
 export {
-    getBalance,
-    updateTokens
+    getBalance
 }
