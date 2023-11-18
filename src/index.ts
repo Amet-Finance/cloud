@@ -15,6 +15,7 @@ import BalanceV1 from './routes/balance/v1'
 import TokenV1 from './routes/token/v1'
 import {CHAINS} from "./modules/web3/constants";
 import rateLimit from "express-rate-limit";
+import InitiateCache from "./modules/cache";
 
 
 const app = express();
@@ -40,6 +41,7 @@ app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with
 
 connection.connect()
     .then(async () => {
+        await InitiateCache([CHAINS.Mumbai, CHAINS.MantaPacific]);
         await BlockchainListener(CHAINS.Mumbai);
         await BlockchainListener(CHAINS.MantaPacific);
         InitiateJobs();
