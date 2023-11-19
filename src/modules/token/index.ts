@@ -68,7 +68,7 @@ function getVerifiedTokens(chainId: number, limit?: number): TokenResponse[] {
     const response = []
     for (const contractAddress in tokensByChain) {
         if (tokensByChain[contractAddress].isVerified) {
-            response.push(tokensByChain[contractAddress]);
+            response.push(generateTokenResponse(chainId, tokensByChain[contractAddress]));
         }
 
         if (limit && response.length === limit) {
