@@ -1,9 +1,13 @@
 const CHAINS = {
-    Ethereum: 1,
-    Mumbai: 80001,
+
     MantaPacific: 169,
     Polygon: 137,
-    Bsc: 56
+
+
+    Bsc: 56,
+    Ethereum: 1,
+
+    Mumbai: 80001,
 }
 
 const RPCsByChain: {
@@ -12,18 +16,16 @@ const RPCsByChain: {
         fallback: string[]
     }
 } = {
-    [CHAINS.Mumbai]: {
+    [CHAINS.Polygon]: {
         def: [
-            "https://rpc.ankr.com/polygon_mumbai",
-            'https://polygon-mumbai-bor.publicnode.com',
-            'https://polygon-testnet.public.blastapi.io',
-            'https://polygon-mumbai-pokt.nodies.app',
-            'https://polygon-mumbai.blockpi.network/v1/rpc/public'
+            "https://polygon.llamarpc.com",
+            "https://polygon-rpc.com",
+            "https://rpc.ankr.com/polygon"
         ],
-        fallback: [
-            'https://polygon-mumbai.g.alchemy.com/v2/vdCSMJlB9ng8e6v7FwDel0vlyjAtD7bo'
-        ]
+        fallback: []
     },
+
+
     [CHAINS.MantaPacific]: {
         def: [
             "https://pacific-rpc.manta.network/http",
@@ -41,7 +43,21 @@ const RPCsByChain: {
             // "https://polygon-mumbai.g.alchemy.com/v2/4EO5W8BnqaQOOGdbzVknVAWxLREsUM1o", // amet-cloud-mumbai-1
             // "https://polygon-mumbai.g.alchemy.com/v2/HxgK8Fm1XwXogQgqfViohtUmEOFwEor-"
         ]
-    }
+    },
+
+
+    [CHAINS.Mumbai]: {
+        def: [
+            "https://rpc.ankr.com/polygon_mumbai",
+            'https://polygon-mumbai-bor.publicnode.com',
+            'https://polygon-testnet.public.blastapi.io',
+            'https://polygon-mumbai-pokt.nodies.app',
+            'https://polygon-mumbai.blockpi.network/v1/rpc/public'
+        ],
+        fallback: [
+            'https://polygon-mumbai.g.alchemy.com/v2/vdCSMJlB9ng8e6v7FwDel0vlyjAtD7bo'
+        ]
+    },
 }
 
 
