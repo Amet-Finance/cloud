@@ -16,7 +16,15 @@ type TokenResponse = {
     isStable?: boolean
 }
 
+type RpcByChain = {
+    [key: number]: {
+        def: string[],
+        fallback: string[]
+    }
+}
+
 export type  {
     Token,
-    TokenResponse
+    TokenResponse,
+    RpcByChain
 }

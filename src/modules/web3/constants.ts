@@ -1,7 +1,9 @@
-const CHAINS = {
+import {RpcByChain} from "./type";
 
+const CHAINS = {
     MantaPacific: 169,
     Polygon: 137,
+    PolygonZKEVM: 1101,
 
 
     Bsc: 56,
@@ -10,17 +12,26 @@ const CHAINS = {
     Mumbai: 80001,
 }
 
-const RPCsByChain: {
-    [key: number]: {
-        def: string[],
-        fallback: string[]
-    }
-} = {
+const RPCsByChain: RpcByChain = {
     [CHAINS.Polygon]: {
         def: [
             "https://polygon.llamarpc.com",
             "https://polygon-rpc.com",
             "https://rpc.ankr.com/polygon"
+        ],
+        fallback: []
+    },
+
+    [CHAINS.PolygonZKEVM]: {
+        def: [
+            "https://zkevm-rpc.com",
+            "https://polygon-zkevm.drpc.org",
+            "https://rpc.polygon-zkevm.gateway.fm",
+            "https://polygon-zkevm.drpc.org",
+            "https://zkevm-rpc.com",
+            "https://polygon-zkevm.blockpi.network/v1/rpc/public",
+            "https://rpc.ankr.com/polygon_zkevm",
+            "https://polygon-zkevm-mainnet.public.blastapi.io"
         ],
         fallback: []
     },
