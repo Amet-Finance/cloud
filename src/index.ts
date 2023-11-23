@@ -41,10 +41,11 @@ app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with
 
 connection.connect()
     .then(async () => {
-        await InitiateCache([CHAINS.MantaPacific, CHAINS.Polygon, CHAINS.PolygonZKEVM]);
+        await InitiateCache([CHAINS.MantaPacific, CHAINS.Polygon, CHAINS.PolygonZKEVM, CHAINS.Bsc]);
         await BlockchainListener(CHAINS.PolygonZKEVM);
         await BlockchainListener(CHAINS.Polygon);
         await BlockchainListener(CHAINS.MantaPacific);
+        await BlockchainListener(CHAINS.Bsc);
         InitiateJobs();
 
         app.listen(process.env.PORT, () => {

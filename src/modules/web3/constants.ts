@@ -4,9 +4,8 @@ const CHAINS = {
     MantaPacific: 169,
     Polygon: 137,
     PolygonZKEVM: 1101,
-
-
     Bsc: 56,
+
     Ethereum: 1,
 
     Mumbai: 80001,
@@ -21,7 +20,6 @@ const RPCsByChain: RpcByChain = {
         ],
         fallback: []
     },
-
     [CHAINS.PolygonZKEVM]: {
         def: [
             "https://zkevm-rpc.com",
@@ -35,8 +33,6 @@ const RPCsByChain: RpcByChain = {
         ],
         fallback: []
     },
-
-
     [CHAINS.MantaPacific]: {
         def: [
             "https://pacific-rpc.manta.network/http",
@@ -44,19 +40,21 @@ const RPCsByChain: RpcByChain = {
         ],
         fallback: []
     },
-
-    [CHAINS.Ethereum]: {
+    [CHAINS.Bsc]: {
         def: [
-            "https://rpc.ankr.com/eth",
+            "https://binance.llamarpc.com",
+            "https://bsc-dataseed1.defibit.io",
+            "https://bsc-dataseed2.defibit.io",
+            "https://bsc-pokt.nodies.app",
+            "https://bsc.meowrpc.com",
+            "https://bsc.publicnode.com",
+            "https://rpc.ankr.com/bsc"
         ],
-        fallback: [
-            // "https://polygon-mumbai.g.alchemy.com/v2/HtUSvOmpwz-7yU8XArdaY1hNulHm-4Qf", // amet-cloud-mumbai-2
-            // "https://polygon-mumbai.g.alchemy.com/v2/4EO5W8BnqaQOOGdbzVknVAWxLREsUM1o", // amet-cloud-mumbai-1
-            // "https://polygon-mumbai.g.alchemy.com/v2/HxgK8Fm1XwXogQgqfViohtUmEOFwEor-"
-        ]
+        fallback: []
     },
 
 
+// TESNET
     [CHAINS.Mumbai]: {
         def: [
             "https://rpc.ankr.com/polygon_mumbai",
