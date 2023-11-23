@@ -1,15 +1,14 @@
-import Web3 from "web3";
 import {RPCsByChain} from "./constants";
+import {ethers} from "ethers";
 
-function getWeb3(chainId: number, isFallback?: boolean) {
-
+function getProvider(chainId: number, isFallback?: boolean) {
     const rpc = getRPC(chainId, isFallback)
-    return new Web3(rpc);
+    return ethers.getDefaultProvider(rpc);
 }
 
 function getRPC(chainId: number, isFallback?: boolean): string {
     const rpcs = RPCsByChain[chainId]
-    let rpcArray = [];
+    let rpcArray: string[];
 
     if (isFallback && rpcs?.fallback.length) {
         rpcArray = rpcs.fallback
@@ -22,5 +21,5 @@ function getRPC(chainId: number, isFallback?: boolean): string {
 }
 
 export {
-    getWeb3
+    getProvider
 }

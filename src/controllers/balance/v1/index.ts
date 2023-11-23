@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
-import {toChecksumAddress} from "web3-utils"
 import connection from '../../../db/main'
+import {getAddress} from "ethers";
 
 async function getBalance(req: Request, res: Response) {
 
@@ -8,7 +8,7 @@ async function getBalance(req: Request, res: Response) {
         const {chainId} = req.query;
         const addressTmp = req.params.address;
 
-        const address = toChecksumAddress(addressTmp);
+        const address = getAddress(addressTmp);
 
         const balance = await connection.db
             .collection(`Balance_${chainId}`)

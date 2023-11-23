@@ -1,21 +1,18 @@
 import {config} from "dotenv";
-
-config();
-
 import "./handler";
 import cors from 'cors';
-import express, {Request, Response} from 'express';
+import express, {Response} from 'express';
 import connection from './db/main';
-import BlockchainListener from './listener/index';
-import InitiateJobs from './jobs/index'
+
 import ContractV1 from './routes/contract/v1'
 import AddressV1 from './routes/address/v1'
 import StatisticsV1 from './routes/statistics/v1'
 import BalanceV1 from './routes/balance/v1'
 import TokenV1 from './routes/token/v1'
 import {CHAINS} from "./modules/web3/constants";
-import rateLimit from "express-rate-limit";
 import InitiateCache from "./modules/cache";
+
+config();
 
 
 const app = express();
@@ -42,11 +39,6 @@ app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with
 connection.connect()
     .then(async () => {
         await InitiateCache([CHAINS.MantaPacific, CHAINS.Polygon, CHAINS.PolygonZKEVM, CHAINS.Bsc]);
-        await BlockchainListener(CHAINS.PolygonZKEVM);
-        await BlockchainListener(CHAINS.Polygon);
-        await BlockchainListener(CHAINS.MantaPacific);
-        await BlockchainListener(CHAINS.Bsc);
-        InitiateJobs();
 
         app.listen(process.env.PORT, () => {
             console.log(`Amet Cloud is listening at PORT=${process.env.PORT}| ${new Date().toLocaleTimeString()}`)

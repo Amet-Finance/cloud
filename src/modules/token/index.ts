@@ -1,9 +1,9 @@
 import connection from "../../db/main";
 import {TokenResponse} from "../web3/type";
 import {TokenCacheGlobal, TokenGetOptions} from "./types";
-import {getTokenInfo} from "../../listener/zcb";
-import {generateTokenResponse, validateAddress} from "../../controllers/token/v1/util";
 import {nop} from "../utils/functions";
+import {generateTokenResponse, validateAddress} from "./util";
+import {getTokenInfo} from "../web3/token";
 
 let globalCache: TokenCacheGlobal = {}
 
@@ -79,23 +79,6 @@ function getVerifiedTokens(chainId: number, limit?: number): TokenResponse[] {
     return response;
 }
 
-function getStableTokens(chainId: number, limit?: number): TokenResponse[] {
-    const tokensByChain = getTokensByChain(chainId);
-
-    const response = []
-    for (const contractAddress in tokensByChain) {
-        if (tokensByChain[contractAddress].isStable) {
-            response.push(tokensByChain[contractAddress]);
-        }
-
-        if (limit && response.length === limit) {
-            break;
-        }
-    }
-
-    return response;
-}
-
 async function updateInDatabase(chainId: number, token: TokenResponse) {
     await connection.db.collection(`Token_${chainId}`).insertOne({
         ...token,
@@ -113,8 +96,7 @@ const TokenService = {
     cache,
     get,
     getMultiple,
-    getVerifiedTokens,
-    getStableTokens
+    getVerifiedTokens
 }
 export default TokenService;
 

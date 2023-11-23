@@ -1,5 +1,10 @@
 import {RpcByChain} from "./type";
 
+
+const CONTRACT_TYPES = {
+    ZcbIssuer: "zcb-issuer",
+    ZcbBond: "zcb-bond"
+}
 const CHAINS = {
     MantaPacific: 169,
     Polygon: 137,
@@ -54,7 +59,7 @@ const RPCsByChain: RpcByChain = {
     },
 
 
-// TESNET
+    // TESTNET
     [CHAINS.Mumbai]: {
         def: [
             "https://rpc.ankr.com/polygon_mumbai",
@@ -72,5 +77,6 @@ const RPCsByChain: RpcByChain = {
 
 export {
     CHAINS,
-    RPCsByChain
+    RPCsByChain,
+    CONTRACT_TYPES
 }

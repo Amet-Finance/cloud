@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import connection from '../../../db/main'
-import {validateAddress, validateSignature} from "./util";
+import {validateAddress} from "../../../modules/token/util";
+import {validateSignature} from "../../../modules/address/util";
 
 async function get(req: Request, res: Response) {
     try {

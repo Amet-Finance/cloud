@@ -1,9 +1,8 @@
 import {Request, Response} from "express";
 import connection from '../../../db/main'
-import {CONTRACT_TYPES} from "../../../listener/constants";
-import {toChecksumAddress} from "web3-utils";
-import {generateTokenResponse} from "../../token/v1/util";
 import TokenService from "../../../modules/token";
+import {CONTRACT_TYPES} from "../../../modules/web3/constants";
+import {getAddress} from "ethers";
 
 
 async function getBonds(req: Request, res: Response) {
@@ -24,7 +23,7 @@ async function getBonds(req: Request, res: Response) {
     };
 
     if (issuer && typeof issuer === "string") {
-        findQuery.issuer = toChecksumAddress(issuer)
+        findQuery.issuer = getAddress(issuer)
     }
 
     if (_id && Array.isArray(_id)) {

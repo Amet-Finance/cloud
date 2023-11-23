@@ -1,4 +1,4 @@
-import {MongoClient, MongoClientOptions, Db} from 'mongodb';
+import {Db, MongoClient, MongoClientOptions} from 'mongodb';
 
 class Main {
     private _db: Db | null;

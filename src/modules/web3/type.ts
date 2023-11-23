@@ -1,11 +1,3 @@
-type Token = {
-    _id: string,
-    name: string,
-    symbol: string,
-    decimals: number,
-    icon?: string
-}
-
 type TokenResponse = {
     _id: string,
     name: string,
@@ -23,8 +15,14 @@ type RpcByChain = {
     }
 }
 
+type TokenBalance = {
+    balance: string,
+    balanceClean: number
+}
+
+
 export type  {
-    Token,
     TokenResponse,
-    RpcByChain
+    RpcByChain,
+    TokenBalance
 }

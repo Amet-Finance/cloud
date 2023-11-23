@@ -1,7 +1,8 @@
 import {Request, Response} from "express";
 import {TokenResponse} from "../../../modules/web3/type";
-import {getBalance} from "../../../listener/zcb/token";
+
 import TokenService from "../../../modules/token";
+import {getBalance} from "../../../modules/web3/token";
 
 async function get(req: Request, res: Response) {
     try {
