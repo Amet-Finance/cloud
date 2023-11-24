@@ -11,6 +11,7 @@ const CHAINS = {
     PolygonZKEVM: 1101,
     Bsc: 56,
 
+    Zeta: 7001,
     Ethereum: 1,
 
     Mumbai: 80001,
@@ -54,6 +55,12 @@ const RPCsByChain: RpcByChain = {
             "https://bsc.meowrpc.com",
             "https://bsc.publicnode.com",
             "https://rpc.ankr.com/bsc"
+        ],
+        fallback: []
+    },
+    [CHAINS.Zeta]: {
+        def: [
+            "https://zetachain-athens-evm.blockpi.network/v1/rpc/public"
         ],
         fallback: []
     },
