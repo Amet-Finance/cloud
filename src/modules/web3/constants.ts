@@ -60,7 +60,8 @@ const RPCsByChain: RpcByChain = {
     },
     [CHAINS.Zeta]: {
         def: [
-            "https://zetachain-athens-evm.blockpi.network/v1/rpc/public"
+            "https://zetachain-athens-evm.blockpi.network/v1/rpc/public",
+            "https://rpc.ankr.com/zetachain_evm_athens_testnet"
         ],
         fallback: []
     },
