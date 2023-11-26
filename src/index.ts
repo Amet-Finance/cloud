@@ -1,4 +1,4 @@
-import {config} from "dotenv";
+import "./config";
 import "./handler";
 import cors from 'cors';
 import express, {Response} from 'express';
@@ -12,7 +12,6 @@ import TokenV1 from './routes/token/v1'
 import {CHAINS} from "./modules/web3/constants";
 import InitiateCache from "./modules/cache";
 
-config();
 
 
 const app = express();

@@ -83,8 +83,13 @@ const RPCsByChain: RpcByChain = {
 }
 
 
+function chainExists(chainId: any) {
+    return Object.values(CHAINS).includes(chainId)
+}
+
 export {
     CHAINS,
     RPCsByChain,
-    CONTRACT_TYPES
+    CONTRACT_TYPES,
+    chainExists
 }
