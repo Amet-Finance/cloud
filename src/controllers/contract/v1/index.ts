@@ -7,6 +7,7 @@ import axios from "axios";
 import s3Client from "../../../db/s3-client";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
 import {validateSignature} from "../../../modules/address/util";
+import ErrorV1 from "../../../routes/error/error";
 
 const BUCKET_NAME = 'storage.amet.finance'
 
@@ -82,8 +83,16 @@ async function updateDescription(req: Request, res: Response) {
     const preChainId = Number(chainId);
     const bondContractAddress = getAddress(_id?.toString() || "").toLowerCase();
 
+    if (!bondContractAddress) {
+        ErrorV1.throw("Contract address is missing")
+    }
+
+    if (!message.includes(bondContractAddress)) {
+        ErrorV1.throw("Invalid signature: PLK1")
+    }
+
     if (!Number.isFinite(preChainId) || !chainExists(preChainId)) {
-        throw Error("Chain is missing")
+        ErrorV1.throw("Chain is missing")
     }
 
     const contract = await connection.db.collection(`Contract_${preChainId}`).findOne({
@@ -92,7 +101,11 @@ async function updateDescription(req: Request, res: Response) {
     })
 
     if (!contract) {
-        throw Error("Contract is missing");
+        ErrorV1.throw("Contract is missing");
+    }
+
+    if (contract?.issuer.toLowerCase() !== address.toLowerCase()) {
+        throw Error("Invalid owner")
     }
 
     const response = await axios.get(`https://${BUCKET_NAME}/contracts/${bondContractAddress}.json`)

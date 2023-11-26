@@ -22,7 +22,7 @@ async function post(req: Request, res: Response) {
 
         const {address, signature, message} = req.query as any;
         const {twitter, telegram, reddit, image} = req.body;
-        validateSignature(address, signature, message);
+        validateSignature(address, signature, message); // todo warning, the message should be sent from the back-end in order to avoid double using the same signature
 
 
         const addressInfo: any = {}
