@@ -1,7 +1,6 @@
 import {Request, Response} from "express";
 import connection from '../../../db/main'
 import {validateAddress} from "../../../modules/token/util";
-import {validateSignature} from "../../../modules/address/util";
 
 async function get(req: Request, res: Response) {
     try {
@@ -20,9 +19,8 @@ async function post(req: Request, res: Response) {
 
     try {
 
-        const {address, signature, message} = req.query as any;
+        const {address} = req.query as any;
         const {twitter, telegram, reddit, image} = req.body;
-        validateSignature(address, signature, message); // todo warning, the message should be sent from the back-end in order to avoid double using the same signature
 
 
         const addressInfo: any = {}
@@ -65,8 +63,7 @@ async function post(req: Request, res: Response) {
 async function del(req: Request, res: Response) {
     try {
 
-        const {address, signature, message} = req.query as any;
-        validateSignature(address, signature, message);
+        const {address} = req.query as any;
 
         await connection.db.collection("Address").deleteOne({_id: address})
         return res.json({

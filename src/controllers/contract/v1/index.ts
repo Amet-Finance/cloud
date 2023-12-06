@@ -6,7 +6,6 @@ import {getAddress} from "ethers";
 import axios from "axios";
 import s3Client from "../../../db/s3-client";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
-import {validateSignature} from "../../../modules/address/util";
 import ErrorV1 from "../../../routes/error/error";
 
 const BUCKET_NAME = 'storage.amet.finance'
@@ -46,6 +45,7 @@ async function getBonds(req: Request, res: Response) {
         .find(findQuery)
         .skip(Number(skip) || 0)
         .limit(Number(limit) || 20)
+        .sort({issuanceDate: -1})
         .toArray();
 
 
@@ -75,9 +75,8 @@ async function getBonds(req: Request, res: Response) {
 
 async function updateDescription(req: Request, res: Response) {
 
-    const {address, signature, message, title, description} = req.body;
+    const {address, message, title, description} = req.body;
     const {chainId, _id} = req.query;
-    validateSignature(address, signature, message); // todo here can be vulnerability, as if the signature should check for the exact message
 
 
     const preChainId = Number(chainId);
