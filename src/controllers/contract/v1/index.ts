@@ -7,6 +7,7 @@ import axios from "axios";
 import s3Client from "../../../db/s3-client";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
 import ErrorV1 from "../../../routes/error/error";
+import {Sort} from "mongodb";
 
 const BUCKET_NAME = 'storage.amet.finance'
 
@@ -27,6 +28,8 @@ async function getBonds(req: Request, res: Response) {
         type: CONTRACT_TYPES.ZcbBond
     };
 
+    const sortQuery: Sort = {issuanceDate: -1}
+
     if (issuer && typeof issuer === "string") {
         findQuery.issuer = getAddress(issuer)
     }
@@ -38,14 +41,14 @@ async function getBonds(req: Request, res: Response) {
     }
 
     if (isTrending) {
-        findQuery.trending = true;
+        sortQuery.trending = -1;
     }
 
     const bonds = await connection.db.collection(`Contract_${chainId}`)
         .find(findQuery)
         .skip(Number(skip) || 0)
         .limit(Number(limit) || 20)
-        .sort({issuanceDate: -1})
+        .sort(sortQuery)
         .toArray();
 
 
