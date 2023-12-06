@@ -28,7 +28,9 @@ async function getBonds(req: Request, res: Response) {
         type: CONTRACT_TYPES.ZcbBond
     };
 
-    const sortQuery: Sort = {issuanceDate: -1}
+    const sortQuery: Sort = {}
+    if (isTrending) sortQuery.trending = -1;
+    sortQuery.issuanceDate = -1
 
     if (issuer && typeof issuer === "string") {
         findQuery.issuer = getAddress(issuer)
@@ -38,10 +40,6 @@ async function getBonds(req: Request, res: Response) {
         findQuery._id = {
             "$in": _id
         }
-    }
-
-    if (isTrending) {
-        sortQuery.trending = -1;
     }
 
     const bonds = await connection.db.collection(`Contract_${chainId}`)
