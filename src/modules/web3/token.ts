@@ -29,16 +29,21 @@ async function getTokenInfo(chainId: number, contractAddress: string, isFallback
     }
 }
 
-async function getBalance(chainId: number, contractAddress: string, address: string, decimals: number): Promise<TokenBalance> {
+async function getBalance(chainId: number, contractAddress: string, address: string, decimals?: number): Promise<TokenBalance> {
 
     const provider = getProvider(chainId);
     const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider);
 
+    if (typeof decimals === "undefined" || !Number.isFinite(decimals)) {
+        const preDecimals = await contract.decimals();
+        decimals = Number(preDecimals);
+    }
     const balance = await contract.balanceOf(address);
     const balanceClean = (BigNumber(balance).div(BigNumber(10).pow(BigNumber(decimals)))).toNumber();
     return {
         balance: balance.toString(),
-        balanceClean
+        balanceClean,
+        decimals
     };
 }
 

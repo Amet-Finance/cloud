@@ -31,7 +31,7 @@ app.use(express.urlencoded({extended: true}));
 app.use('/v1/token', TokenV1);
 app.use('/v1/address', AddressV1);
 app.use('/v1/contract', ContractV1);
-app.use('/v1/affiliate', AffiliateV1);
+app.use('/v1/affiliate', AffiliateV1); // todo rename to referral
 app.use('/v1/balance', BalanceV1)
 app.use('/v1/statistics', StatisticsV1);
 

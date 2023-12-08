@@ -17,7 +17,8 @@ type RpcByChain = {
 
 type TokenBalance = {
     balance: string,
-    balanceClean: number
+    balanceClean: number,
+    decimals: number
 }
 
 

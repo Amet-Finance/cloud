@@ -1,17 +1,22 @@
 import {Request, Response} from "express";
 import connection from '../../../db/main'
 import TokenService from "../../../modules/token";
-import {chainExists, CONTRACT_TYPES} from "../../../modules/web3/constants";
+import {CONTRACT_TYPES, validateChain} from "../../../modules/web3/constants";
 import {getAddress} from "ethers";
 import axios from "axios";
 import s3Client from "../../../db/s3-client";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
 import ErrorV1 from "../../../routes/error/error";
 import {Sort} from "mongodb";
+import ZeroCouponBondsV1 from "../../../modules/web3/zcb/v1";
+import {DetailedBondResponse} from "./types";
+import ContractV1Utils from "./utils";
+import {BUCKET_NAME} from "./contstants";
 
-const BUCKET_NAME = 'storage.amet.finance'
 
 async function getBonds(req: Request, res: Response) {
+
+    // todo implement proper pagination
     const {
         chainId,
         skip,
@@ -21,8 +26,7 @@ async function getBonds(req: Request, res: Response) {
         _id
     } = req.query;
 
-    // todo implement proper pagination
-    // todo add address as well for the issuer query
+    validateChain(chainId);
 
     const findQuery: { [key: string]: string | number | any } = {
         type: CONTRACT_TYPES.ZcbBond
@@ -74,6 +78,28 @@ async function getBonds(req: Request, res: Response) {
     })
 }
 
+async function getContractDetailed(req: Request, res: Response) {
+    const {id} = req.params
+    const {chainId} = req.query;
+
+    const contractAddress = getAddress(`${id}`).toLowerCase();
+    const parsedChain = Number(chainId);
+    validateChain(chainId);
+
+
+    const contractInfo = await ZeroCouponBondsV1.getContractInfo(parsedChain, contractAddress, {contractBalance: true})
+    const description = await ContractV1Utils.getDescription(contractInfo);
+
+    const response: DetailedBondResponse = {
+        contractInfo,
+        securityDetails: await ContractV1Utils.getSecurityDetails(contractInfo, description),
+        description
+    }
+
+    return res.json(response)
+}
+
+
 async function updateDescription(req: Request, res: Response) {
 
     const {address, message, title, description} = req.body;
@@ -83,16 +109,14 @@ async function updateDescription(req: Request, res: Response) {
     const preChainId = Number(chainId);
     const bondContractAddress = getAddress(_id?.toString() || "").toLowerCase();
 
+    validateChain(chainId);
+
     if (!bondContractAddress) {
         ErrorV1.throw("Contract address is missing")
     }
 
     if (!message.includes(bondContractAddress)) {
         ErrorV1.throw("Invalid signature: PLK1")
-    }
-
-    if (!Number.isFinite(preChainId) || !chainExists(preChainId)) {
-        ErrorV1.throw("Chain is missing")
     }
 
     const contract = await connection.db.collection(`Contract_${preChainId}`).findOne({
@@ -127,7 +151,15 @@ async function updateDescription(req: Request, res: Response) {
     return res.json(preObject)
 }
 
-export {
-    getBonds,
-    updateDescription
+async function report(req: Request, res: Response) {
+    //todo update this one
+    return res.json({})
 }
+
+const ContractControllerV1 = {
+    getBonds,
+    updateDescription,
+    getContractDetailed,
+    report
+}
+export default ContractControllerV1

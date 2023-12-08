@@ -1,4 +1,5 @@
 import {RpcByChain} from "./type";
+import ErrorV1 from "../../routes/error/error";
 
 
 const CONTRACT_TYPES = {
@@ -84,12 +85,17 @@ const RPCsByChain: RpcByChain = {
 
 
 function chainExists(chainId: any) {
-    return Object.values(CHAINS).includes(chainId)
+    return Object.values(CHAINS).includes(Number(chainId))
+}
+
+function validateChain(chainId: any) {
+    if (!chainExists(chainId)) ErrorV1.throw("Invalid chain")
 }
 
 export {
     CHAINS,
     RPCsByChain,
     CONTRACT_TYPES,
-    chainExists
+    chainExists,
+    validateChain
 }
