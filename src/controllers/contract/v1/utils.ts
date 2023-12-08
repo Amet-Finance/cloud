@@ -17,7 +17,7 @@ async function getSecurityDetails(contractInfo: BondInfoDetailed, description: D
 
     const totalHolders = await connection.db.collection(`Balance_${chainId}`).countDocuments({[contractAddress]: {$exists: true}})
     const issuerInfo: any = await connection.db.collection("Address").findOne({_id: contractInfo.issuer.toLowerCase() as any})
-    const issuerScore = issuerInfo.score || 0;
+    const issuerScore = issuerInfo?.score || 0;
 
     const uniqueHoldersIndex = (totalHolders / (contractInfo.purchased - contractInfo.redeemed)) || 0
 
