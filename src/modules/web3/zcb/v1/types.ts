@@ -1,4 +1,4 @@
-import {TokenBalance} from "../../type";
+import {TokenBalance, TokenResponse} from "../../type";
 
 type BondInfoDetailed = {
     _id: string,
@@ -8,10 +8,15 @@ type BondInfoDetailed = {
     purchased: number,
     redeemed: number,
     redeemLockPeriod: number,
+
     investmentToken: string,
     investmentTokenAmount: string,
+    investmentTokenInfo?: TokenResponse
+
     interestToken: string,
     interestTokenAmount: string,
+    interestTokenInfo?: TokenResponse
+
     interestTokenBalance?: TokenBalance,
     feePercentage: number,
     issuanceDate: number
@@ -19,6 +24,7 @@ type BondInfoDetailed = {
 
 type ContractInfoOptions = {
     contractBalance?: boolean,
+    tokensIncluded?:boolean
 }
 
 export type {

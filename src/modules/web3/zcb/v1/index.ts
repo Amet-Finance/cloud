@@ -4,6 +4,7 @@ import {ethers} from "ethers";
 import ZeroCouponBondsV1_AmetFinance
     from './abi/contracts_zcb-v1_ZeroCouponBondsV1_AmetFinance_sol_ZeroCouponBondsV1_AmetFinance.json'
 import {getBalance} from "../../token";
+import TokenService from "../../../token";
 
 function getContract(chainId: number, contractAddress: string) {
     const provider = getProvider(chainId);
@@ -41,6 +42,13 @@ async function getContractInfo(chainId: number, contractAddress: string, options
 
     if (options?.contractBalance) {
         response.interestTokenBalance = await getBalance(chainId, interestToken, contractAddress);
+    }
+
+    if (options?.tokensIncluded) {
+        const interestToken = await TokenService.get(chainId, response.interestToken);
+        const investmentToken = await TokenService.get(chainId, response.investmentToken);
+        if (interestToken) response.interestTokenInfo = interestToken
+        if (investmentToken) response.investmentTokenInfo = investmentToken
     }
 
     return response;
