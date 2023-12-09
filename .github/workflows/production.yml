@@ -14,7 +14,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Deploy Docker image
+    - name: Connect to Server and restart
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST_MAIN }}
