@@ -1,4 +1,4 @@
-name: Amet Finance Cloud Production.
+name: Amet Finance Cloud Production
 
 on:
   push:
