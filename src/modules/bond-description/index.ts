@@ -1,6 +1,6 @@
 import {BondDescriptionCache} from "./types";
 import {Description} from "../../controllers/contract/v1/types";
-import axios from "axios/index";
+import axios from "axios";
 import {BUCKET_NAME} from "../../controllers/contract/v1/contstants";
 
 const HOUR_CACHE = 60 * 60 * 1000;
