@@ -12,6 +12,7 @@ import ZeroCouponBondsV1 from "../../../modules/web3/zcb/v1";
 import {DetailedBondResponse} from "./types";
 import ContractV1Utils from "./utils";
 import {BUCKET_NAME} from "./contstants";
+import BondDescriptionService from "../../../modules/bond-description";
 
 
 async function getBonds(req: Request, res: Response) {
@@ -88,7 +89,7 @@ async function getContractDetailed(req: Request, res: Response) {
 
 
     const contractInfo = await ZeroCouponBondsV1.getContractInfo(parsedChain, contractAddress, {contractBalance: true, tokensIncluded: true})
-    const description = await ContractV1Utils.getDescription(contractInfo);
+    const description = await BondDescriptionService.getDescription(contractInfo._id);
 
     const response: DetailedBondResponse = {
         contractInfo,

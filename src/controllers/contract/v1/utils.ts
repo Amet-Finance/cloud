@@ -2,8 +2,6 @@ import {Description, SecurityDetails} from "./types";
 import BigNumber from "bignumber.js";
 import {BondInfoDetailed} from "../../../modules/web3/zcb/v1/types";
 import connection from "../../../db/main";
-import axios from "axios";
-import {BUCKET_NAME} from "./contstants";
 import TokenService from "../../../modules/token";
 
 async function getSecurityDetails(contractInfo: BondInfoDetailed, description: Description): Promise<SecurityDetails> {
@@ -51,14 +49,8 @@ async function getSecurityDetails(contractInfo: BondInfoDetailed, description: D
     return securityDetails
 }
 
-async function getDescription(contractInfo: BondInfoDetailed): Promise<Description> {
-    const bondContractAddress = contractInfo._id.toLowerCase();
-    const response = await axios.get(`https://${BUCKET_NAME}/contracts/${bondContractAddress}.json`)
-    return response.data;
-}
 
 const ContractV1Utils = {
     getSecurityDetails,
-    getDescription
 }
 export default ContractV1Utils;
