@@ -88,7 +88,7 @@ async function getContractDetailed(req: Request, res: Response) {
     validateChain(chainId);
 
 
-    const contractInfo = await ZeroCouponBondsV1.getContractInfo(parsedChain, contractAddress, {contractBalance: true, tokensIncluded: true})
+    const contractInfo = await ContractV1Utils.getContractInfo(parsedChain, contractAddress);
     const description = await BondDescriptionService.getDescription(contractInfo._id);
 
     const response: DetailedBondResponse = {

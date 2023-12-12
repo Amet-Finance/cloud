@@ -1,8 +1,58 @@
-import {Description, SecurityDetails} from "./types";
+import {BondInfoDetailed, ContractInfoOptions, Description, SecurityDetails} from "./types";
 import BigNumber from "bignumber.js";
-import {BondInfoDetailed} from "../../../modules/web3/zcb/v1/types";
+
 import connection from "../../../db/main";
 import TokenService from "../../../modules/token";
+import {getBalance} from "../../../modules/web3/token";
+
+async function getContractInfo(chainId: number, contractAddress: string, options?: ContractInfoOptions): Promise<BondInfoDetailed> {
+    const contractInfoFromDb = await connection.db.collection(`Contract_${chainId}`).findOne({
+        _id: contractAddress.toLowerCase() as any
+    }) as any;
+
+    if (!contractInfoFromDb) {
+        throw Error('Contract info is missing');
+    }
+
+    const {
+        issuer, total,
+        purchased, redeemed,
+        redeemLockPeriod, investmentToken,
+        investmentTokenAmount, interestToken,
+        interestTokenAmount, feePercentage,
+        issuanceDate, issuanceBlock
+    } = contractInfoFromDb;
+
+    const response: BondInfoDetailed = {
+        _id: contractAddress,
+        chainId: chainId,
+        issuer: issuer,
+        total: Number(total),
+        purchased: Number(purchased),
+        redeemed: Number(redeemed),
+        redeemLockPeriod: Number(redeemLockPeriod),
+        investmentToken: investmentToken,
+        investmentTokenAmount: investmentTokenAmount.toString(),
+        interestToken: interestToken,
+        interestTokenAmount: interestTokenAmount.toString(),
+        feePercentage: Number(feePercentage),
+        issuanceDate: Number(issuanceDate),
+        issuanceBlock: issuanceBlock || 0
+    };
+
+    if (options?.contractBalance) {
+        response.interestTokenBalance = await getBalance(chainId, interestToken, contractAddress);
+    }
+
+    if (options?.tokensIncluded) {
+        const interestToken = await TokenService.get(chainId, response.interestToken);
+        const investmentToken = await TokenService.get(chainId, response.investmentToken);
+        if (interestToken) response.interestTokenInfo = interestToken
+        if (investmentToken) response.investmentTokenInfo = investmentToken
+    }
+
+    return response;
+}
 
 async function getSecurityDetails(contractInfo: BondInfoDetailed, description: Description): Promise<SecurityDetails> {
 
@@ -52,5 +102,6 @@ async function getSecurityDetails(contractInfo: BondInfoDetailed, description: D
 
 const ContractV1Utils = {
     getSecurityDetails,
+    getContractInfo
 }
 export default ContractV1Utils;

@@ -1,4 +1,33 @@
-import {BondInfoDetailed} from "../../../modules/web3/zcb/v1/types";
+import {TokenBalance, TokenResponse} from "../../../modules/web3/type";
+
+type BondInfoDetailed = {
+    _id: string,
+    chainId: number,
+    issuer: string,
+    total: number,
+    purchased: number,
+    redeemed: number,
+    redeemLockPeriod: number,
+
+    investmentToken: string,
+    investmentTokenAmount: string,
+    investmentTokenInfo?: TokenResponse
+
+    interestToken: string,
+    interestTokenAmount: string,
+    interestTokenInfo?: TokenResponse
+
+    interestTokenBalance?: TokenBalance,
+    feePercentage: number,
+    issuanceDate: number,
+    issuanceBlock: number
+}
+
+type ContractInfoOptions = {
+    contractBalance?: boolean,
+    tokensIncluded?: boolean
+}
+
 
 type Description = {
     name: string,
@@ -28,5 +57,7 @@ type DetailedBondResponse = {
 export type  {
     DetailedBondResponse,
     SecurityDetails,
-    Description
+    Description,
+    ContractInfoOptions,
+    BondInfoDetailed
 }
