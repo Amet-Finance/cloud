@@ -1,4 +1,5 @@
 import "./config";
+import "./tracer";
 import "./handler";
 import cors from 'cors';
 import express, {Response} from 'express';
