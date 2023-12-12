@@ -75,7 +75,7 @@ const RPCsByChain: RpcByChain = {
             "https://rpc.ankr.com/zetachain_evm_athens_testnet/74cb08b0ad4e0fc6ef41f8486f6a2b309f11519cf33e8986810642447393cdc2"
         ]
     },
-    [CHAINS.Optimism] : {
+    [CHAINS.Optimism]: {
         def: [
             "https://optimism.llamarpc.com",
             "https://rpc.ankr.com/optimism",

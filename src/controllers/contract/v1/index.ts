@@ -8,7 +8,6 @@ import s3Client from "../../../db/s3-client";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
 import ErrorV1 from "../../../routes/error/error";
 import {Sort} from "mongodb";
-import ZeroCouponBondsV1 from "../../../modules/web3/zcb/v1";
 import {DetailedBondResponse} from "./types";
 import ContractV1Utils from "./utils";
 import {BUCKET_NAME} from "./contstants";

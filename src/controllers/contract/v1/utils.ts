@@ -1,6 +1,5 @@
 import {BondInfoDetailed, ContractInfoOptions, Description, SecurityDetails} from "./types";
 import BigNumber from "bignumber.js";
-
 import connection from "../../../db/main";
 import TokenService from "../../../modules/token";
 import {getBalance} from "../../../modules/web3/token";
@@ -56,6 +55,20 @@ async function getContractInfo(chainId: number, contractAddress: string, options
 
 async function getSecurityDetails(contractInfo: BondInfoDetailed, description: Description): Promise<SecurityDetails> {
 
+    const isTotallyBought = !(contractInfo.total - contractInfo.purchased)
+    const isTotallyRedeemed = !(contractInfo.purchased - contractInfo.redeemed);
+    const isTotallyFinished = isTotallyBought && isTotallyRedeemed;
+
+    if (isTotallyFinished) {
+        return {
+            bondScore: 0,
+            issuerScore: 0,
+            securedPercentage: 0,
+            uniqueHolders: 0,
+            uniqueHoldersIndex: 0
+        }
+    }
+
     if (!contractInfo.interestTokenBalance) {
         throw Error('Something went wrong: B11')
     }
@@ -94,11 +107,11 @@ async function getSecurityDetails(contractInfo: BondInfoDetailed, description: D
     securityDetails.securedPercentage = securedPercentage;
 
 
+    console.log(`securityDetails`, securityDetails)
     securityDetails.bondScore = (0.4 * (securedPercentage / 10)) + (0.2 * issuerScore) + (0.2 * (isBothAssetsVerified ? 10 : 0)) + (0.15 * (uniqueHoldersIndex * 10)) + (0.05 * (descriptionExists ? 10 : 0));
 
     return securityDetails
 }
-
 
 const ContractV1Utils = {
     getContractInfo,

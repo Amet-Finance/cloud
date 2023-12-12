@@ -1,11 +1,11 @@
 import {Db, MongoClient, MongoClientOptions} from 'mongodb';
 
 class Main {
-    private _db: Db | null;
-
     constructor() {
         this._db = null;
     }
+
+    private _db: Db | null;
 
     get db(): Db {
         if (!this._db) {

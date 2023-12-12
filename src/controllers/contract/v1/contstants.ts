@@ -1,5 +1,5 @@
 const BUCKET_NAME = 'storage.amet.finance'
 
-export  {
+export {
     BUCKET_NAME
 }
