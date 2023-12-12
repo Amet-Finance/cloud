@@ -101,7 +101,7 @@ async function getSecurityDetails(contractInfo: BondInfoDetailed, description: D
 
 
 const ContractV1Utils = {
-    getSecurityDetails,
-    getContractInfo
+    getContractInfo,
+    getSecurityDetails
 }
 export default ContractV1Utils;
