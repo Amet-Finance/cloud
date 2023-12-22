@@ -34,21 +34,26 @@ function getTokensByChain(chainId: number) {
 }
 
 async function get(chainId: number, contractAddress: string, options?: TokenGetOptions): Promise<TokenResponse | null> {
-    validateAddress(contractAddress);
-    const local = getTokensByChain(chainId)?.[contractAddress.toLowerCase()]
-    if (local) {
-        if (options?.isVerified && !local.isVerified) {
-            return null;
+    try {
+        validateAddress(contractAddress);
+        const local = getTokensByChain(chainId)?.[contractAddress.toLowerCase()]
+        if (local) {
+            if (options?.isVerified && !local.isVerified) {
+                return null;
+            }
+            return generateTokenResponse(chainId, local);
         }
-        return generateTokenResponse(chainId, local);
+
+        const tokenFromBlockchain = await getTokenInfo(chainId, contractAddress);
+        const tokenResponse = generateTokenResponse(chainId, tokenFromBlockchain);
+        updateLocalCache(chainId, tokenResponse);
+        updateInDatabase(chainId, tokenResponse).catch(nop);
+
+        return tokenResponse;
+    } catch (error: any) {
+        console.log('error', error);
+        return null;
     }
-
-    const tokenFromBlockchain = await getTokenInfo(chainId, contractAddress);
-    const tokenResponse = generateTokenResponse(chainId, tokenFromBlockchain);
-    updateLocalCache(chainId, tokenResponse);
-    updateInDatabase(chainId, tokenResponse).catch(nop);
-
-    return tokenResponse;
 }
 
 async function getMultiple(chainId: number, contractAddresses: string[], options?: TokenGetOptions): Promise<TokenResponse[]> {
