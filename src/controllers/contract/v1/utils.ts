@@ -108,7 +108,7 @@ async function getSecurityDetails(contractInfo: BondInfoDetailed, description: D
 
 
     console.log(`securityDetails`, securityDetails)
-    securityDetails.bondScore = (0.4 * (securedPercentage / 10)) + (0.2 * issuerScore) + (0.2 * (isBothAssetsVerified ? 10 : 0)) + (0.15 * (uniqueHoldersIndex * 10)) + (0.05 * (descriptionExists ? 10 : 0));
+    securityDetails.bondScore = (0.45 * (securedPercentage / 10)) + (0.3 * issuerScore) + (0.05 * (isBothAssetsVerified ? 10 : 0)) + (0.15 * (uniqueHoldersIndex * 10)) + (0.05 * (descriptionExists ? 10 : 0));
 
     return securityDetails
 }
