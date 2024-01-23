@@ -16,7 +16,7 @@ const CHAINS = {
     Zeta: 7001,
     Ethereum: 1,
 
-    // Mumbai: 80001,
+    Mumbai: 80001,
 }
 
 const RPCsByChain: RpcByChain = {
@@ -89,16 +89,16 @@ const RPCsByChain: RpcByChain = {
     },
 
     // TESTNET
-    // [CHAINS.Mumbai]: {
-    //     def: [
-    //         "https://rpc.ankr.com/polygon_mumbai",
-    //         'https://polygon-mumbai-bor.publicnode.com',
-    //         'https://polygon-testnet.public.blastapi.io',
-    //         'https://polygon-mumbai-pokt.nodies.app',
-    //         'https://polygon-mumbai.blockpi.network/v1/rpc/public'
-    //     ],
-    //     fallback: []
-    // },
+    [CHAINS.Mumbai]: {
+        def: [
+            "https://rpc.ankr.com/polygon_mumbai",
+            'https://polygon-mumbai-bor.publicnode.com',
+            'https://polygon-testnet.public.blastapi.io',
+            'https://polygon-mumbai-pokt.nodies.app',
+            'https://polygon-mumbai.blockpi.network/v1/rpc/public'
+        ],
+        fallback: []
+    },
 }
 
 

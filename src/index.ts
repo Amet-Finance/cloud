@@ -41,7 +41,7 @@ app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with
 
 connection.connect()
     .then(async () => {
-        await InitiateCache([CHAINS.MantaPacific, CHAINS.Polygon, CHAINS.PolygonZKEVM, CHAINS.Bsc, CHAINS.Zeta]);
+        await InitiateCache([CHAINS.Mumbai, CHAINS.MantaPacific, CHAINS.Polygon, CHAINS.PolygonZKEVM, CHAINS.Bsc, CHAINS.Zeta]);
 
         app.listen(process.env.PORT, () => {
             console.log(`Amet Cloud is listening at PORT=${process.env.PORT}| ${new Date().toLocaleTimeString()}`)
