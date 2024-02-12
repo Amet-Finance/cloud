@@ -1,11 +1,11 @@
 import {getProvider} from "./utils";
 import ERC20_ABI from "../web3/abi-jsons/ERC20.json";
-import {TokenBalance} from "./type";
+import {TokenBalance, TokenInfoFromBlockchain} from "./type";
 import BigNumber from "bignumber.js";
 import {ethers} from "ethers";
 
 
-async function getTokenInfo(chainId: number, contractAddress: string, isFallback?: boolean): Promise<any> {
+async function getTokenInfo(chainId: number, contractAddress: string, isFallback?: boolean): Promise<TokenInfoFromBlockchain> {
     try {
         const provider = getProvider(chainId, isFallback);
         const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
@@ -15,9 +15,10 @@ async function getTokenInfo(chainId: number, contractAddress: string, isFallback
         const decimals = await contract.decimals();
 
         return {
-            _id: contractAddress.toLowerCase(),
+            contractAddress: contractAddress.toLowerCase(),
             name,
             symbol,
+            chainId: Number(chainId),
             decimals: Number(decimals)
         };
     } catch (error: any) {

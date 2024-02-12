@@ -1,13 +1,13 @@
 import {BondDescriptionCache} from "./types";
-import {Description} from "../../controllers/contract/v1/types";
 import axios from "axios";
-import {BUCKET_NAME} from "../../controllers/contract/v1/contstants";
+import {ContractDescription} from "../../controllers/contract/v2/types";
+import {BUCKET_NAME} from "../../controllers/contract/v2/constants";
 
 const HOUR_CACHE = 60 * 60 * 1000;
 
 let bondDescription: BondDescriptionCache = {}
 
-async function getDescription(contractAddress: string) {
+async function get(contractAddress: string, chainId: string) {
 
     const contractLower = contractAddress.toLowerCase();
     if (bondDescription[contractLower]) {
@@ -15,17 +15,20 @@ async function getDescription(contractAddress: string) {
             return bondDescription[contractLower];
         }
     }
-    return getDescriptionFromAPI(contractAddress);
+    return getDescriptionFromAPI(contractLower);
 }
 
-async function getDescriptionFromAPI(contractAddress: string): Promise<Description> {
-    const bondContractAddress = contractAddress.toLowerCase();
-    const response = await axios.get(`https://${BUCKET_NAME}/contracts/${bondContractAddress}.json`)
+async function getDescriptionFromAPI(contractAddress: string): Promise<ContractDescription> {
+    const response = await axios.get(`https://${BUCKET_NAME}/contracts/${contractAddress}.json`)
+    bondDescription[contractAddress] = {
+        ...response.data,
+        cacheTime: new Date()
+    } // todo rewrite this part, include chainId as well
     return response.data;
 }
 
 
 const BondDescriptionService = {
-    getDescription
+    get
 }
 export default BondDescriptionService;

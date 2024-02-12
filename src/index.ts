@@ -5,15 +5,14 @@ import cors from 'cors';
 import express, {Response} from 'express';
 import connection from './db/main';
 
-import ContractV1 from './routes/contract/v1'
-import AffiliateV1 from './routes/affiliate/v1'
+import ContractV2 from './routes/contract/v2'
 import AddressV1 from './routes/address/v1'
 import StatisticsV1 from './routes/statistics/v1'
 import BalanceV1 from './routes/balance/v1'
 import TokenV1 from './routes/token/v1'
 import {CHAINS} from "./modules/web3/constants";
 import InitiateCache from "./modules/cache";
-
+import SecurityMiddleware from "./routes/middlewares/v1";
 // import rateLimit from "express-rate-limit";
 
 const app = express();
@@ -32,8 +31,10 @@ app.use(express.urlencoded({extended: true}));
 
 app.use('/v1/token', TokenV1);
 app.use('/v1/address', AddressV1);
-app.use('/v1/contract', ContractV1);
-app.use('/v1/affiliate', AffiliateV1); // todo rename to referral
+app.use('/v1/contract', SecurityMiddleware.outdated);
+app.use('/v2/contract', ContractV2);
+
+
 app.use('/v1/balance', BalanceV1)
 app.use('/v1/statistics', StatisticsV1);
 
@@ -41,9 +42,6 @@ app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with
 
 connection.connect()
     .then(async () => {
-        await InitiateCache([CHAINS.Mumbai, CHAINS.MantaPacific, CHAINS.Polygon, CHAINS.PolygonZKEVM, CHAINS.Bsc, CHAINS.Zeta]);
-
-        app.listen(process.env.PORT, () => {
-            console.log(`Amet Cloud is listening at PORT=${process.env.PORT}| ${new Date().toLocaleTimeString()}`)
-        });
+        await InitiateCache();
+        app.listen(process.env.PORT, () => console.log(`Amet Cloud is listening at PORT=${process.env.PORT}| ${new Date().toLocaleTimeString()}`))
     })

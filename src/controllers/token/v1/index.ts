@@ -1,9 +1,9 @@
 import {Request, Response} from "express";
-import {TokenResponse} from "../../../modules/web3/type";
 
 import TokenService from "../../../modules/token";
 import {getBalance} from "../../../modules/web3/token";
 import {RPCsByChain} from "../../../modules/web3/constants";
+import {TokenResponse} from "../../../modules/token/types";
 
 async function get(req: Request, res: Response) {
     // todo implement here security checks as well
@@ -26,9 +26,11 @@ async function get(req: Request, res: Response) {
     }
 
     for (const token of tokens) {
-        tokenKeyValue[token._id] = {
+        const [contractAddress] = token._id.toLowerCase().split("_");
+
+        tokenKeyValue[contractAddress] = {
             ...token,
-            ...(requestBalance ? await getBalance(chainId, token._id, address, token.decimals) : {})
+            ...(requestBalance ? await getBalance(chainId, contractAddress, address, token.decimals) : {})
         }
     }
 
