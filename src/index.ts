@@ -10,21 +10,11 @@ import AddressV1 from './routes/address/v1'
 import StatisticsV1 from './routes/statistics/v1'
 import BalanceV1 from './routes/balance/v1'
 import TokenV1 from './routes/token/v1'
-import {CHAINS} from "./modules/web3/constants";
 import InitiateCache from "./modules/cache";
 import SecurityMiddleware from "./routes/middlewares/v1";
-// import rateLimit from "express-rate-limit";
 
 const app = express();
 
-// const limiter = rateLimit({
-//     windowMs: 5 * 1000, // 15 minutes
-//     limit: 1000,
-//     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-//     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-// })
-
-// app.use(limiter)
 app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));

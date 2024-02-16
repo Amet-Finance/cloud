@@ -13,7 +13,7 @@ function generateTokenResponse(chainId: number, tokenInfo: any): TokenResponse {
         chainId: Number(chainId),
         name,
         symbol,
-        decimals,
+        decimals
     }
 
     if (isVerified) {

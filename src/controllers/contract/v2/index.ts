@@ -21,7 +21,6 @@ async function getBonds(req: Request, res: Response) {
         skip,
         limit,
         chainId,
-        // type,// zcb-bond or zcb-issuer
         responseFormat, // basic or extended
         contractAddresses,
         trending,
@@ -58,7 +57,7 @@ async function getBonds(req: Request, res: Response) {
 
     if (contractAddresses) {
         const contractIds = JSON.parse(`${contractAddresses}`)
-        const contractIdsMapped = contractIds.map((id: string) => (id.includes("_") ? id : `${id}_${chainId}`))
+        const contractIdsMapped = contractIds.map((id: string) => (id.includes("_") ? id : `${id}_${chainId}`).toLowerCase())
         query._id = {
             $in: contractIdsMapped
         }
@@ -129,8 +128,8 @@ async function transformFinancialAttribute(contract: ContractRawData, contractAd
 async function transformBasicData(contract: ContractRawData): Promise<ContractBasicFormat> {
     return {
         ...(await transformEssentialData(contract)),
-        score: contract.score,
-        tbv: contract.tbv
+        score: contract.score || 0,
+        tbv: contract.tbv || 0
     }
 }
 
@@ -150,11 +149,11 @@ async function transformExtendedData(contract: ContractRawData): Promise<Contrac
             issuanceBlock: contract.issuanceBlock,
         },
         contractStats: {
-            score: contract.score,
-            securedPercentage: contract.securedPercentage,
+            score: contract.score || 0,
+            securedPercentage: contract.securedPercentage || 0,
             issuerScore: issuerInfo?.score || 0,
-            uniqueHolders: contract.uniqueHolders,
-            tbv: contract.tbv
+            uniqueHolders: contract.uniqueHolders || 0,
+            tbv: contract.tbv || 0
         },
         lastUpdated: contract.lastUpdated
     }
