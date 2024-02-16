@@ -1,13 +1,3 @@
-type TokenResponse = {
-    _id: string,
-    name: string,
-    symbol: string,
-    decimals: number,
-    isVerified: boolean,
-    icon?: string,
-    isStable?: boolean
-}
-
 type RpcByChain = {
     [key: number]: {
         def: string[],
@@ -21,9 +11,16 @@ type TokenBalance = {
     decimals: number
 }
 
+type TokenInfoFromBlockchain = {
+    contractAddress: string,
+    name: string,
+    symbol: string,
+    decimals: number,
+    chainId: number
+}
 
 export type  {
-    TokenResponse,
     RpcByChain,
-    TokenBalance
+    TokenBalance,
+    TokenInfoFromBlockchain
 }

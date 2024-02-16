@@ -1,11 +1,9 @@
 import TokenService from '../token'
 
-async function InitiateCache(chainIds: number[]) {
-    await TokenService.cache(chainIds);
+async function InitiateCache() {
+    await TokenService.cache();
 
-    setInterval(async () => {
-        await TokenService.cache(chainIds)
-    }, 60000)
+    setInterval(TokenService.cache, 60000)
 }
 
 export default InitiateCache;
