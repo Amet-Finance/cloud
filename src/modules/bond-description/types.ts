@@ -1,5 +1,5 @@
 type BondDescriptionCache = {
-    [contractAddress: string]: BondDescription
+    [contractId: string]: BondDescription
 }
 
 type BondDescription = {

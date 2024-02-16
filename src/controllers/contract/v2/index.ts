@@ -143,7 +143,7 @@ async function transformExtendedData(contract: ContractRawData): Promise<Contrac
 
     return {
         contractDescription: {
-            ...(await BondDescriptionService.get(contractAddress, chainId))
+            ...(await BondDescriptionService.get(contract._id))
         },
         contractInfo: {
             ...(await transformEssentialData(contract)),
@@ -205,6 +205,7 @@ async function updateDescription(req: Request, res: Response) {
         }
     ))
 
+    BondDescriptionService.update(contractAddress, preObject);
     return res.json(preObject)
 }
 
