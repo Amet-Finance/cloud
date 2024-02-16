@@ -11,10 +11,14 @@ import {
     FinancialAttributeInfo,
     TransformDataConfig
 } from "./types";
-import {ResponseFormats} from "./constants";
+import {BUCKET_NAME, ResponseFormats} from "./constants";
 import TokenService from "../../../modules/token";
 import BigNumber from "bignumber.js";
 import BondDescriptionService from "../../../modules/bond-description";
+import ErrorV1 from "../../../routes/error/error";
+import axios from "axios";
+import s3Client from "../../../db/s3-client";
+import {PutObjectCommand} from "@aws-sdk/client-s3";
 
 async function getBonds(req: Request, res: Response) {
     const {
@@ -160,7 +164,53 @@ async function transformExtendedData(contract: ContractRawData): Promise<Contrac
 }
 
 
+async function updateDescription(req: Request, res: Response) {
+
+    const {address, message, title, description, _id} = req.body;
+
+
+    const contractAddress = (_id || "").toString().toLowerCase();
+
+    if (!contractAddress) {
+        ErrorV1.throw("Contract address is missing")
+    }
+
+    if (!message.includes(contractAddress)) {
+        ErrorV1.throw("Invalid signature: PLK1")
+    }
+
+    const contract = await connection.db.collection(`Contract`).findOne({_id: contractAddress as any})
+
+    if (!contract) {
+        ErrorV1.throw("Contract is missing");
+    }
+
+    if (contract?.issuer.toLowerCase() !== address.toLowerCase()) {
+        throw Error("Invalid owner")
+    }
+
+    const response = await axios.get(`https://${BUCKET_NAME}/contracts/${contractAddress}.json`)
+    const preObject = response.data;
+
+    if (!preObject.details) preObject.details = {}
+    if (title) preObject.details.title = title
+    if (description) preObject.details.description = description
+
+    await s3Client.send(new PutObjectCommand(
+        {
+            Bucket: BUCKET_NAME,
+            Key: `contracts/${contractAddress}.json`,
+            Body: JSON.stringify(preObject),
+            ContentType: "application/json",
+        }
+    ))
+
+    return res.json(preObject)
+}
+
+
 const ContractControllerV2 = {
-    getBonds
+    getBonds,
+    updateDescription
 }
 export default ContractControllerV2;
