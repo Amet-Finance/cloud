@@ -11,10 +11,14 @@ function signature(req: Request, res: Response, next: NextFunction) {
             message: "Invalid signature"
         })
     }
+}
 
+function outdated(req: Request, res: Response, next: NextFunction) {
+    return res.status(410).send('This route is no longer available. Please update your request URL.');
 }
 
 const SecurityMiddleware = {
-    signature
+    signature,
+    outdated
 }
 export default SecurityMiddleware;

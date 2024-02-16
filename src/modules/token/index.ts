@@ -1,28 +1,37 @@
 import connection from "../../db/main";
-import {TokenResponse} from "../web3/type";
-import {TokenCacheGlobal, TokenGetOptions} from "./types";
+import {TokenCacheByChainAndContract, TokenGetOptions, TokenRawData, TokenResponse} from "./types";
 import {nop} from "../utils/functions";
 import {generateTokenResponse, validateAddress} from "./util";
 import {getTokenInfo} from "../web3/token";
 
-let globalCache: TokenCacheGlobal = {}
+let tokenCacheByChainAndContract: TokenCacheByChainAndContract = {}
 
-async function cache(chainIds: number[]) {
+async function cache() {
     try {
-        let localCacheTmp: TokenCacheGlobal = {}
+        let localCacheByChainAndContract: TokenCacheByChainAndContract = {}
 
-        for (const chainId of chainIds) {
-            localCacheTmp[chainId] = {}
-            const verifiedTokens: any = await connection.db.collection(`Token_${chainId}`).find({}).toArray();
-            verifiedTokens.forEach((token: TokenResponse) => {
-                localCacheTmp[chainId][token._id.toLowerCase()] = {
-                    ...token,
-                    _id: token._id.toLowerCase()
-                }
-            })
+        const tokensRaw: any = await connection.db.collection(`Token`).find({}).toArray();
+        for (const token of tokensRaw as TokenRawData[]) {
+
+            const {_id, chainId} = token
+            const [contractAddress, _] = _id.toLowerCase().split("_")
+
+            if (!localCacheByChainAndContract[chainId]) localCacheByChainAndContract[chainId] = {}
+            localCacheByChainAndContract[chainId][contractAddress] = {
+                _id: token._id,
+                contractAddress: contractAddress,
+                chainId: chainId,
+                name: token.name,
+                symbol: token.symbol,
+                icon: token.icon,
+                decimals: token.decimals,
+                isVerified: Boolean(token.isVerified),
+                priceUsd: token.priceUsd
+            };
+
         }
 
-        globalCache = localCacheTmp;
+        tokenCacheByChainAndContract = localCacheByChainAndContract;
     } catch (error: any) {
         console.error(`Token cache| ${error.message}`)
     }
@@ -30,30 +39,23 @@ async function cache(chainIds: number[]) {
 
 
 function getTokensByChain(chainId: number) {
-    return globalCache[chainId] || {}
+    return tokenCacheByChainAndContract[chainId] || {}
 }
 
 async function get(chainId: number, contractAddress: string, options?: TokenGetOptions): Promise<TokenResponse | null> {
-    try {
-        validateAddress(contractAddress);
-        const local = getTokensByChain(chainId)?.[contractAddress.toLowerCase()]
-        if (local) {
-            if (options?.isVerified && !local.isVerified) {
-                return null;
-            }
-            return generateTokenResponse(chainId, local);
-        }
-
-        const tokenFromBlockchain = await getTokenInfo(chainId, contractAddress);
-        const tokenResponse = generateTokenResponse(chainId, tokenFromBlockchain);
-        updateLocalCache(chainId, tokenResponse);
-        updateInDatabase(chainId, tokenResponse).catch(nop);
-
-        return tokenResponse;
-    } catch (error: any) {
-        console.log('error', error);
-        return null;
+    validateAddress(contractAddress);
+    const localToken = getTokensByChain(chainId)?.[contractAddress.toLowerCase()]
+    if (localToken) {
+        if (options?.isVerified && !localToken.isVerified) return null;
+        return generateTokenResponse(chainId, localToken);
     }
+
+    const tokenFromBlockchain = await getTokenInfo(chainId, contractAddress);
+    const tokenResponse = generateTokenResponse(chainId, tokenFromBlockchain);
+    updateLocalCache(chainId, tokenResponse);
+    updateInDatabase(tokenResponse).catch(nop);
+
+    return tokenResponse;
 }
 
 async function getMultiple(chainId: number, contractAddresses: string[], options?: TokenGetOptions): Promise<TokenResponse[]> {
@@ -84,18 +86,14 @@ function getVerifiedTokens(chainId: number, limit?: number): TokenResponse[] {
     return response;
 }
 
-async function updateInDatabase(chainId: number, token: TokenResponse) {
-    await connection.db.collection(`Token_${chainId}`).insertOne({
-        ...token,
-        _id: token._id.toLowerCase() as any
-    })
+async function updateInDatabase(token: TokenResponse) {
+    await connection.db.collection("Token").insertOne(token as any)
 }
 
 function updateLocalCache(chainId: number, token: TokenResponse) {
-    if (!globalCache[chainId]) globalCache[chainId] = {}
-    globalCache[chainId][token._id.toLowerCase()] = token;
+    if (!tokenCacheByChainAndContract[chainId]) tokenCacheByChainAndContract[chainId] = {}
+    tokenCacheByChainAndContract[chainId][token._id.toLowerCase()] = token;
 }
-
 
 const TokenService = {
     cache,
