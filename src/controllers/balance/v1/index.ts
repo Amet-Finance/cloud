@@ -11,7 +11,7 @@ async function getBalance(req: Request, res: Response) {
         const address = getAddress(addressTmp);
 
         const balance = await connection.db
-            .collection(`Balance_${chainId}`)
+            .collection(`Balance`)
             .findOne({
                 _id: address.toLowerCase() as any
             })
