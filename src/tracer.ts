@@ -38,11 +38,11 @@ app.use((req, res, next) => {
         const [seconds, nanoseconds] = process.hrtime(start);
         const duration = seconds + nanoseconds / 1e9;
 
-        httpRequestDurationSeconds.labels(req.method, req.path, res.statusCode.toString()).observe(duration);
+        httpRequestDurationSeconds.labels(req.method, req.baseUrl, res.statusCode.toString()).observe(duration);
         httpRequestCounter.labels(req.method, req.baseUrl, res.statusCode.toString()).inc();
 
         if (res.statusCode >= 400) {
-            httpErrorCounter.labels(req.method, req.path, res.statusCode.toString()).inc();
+            httpErrorCounter.labels(req.method, req.baseUrl, res.statusCode.toString()).inc();
         }
     });
 
