@@ -1,11 +1,11 @@
 import "./config";
-import app from "./server";
 import "./tracer";
 import "./handler";
 import cors from 'cors';
 import express, {Response} from 'express';
 import connection from './db/main';
 
+import app from "./server";
 import ContractV2 from './routes/contract/v2'
 import AddressV1 from './routes/address/v1'
 import StatisticsV1 from './routes/statistics/v1'
