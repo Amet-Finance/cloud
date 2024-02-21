@@ -1,5 +1,6 @@
 import "./config";
-import "./routes/tracer";
+import app from "./server";
+import "./tracer";
 import "./handler";
 import cors from 'cors';
 import express, {Response} from 'express';
@@ -8,13 +9,11 @@ import connection from './db/main';
 import ContractV2 from './routes/contract/v2'
 import AddressV1 from './routes/address/v1'
 import StatisticsV1 from './routes/statistics/v1'
-import TracerV1 from './routes/tracer'
 import BalanceV1 from './routes/balance/v1'
 import TokenV1 from './routes/token/v1'
 import InitiateCache from "./modules/cache";
 import SecurityMiddleware from "./routes/middlewares/v1";
 
-const app = express();
 
 app.use(cors())
 app.use(express.json());
@@ -28,8 +27,6 @@ app.use('/v2/contract', ContractV2);
 
 app.use('/v1/balance', BalanceV1)
 app.use('/v1/statistics', StatisticsV1);
-
-app.use('/v1/metrics', TracerV1);
 
 app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with On-Chain Bonds | Amet Finance"))
 
