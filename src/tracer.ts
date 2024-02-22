@@ -38,7 +38,7 @@ app.use((req, res, next) => {
         const [seconds, nanoseconds] = process.hrtime(start);
         const duration = seconds + nanoseconds / 1e9;
 
-        if (req.baseUrl !== "/") {
+        if (req.baseUrl) {
             httpRequestDurationSeconds.labels(req.method, req.baseUrl, res.statusCode.toString()).observe(duration);
             httpRequestCounter.labels(req.method, req.baseUrl, res.statusCode.toString()).inc();
         }
