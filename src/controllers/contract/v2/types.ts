@@ -15,37 +15,33 @@ type TransformDataConfig = {
     responseFormat: string
 }
 
-
 type ContractRawData = {
     _id: string, // "0xf236f59f0f2a192bd521a11706e897bdb9fab6e4_80001"
+    type: string, // fixed-flat
     issuer: string,
+    owner: string,
     chainId: number,
 
-    total: number,
+    totalBonds: number,
     purchased: number,
     redeemed: number,
-    maturityPeriod: number,
-
-    investmentToken: string,
-    investmentAmount: string,
-    interestToken: string,
-    interestAmount: string,
-
+    maturityPeriodInBlocks: number,
     isSettled: boolean,
-    purchaseFeePercentage: number,
-    earlyRedemptionFeePercentage: number,
+
+    purchaseToken: string,
+    purchaseAmount: string,
+    payoutToken: string,
+    payoutAmount: string,
 
     issuanceBlock: number,
-    issuanceDate: Date
-    type: string,
+    issuanceDate: Date,
+    lastUpdated: Date,
 
     trending?: boolean
     score: number,
     tbv: number,
     securedPercentage: number,
     uniqueHolders: number,
-
-    lastUpdated: Date
 }
 
 type FinancialAttributeInfo = TokenResponse & {
@@ -56,17 +52,17 @@ type FinancialAttributeInfo = TokenResponse & {
 type ContractEssentialFormat = {
     _id: string, // combination of contractAddress and chainId
 
-    total: number,
+    totalBonds: number,
     purchased: number,
     redeemed: number,
-    maturityPeriod: number,
+    maturityPeriodInBlocks: number,
 
-    investment: FinancialAttributeInfo,
-    interest: FinancialAttributeInfo,
+    purchase: FinancialAttributeInfo,
+    payout: FinancialAttributeInfo,
 
     issuer: string,
+    owner: string,
     issuanceDate: Date,
-
 }
 
 type ContractBasicFormat = ContractEssentialFormat & {
@@ -95,8 +91,6 @@ type ContractStats = {
 
 type ContractExtendedInfoFormat = ContractEssentialFormat & {
     isSettled: boolean,
-    purchaseFeePercentage: number,
-    earlyRedemptionFeePercentage: number,
     issuanceBlock: number,
 }
 

@@ -1,10 +1,11 @@
 import {RpcByChain} from "./type";
-import ErrorV1 from "../../routes/error/error";
 
 
 const CONTRACT_TYPES = {
-    ZcbIssuer: "zcb-issuer",
-    ZcbBond: "zcb-bond"
+    FIXED_FLEX: {
+        ISSUER: "fixed-flex-issuer",
+        BOND: "fixed-flex-bon"
+    }
 }
 const CHAINS = {
     MantaPacific: 169,
@@ -106,14 +107,9 @@ function chainExists(chainId: any) {
     return Object.values(CHAINS).includes(Number(chainId))
 }
 
-function validateChain(chainId: any) {
-    if (!chainExists(chainId)) ErrorV1.throw("Invalid chain")
-}
-
 export {
     CHAINS,
     RPCsByChain,
     CONTRACT_TYPES,
-    chainExists,
-    validateChain
+    chainExists
 }

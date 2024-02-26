@@ -22,7 +22,6 @@ app.use('/v1/address', AddressV1);
 app.use('/v1/contract', SecurityMiddleware.outdated);
 app.use('/v2/contract', ContractV2);
 
-
 app.use('/v1/balance', BalanceV1)
 app.use('/v1/statistics', StatisticsV1);
 

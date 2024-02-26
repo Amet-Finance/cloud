@@ -32,7 +32,7 @@ async function getBonds(req: Request, res: Response) {
     } = req.query;
 
     const query: ContractQuery = {
-        type: CONTRACT_TYPES.ZcbBond
+        type: CONTRACT_TYPES.FIXED_FLEX.BOND
     }
     const sortQuery: ContractSortQuery = {}
 
@@ -48,16 +48,6 @@ async function getBonds(req: Request, res: Response) {
 
         query.chainId = chainIdInt;
     }
-
-    // if (type) {
-    //     if (type === CONTRACT_TYPES.ZcbBond) {
-    //         query.type = CONTRACT_TYPES.ZcbBond
-    //     } else if (type === CONTRACT_TYPES.ZcbIssuer) {
-    //         query.type = CONTRACT_TYPES.ZcbIssuer
-    //     } else {
-    //         throw Error("Contract type is not supported")
-    //     }
-    // }
 
     if (contractAddresses) {
         const contractIds = JSON.parse(`${contractAddresses}`)
@@ -107,14 +97,15 @@ function transformData(contract: ContractRawData, config: TransformDataConfig) {
 async function transformEssentialData(contract: ContractRawData): Promise<ContractEssentialFormat> {
     return {
         _id: contract._id,
-        total: Number(contract.total),
+        issuer: contract.issuer,
+        owner: contract.owner,
+        totalBonds: Number(contract.totalBonds),
         purchased: Number(contract.purchased),
         redeemed: Number(contract.redeemed),
-        investment: await transformFinancialAttribute(contract, contract.investmentToken, contract.investmentAmount),
-        interest: await transformFinancialAttribute(contract, contract.interestToken, contract.interestAmount),
-        issuer: contract.issuer,
-        maturityPeriod: Number(contract.maturityPeriod),
-        issuanceDate: new Date(contract.issuanceDate),
+        purchase: await transformFinancialAttribute(contract, contract.purchaseToken, contract.purchaseAmount),
+        payout: await transformFinancialAttribute(contract, contract.payoutToken, contract.payoutAmount),
+        maturityPeriodInBlocks: Number(contract.maturityPeriodInBlocks),
+        issuanceDate: new Date(contract.issuanceDate)
     }
 }
 
@@ -148,8 +139,6 @@ async function transformExtendedData(contract: ContractRawData): Promise<Contrac
         contractInfo: {
             ...(await transformEssentialData(contract)),
             isSettled: contract.isSettled,
-            purchaseFeePercentage: contract.purchaseFeePercentage,
-            earlyRedemptionFeePercentage: contract.earlyRedemptionFeePercentage,
             issuanceBlock: contract.issuanceBlock,
         },
         contractStats: {
