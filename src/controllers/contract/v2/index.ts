@@ -77,19 +77,23 @@ async function getBonds(req: Request, res: Response) {
 
     for (const contract of contractsTmp) {
         const transformedData = await transformData(contract as any, transformDataConfig)
-        data.push(transformedData);
+        if (transformedData) data.push(transformedData);
     }
 
     return res.json({data});
 }
 
 function transformData(contract: ContractRawData, config: TransformDataConfig) {
-    if (config.responseFormat === ResponseFormats.Basic) {
-        return transformBasicData(contract)
-    } else if (config.responseFormat === ResponseFormats.Extended) {
-        return transformExtendedData(contract)
-    } else {
-        throw Error("Unsupported response format")
+    try {
+        if (config.responseFormat === ResponseFormats.Basic) {
+            return transformBasicData(contract)
+        } else if (config.responseFormat === ResponseFormats.Extended) {
+            return transformExtendedData(contract)
+        } else {
+            throw Error("Unsupported response format")
+        }
+    } catch (error: any) {
+        // console.error(er)
     }
 }
 
