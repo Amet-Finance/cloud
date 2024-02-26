@@ -83,17 +83,17 @@ async function getBonds(req: Request, res: Response) {
     return res.json({data});
 }
 
-function transformData(contract: ContractRawData, config: TransformDataConfig) {
+async function transformData(contract: ContractRawData, config: TransformDataConfig) {
     try {
         if (config.responseFormat === ResponseFormats.Basic) {
-            return transformBasicData(contract)
+            return await transformBasicData(contract)
         } else if (config.responseFormat === ResponseFormats.Extended) {
-            return transformExtendedData(contract)
+            return await transformExtendedData(contract)
         } else {
             throw Error("Unsupported response format")
         }
     } catch (error: any) {
-        // console.error(er)
+        // console.error(error)
     }
 }
 
