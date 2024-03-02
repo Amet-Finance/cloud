@@ -4,7 +4,7 @@ import {RpcByChain} from "./type";
 const CONTRACT_TYPES = {
     FIXED_FLEX: {
         ISSUER: "fixed-flex-issuer",
-        BOND: "fixed-flex-bon"
+        BOND: "fixed-flex-bond"
     }
 }
 const CHAINS = {
