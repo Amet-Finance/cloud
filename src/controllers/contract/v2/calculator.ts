@@ -12,12 +12,12 @@ async function score(contract: ContractRawData, issuerScore: number) {
     const isBothAssetsVerified = payoutToken?.isVerified && purchaseToken?.isVerified;
 
     const uniqueHoldersIndex = contract.uniqueHolders ? contract.uniqueHolders / contract.totalBonds : 0;
-    const securedPercentage = await CalculatorController.securedPercentage(contract)
+    const securedPercentage = await CalculatorController.securedPercentage(contract, true)
 
     return (0.45 * (securedPercentage / 10)) + (0.3 * issuerScore) + (0.05 * (isBothAssetsVerified ? 10 : 0)) + (0.2 * (uniqueHoldersIndex * 10));
 }
 
-async function securedPercentage(contract: ContractRawData) {
+async function securedPercentage(contract: ContractRawData, includeMin?: boolean) {
     const {_id} = contract;
     const [contractAddress, chainId] = _id.split("_");
 
@@ -32,7 +32,11 @@ async function securedPercentage(contract: ContractRawData) {
 
     const notRedeemed = BigNumber(contract.totalBonds - contract.redeemed).times(payoutAmount).toNumber();
     const securedTmp = payoutBalanceClean * 100 / notRedeemed
-    return Math.min(Number.isFinite(securedTmp) ? securedTmp : 0, 100);
+    if (includeMin) {
+        return Math.min(Number.isFinite(securedTmp) ? securedTmp : 0, 100);
+    }
+
+    return securedTmp;
 }
 
 const CalculatorController = {
