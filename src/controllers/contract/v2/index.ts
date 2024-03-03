@@ -136,6 +136,7 @@ async function transformBasicData(contract: ContractRawData): Promise<ContractBa
 async function transformExtendedData(contract: ContractRawData): Promise<ContractExtendedFormat> {
     const [contractAddress, chainId] = contract._id.split("_")
     const issuerInfo = await connection.db.collection("Address").findOne({_id: contract.issuer.toLowerCase() as any})
+    const issuerScore = issuerInfo?.score || 0;
 
     return {
         contractDescription: {
@@ -147,10 +148,10 @@ async function transformExtendedData(contract: ContractRawData): Promise<Contrac
             issuanceBlock: contract.issuanceBlock,
         },
         contractStats: {
-            score: contract.score || 0,
+            score: await CalculatorController.score(contract, issuerScore),
             securedPercentage: await CalculatorController.securedPercentage(contract),
             payoutBalance: contract.payoutBalance,
-            issuerScore: issuerInfo?.score || 0,
+            issuerScore,
             uniqueHolders: contract.uniqueHolders || 0,
             tbv: contract.tbv || 0
         },
