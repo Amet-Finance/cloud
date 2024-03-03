@@ -3,6 +3,21 @@ import TokenService from "../../../modules/token";
 import {ContractRawData} from "./types";
 import {getBalance} from "../../../modules/web3/token";
 
+async function tbv(contract: ContractRawData) {
+    const {_id} = contract;
+    const [_, chainId] = _id.split("_");
+
+
+    const payoutToken = await TokenService.get(chainId, contract.payoutToken)
+    const purchaseToken = await TokenService.get(chainId, contract.purchaseToken)
+    if (!purchaseToken || !payoutToken) return 0;
+
+    const purchaseAmountClean = BigNumber(contract.purchaseAmount).div(BigNumber(10).pow(BigNumber(purchaseToken.decimals))).toNumber()
+    const payoutAmountClean = BigNumber(contract.payoutAmount).div(BigNumber(10).pow(BigNumber(payoutToken.decimals))).toNumber()
+    return ((contract.purchased * purchaseAmountClean) * (purchaseToken.priceUsd || 0)) + (contract.redeemed * payoutAmountClean * (payoutToken.priceUsd || 0))
+}
+
+
 async function score(contract: ContractRawData, issuerScore: number) {
     const {_id} = contract;
     const [contractAddress, chainId] = _id.split("_");
@@ -40,6 +55,7 @@ async function securedPercentage(contract: ContractRawData, includeMin?: boolean
 }
 
 const CalculatorController = {
+    tbv,
     score,
     securedPercentage
 }
