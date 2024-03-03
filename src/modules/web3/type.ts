@@ -1,5 +1,5 @@
 type RpcByChain = {
-    [key: number]: {
+    [key: number|string]: {
         def: string[],
         fallback: string[]
     }

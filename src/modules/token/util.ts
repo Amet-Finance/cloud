@@ -1,7 +1,7 @@
 import {TokenResponse} from "./types";
 import {getAddress} from "ethers";
 
-function generateTokenResponse(chainId: number, tokenInfo: any): TokenResponse {
+function generateTokenResponse(chainId: number|string, tokenInfo: any): TokenResponse {
 
     const {name, symbol, decimals, icon, isVerified, contractAddress, unidentified} = tokenInfo
     const contractsLowercase = contractAddress.toLowerCase();

@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import {ethers} from "ethers";
 
 
-async function getTokenInfo(chainId: number, contractAddress: string, isFallback?: boolean): Promise<TokenInfoFromBlockchain> {
+async function getTokenInfo(chainId: number|string, contractAddress: string, isFallback?: boolean): Promise<TokenInfoFromBlockchain> {
     try {
         const provider = getProvider(chainId, isFallback);
         const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider)
@@ -30,7 +30,7 @@ async function getTokenInfo(chainId: number, contractAddress: string, isFallback
     }
 }
 
-async function getBalance(chainId: number, contractAddress: string, address: string, decimals?: number): Promise<TokenBalance> {
+async function getBalance(chainId: number|string, contractAddress: string, address: string, decimals?: number): Promise<TokenBalance> {
 
     const provider = getProvider(chainId);
     const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider);

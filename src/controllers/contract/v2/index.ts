@@ -19,6 +19,7 @@ import ErrorV1 from "../../../routes/error/error";
 import axios from "axios";
 import s3Client from "../../../db/s3-client";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
+import CalculatorController from "./calculator";
 
 async function getBonds(req: Request, res: Response) {
     const {
@@ -147,7 +148,8 @@ async function transformExtendedData(contract: ContractRawData): Promise<Contrac
         },
         contractStats: {
             score: contract.score || 0,
-            securedPercentage: contract.securedPercentage || 0,
+            securedPercentage: await CalculatorController.securedPercentage(contract),
+            payoutBalance: contract.payoutBalance,
             issuerScore: issuerInfo?.score || 0,
             uniqueHolders: contract.uniqueHolders || 0,
             tbv: contract.tbv || 0

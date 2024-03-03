@@ -32,6 +32,7 @@ type ContractRawData = {
     purchaseAmount: string,
     payoutToken: string,
     payoutAmount: string,
+    payoutBalance: string,
 
     issuanceBlock: number,
     issuanceDate: Date,
@@ -84,6 +85,7 @@ type ContractDescription = {
 type ContractStats = {
     score: number,
     securedPercentage: number,
+    payoutBalance: string,
     issuerScore: number,
     uniqueHolders: number,
     tbv: number

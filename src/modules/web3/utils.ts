@@ -1,12 +1,12 @@
 import {RPCsByChain} from "./constants";
 import {ethers} from "ethers";
 
-function getProvider(chainId: number, isFallback?: boolean) {
+function getProvider(chainId: number|string, isFallback?: boolean) {
     const rpc = getRPC(chainId, isFallback)
     return ethers.getDefaultProvider(rpc);
 }
 
-function getRPC(chainId: number, isFallback?: boolean): string {
+function getRPC(chainId: number|string, isFallback?: boolean): string {
     const rpcs = RPCsByChain[chainId]
     let rpcArray: string[];
 

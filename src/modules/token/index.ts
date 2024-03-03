@@ -38,11 +38,11 @@ async function cache() {
 }
 
 
-function getTokensByChain(chainId: number) {
+function getTokensByChain(chainId: number|string) {
     return tokenCacheByChainAndContract[chainId] || {}
 }
 
-async function get(chainId: number, contractAddress: string, options?: TokenGetOptions): Promise<TokenResponse | null> {
+async function get(chainId: number|string, contractAddress: string, options?: TokenGetOptions): Promise<TokenResponse | null> {
     validateAddress(contractAddress);
     const localToken = getTokensByChain(chainId)?.[contractAddress.toLowerCase()]
     if (localToken) {
@@ -90,7 +90,7 @@ async function updateInDatabase(token: TokenResponse) {
     await connection.db.collection("Token").insertOne(token as any)
 }
 
-function updateLocalCache(chainId: number, token: TokenResponse) {
+function updateLocalCache(chainId: number|string, token: TokenResponse) {
     if (!tokenCacheByChainAndContract[chainId]) tokenCacheByChainAndContract[chainId] = {}
     tokenCacheByChainAndContract[chainId][token._id.toLowerCase()] = token;
 }
