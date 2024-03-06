@@ -1,4 +1,9 @@
-import {Db, MongoClient, MongoClientOptions} from 'mongodb';
+import {Collection, Db, Document, MongoClient, MongoClientOptions} from 'mongodb';
+import {Address} from "node:cluster";
+import {AddressRawData} from "../modules/address/types";
+import {ContractRawData} from "../controllers/contract/v2/types";
+import {BalanceRawData} from "../modules/balance/types";
+import {TokenRawData} from "../modules/token/types";
 
 class Main {
     constructor() {
@@ -26,6 +31,23 @@ class Main {
         this._db = client.db(DB_NAME);
         console.timeEnd('Connecting to MongoDB')
     }
+
+    get contract(): Collection<ContractRawData> {
+        return this.db.collection("Contract")
+    }
+
+    get address(): Collection<AddressRawData> {
+        return this.db.collection("Address")
+    }
+
+    get balance(): Collection<BalanceRawData> {
+        return this.db.collection("Balance")
+    }
+
+    get token(): Collection<TokenRawData> {
+        return this.db.collection(`Token`);
+    }
+
 }
 
 const connection = new Main()

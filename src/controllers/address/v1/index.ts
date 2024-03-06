@@ -6,7 +6,7 @@ async function get(req: Request, res: Response) {
     try {
         const {address} = req.query as any;
         validateAddress(address);
-        const addressInfo = await connection.db.collection("Address").findOne({_id: address.toLowerCase()})
+        const addressInfo = await connection.address.findOne({_id: address.toLowerCase()})
         return res.json(addressInfo)
     } catch (error: any) {
         return res.status(400).json({
@@ -41,7 +41,7 @@ async function post(req: Request, res: Response) {
             addressInfo.image = image
         }
 
-        await connection.db.collection("Address").updateOne({
+        await connection.address.updateOne({
             _id: address.toLowerCase()
         }, {
             $set: addressInfo
@@ -65,7 +65,7 @@ async function del(req: Request, res: Response) {
 
         const {address} = req.query as any;
 
-        await connection.db.collection("Address").deleteOne({_id: address})
+        await connection.address.deleteOne({_id: address})
         return res.json({
             success: true
         })

@@ -20,6 +20,7 @@ import axios from "axios";
 import s3Client from "../../../db/s3-client";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
 import CalculatorController from "./calculator";
+import {getIssuerScore} from "../../../modules/address";
 
 async function getBonds(req: Request, res: Response) {
     const {
@@ -67,7 +68,7 @@ async function getBonds(req: Request, res: Response) {
     }
 
     const contractsTmp = await connection
-        .db.collection("Contract")
+        .contract
         .find(query as any)
         .sort(sortQuery as any)
         .skip(skipValue)
@@ -128,14 +129,13 @@ async function transformFinancialAttribute(contract: ContractRawData, contractAd
 async function transformBasicData(contract: ContractRawData): Promise<ContractBasicFormat> {
     return {
         ...(await transformEssentialData(contract)),
-        score: contract.score || 0,
-        tbv: contract.tbv || 0
+        score: await CalculatorController.score(contract),
+        tbv: await CalculatorController.tbv(contract)
     }
 }
 
 async function transformExtendedData(contract: ContractRawData): Promise<ContractExtendedFormat> {
-    const issuerInfo = await connection.db.collection("Address").findOne({_id: contract.issuer.toLowerCase() as any})
-    const issuerScore = issuerInfo?.score || 0;
+    const issuerScore = await getIssuerScore(contract.issuer);
 
     return {
         contractDescription: {
@@ -153,7 +153,6 @@ async function transformExtendedData(contract: ContractRawData): Promise<Contrac
             payoutBalance: contract.payoutBalance,
             uniqueHolders: contract.uniqueHolders || 0,
             issuerScore,
-
         },
         lastUpdated: contract.lastUpdated
     }
@@ -175,7 +174,7 @@ async function updateDescription(req: Request, res: Response) {
         ErrorV1.throw("Invalid signature: PLK1")
     }
 
-    const contract = await connection.db.collection(`Contract`).findOne({_id: contractAddress as any})
+    const contract = await connection.contract.findOne({_id: contractAddress as any})
 
     if (!contract) {
         ErrorV1.throw("Contract is missing");

@@ -8,18 +8,20 @@ type TokenResponse = {
     isVerified?: boolean,
     unidentified?: boolean,
     icon?: string,
-    isStable?: boolean,
     priceUsd?: number
 }
 
 type TokenRawData = {
     _id: string,
+    contractAddress: string,
     chainId: number,
 
     name: string,
     symbol: string,
     decimals: number
     icon?: string,
+
+    cmId?: string,
 
     isVerified?: boolean,
     priceUsd?: number,

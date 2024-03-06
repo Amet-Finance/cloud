@@ -1,5 +1,5 @@
 import connection from "../../db/main";
-import {TokenCacheByChainAndContract, TokenGetOptions, TokenRawData, TokenResponse} from "./types";
+import {TokenCacheByChainAndContract, TokenGetOptions, TokenResponse} from "./types";
 import {nop} from "../utils/functions";
 import {generateTokenResponse, validateAddress} from "./util";
 import {getTokenInfo} from "../web3/token";
@@ -10,17 +10,17 @@ async function cache() {
     try {
         let localCacheByChainAndContract: TokenCacheByChainAndContract = {}
 
-        const tokensRaw: any = await connection.db.collection(`Token`).find({}).toArray();
-        for (const token of tokensRaw as TokenRawData[]) {
+        const tokensRaw = await connection.token.find({}).toArray();
+        for (const token of tokensRaw) {
 
-            const {_id, chainId} = token
-            const [contractAddress, _] = _id.toLowerCase().split("_")
+            const {_id} = token;
+            const [contractAddress, chainId] = _id.toLowerCase().split("_")
 
             if (!localCacheByChainAndContract[chainId]) localCacheByChainAndContract[chainId] = {}
             localCacheByChainAndContract[chainId][contractAddress] = {
                 _id: token._id,
                 contractAddress: contractAddress,
-                chainId: chainId,
+                chainId: Number(chainId),
                 name: token.name,
                 symbol: token.symbol,
                 icon: token.icon,

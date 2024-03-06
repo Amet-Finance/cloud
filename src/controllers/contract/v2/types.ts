@@ -39,9 +39,6 @@ type ContractRawData = {
     lastUpdated: Date,
 
     trending?: boolean
-    score: number,
-    tbv: number,
-    securedPercentage: number,
     uniqueHolders: number,
 }
 

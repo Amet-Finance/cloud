@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import TokenService from "../../../modules/token";
 import {ContractRawData} from "./types";
 import {getBalance} from "../../../modules/web3/token";
+import {getIssuerScore} from "../../../modules/address";
 
 async function tbv(contract: ContractRawData) {
     const {_id} = contract;
@@ -18,7 +19,7 @@ async function tbv(contract: ContractRawData) {
 }
 
 
-async function score(contract: ContractRawData, issuerScore: number) {
+async function score(contract: ContractRawData, issuerScore?: number) {
     const {_id} = contract;
     const [contractAddress, chainId] = _id.split("_");
 
@@ -28,6 +29,10 @@ async function score(contract: ContractRawData, issuerScore: number) {
 
     const uniqueHoldersIndex = contract.uniqueHolders ? contract.uniqueHolders / contract.totalBonds : 0;
     const securedPercentage = await CalculatorController.securedPercentage(contract, true)
+
+    if (!Number.isFinite(issuerScore) || issuerScore === undefined) {
+        issuerScore = await getIssuerScore(contract.issuer);
+    }
 
     return (0.45 * (securedPercentage / 10)) + (0.3 * issuerScore) + (0.05 * (isBothAssetsVerified ? 10 : 0)) + (0.2 * (uniqueHoldersIndex * 10));
 }
