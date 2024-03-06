@@ -43,19 +43,23 @@ function getTokensByChain(chainId: number|string) {
 }
 
 async function get(chainId: number|string, contractAddress: string, options?: TokenGetOptions): Promise<TokenResponse | null> {
-    validateAddress(contractAddress);
-    const localToken = getTokensByChain(chainId)?.[contractAddress.toLowerCase()]
-    if (localToken) {
-        if (options?.isVerified && !localToken.isVerified) return null;
-        return generateTokenResponse(chainId, localToken);
+    try {
+        validateAddress(contractAddress);
+        const localToken = getTokensByChain(chainId)?.[contractAddress.toLowerCase()]
+        if (localToken) {
+            if (options?.isVerified && !localToken.isVerified) return null;
+            return generateTokenResponse(chainId, localToken);
+        }
+
+        const tokenFromBlockchain = await getTokenInfo(chainId, contractAddress);
+        const tokenResponse = generateTokenResponse(chainId, tokenFromBlockchain);
+        updateLocalCache(chainId, tokenResponse);
+        updateInDatabase(tokenResponse).catch(nop);
+
+        return tokenResponse;
+    } catch (error: any) {
+        return null;
     }
-
-    const tokenFromBlockchain = await getTokenInfo(chainId, contractAddress);
-    const tokenResponse = generateTokenResponse(chainId, tokenFromBlockchain);
-    updateLocalCache(chainId, tokenResponse);
-    updateInDatabase(tokenResponse).catch(nop);
-
-    return tokenResponse;
 }
 
 async function getMultiple(chainId: number, contractAddresses: string[], options?: TokenGetOptions): Promise<TokenResponse[]> {
@@ -92,7 +96,7 @@ async function updateInDatabase(token: TokenResponse) {
 
 function updateLocalCache(chainId: number|string, token: TokenResponse) {
     if (!tokenCacheByChainAndContract[chainId]) tokenCacheByChainAndContract[chainId] = {}
-    tokenCacheByChainAndContract[chainId][token._id.toLowerCase()] = token;
+    tokenCacheByChainAndContract[chainId][token.contractAddress.toLowerCase()] = token;
 }
 
 const TokenService = {
