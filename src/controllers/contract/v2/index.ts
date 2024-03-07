@@ -110,6 +110,7 @@ async function transformEssentialData(contract: ContractRawData): Promise<Contra
         redeemed: Number(contract.redeemed),
         purchase: await transformFinancialAttribute(contract, contract.purchaseToken, contract.purchaseAmount),
         payout: await transformFinancialAttribute(contract, contract.payoutToken, contract.payoutAmount),
+        payoutBalance: contract.payoutBalance,
         maturityPeriodInBlocks: Number(contract.maturityPeriodInBlocks),
         issuanceDate: new Date(contract.issuanceDate)
     }
@@ -150,7 +151,6 @@ async function transformExtendedData(contract: ContractRawData): Promise<Contrac
             score: await CalculatorController.score(contract, issuerScore),
             securedPercentage: await CalculatorController.securedPercentage(contract),
             tbv: await CalculatorController.tbv(contract),
-            payoutBalance: contract.payoutBalance,
             uniqueHolders: contract.uniqueHolders || 0,
             issuerScore,
         },
