@@ -51,6 +51,8 @@ async function securedPercentage(contract: ContractRawData, includeMin?: boolean
     const payoutBalanceClean = BigNumber(payoutBalance.toString()).div(BigNumber(10).pow(BigNumber(payoutToken.decimals))).toNumber()
 
     const notRedeemed = BigNumber(contract.totalBonds - contract.redeemed).times(payoutAmount).toNumber();
+    if (!notRedeemed) return 0; // this means all the bonds were purchased and redeemed
+
     const securedTmp = payoutBalanceClean * 100 / notRedeemed
     if (includeMin) {
         return Math.min(Number.isFinite(securedTmp) ? securedTmp : 0, 100);
