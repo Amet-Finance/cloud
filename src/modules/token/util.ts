@@ -3,7 +3,7 @@ import {getAddress} from "ethers";
 
 function generateTokenResponse(chainId: number|string, tokenInfo: any): TokenResponse {
 
-    const {name, symbol, decimals, icon, isVerified, contractAddress, unidentified} = tokenInfo
+    const {name, symbol, decimals, icon, isVerified, contractAddress, unidentified, priceUsd} = tokenInfo
     const contractsLowercase = contractAddress.toLowerCase();
     const _id = `${contractAddress}_${chainId}`.toLowerCase()
 
@@ -23,6 +23,10 @@ function generateTokenResponse(chainId: number|string, tokenInfo: any): TokenRes
 
     if (unidentified) {
         tokenResponse.unidentified = true;
+    }
+
+    if (priceUsd) {
+        tokenResponse.priceUsd = priceUsd;
     }
 
     return tokenResponse
