@@ -25,7 +25,8 @@
     "typescript": "5.3.3"
   },
   "scripts": {
-    "start": "tsc && node build/index.js",
+    "start": "node build/index.js",
+    "build:start": "tsc && npm run start",
     "build": "tsc"
   },
   "keywords": [],

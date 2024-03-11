@@ -11,15 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Connect to Server and Restart
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST_MAIN }}
-        username: ${{ secrets.USERNAME_MAIN }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd ~/cloud
-          git pull && npm i && npm run build && pm2 restart 1
+      - name: Connect to Server and Restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_MAIN }}
+          username: ${{ secrets.USERNAME_MAIN }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/cloud
+            git pull && npm i && npm run build && sudo systemctl restart cloud.service
