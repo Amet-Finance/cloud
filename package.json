@@ -13,7 +13,7 @@
     "ethers": "^6.8.1",
     "express": "^4.18.2",
     "helmet": "^7.1.0",
-    "mongodb": "^5.1.0",
+    "mongodb": "^5.8.0",
     "node-schedule": "^2.1.1",
     "prom-client": "^15.1.0"
   },
