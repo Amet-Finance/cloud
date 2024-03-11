@@ -15,13 +15,13 @@ async function tbv(contract: ContractRawData) {
 
     const purchaseAmountClean = BigNumber(contract.purchaseAmount).div(BigNumber(10).pow(BigNumber(purchaseToken.decimals))).toNumber()
     const payoutAmountClean = BigNumber(contract.payoutAmount).div(BigNumber(10).pow(BigNumber(payoutToken.decimals))).toNumber()
-    return ((contract.purchased * purchaseAmountClean) * (purchaseToken.priceUsd || 0)) + (contract.redeemed * payoutAmountClean * (payoutToken.priceUsd || 0))
+    return ((contract.purchased * purchaseAmountClean) * (purchaseToken.priceUsd ?? 0)) + (contract.redeemed * payoutAmountClean * (payoutToken.priceUsd ?? 0))
 }
 
 
 async function score(contract: ContractRawData, issuerScore?: number) {
     const {_id} = contract;
-    const [contractAddress, chainId] = _id.split("_");
+    const [_, chainId] = _id.split("_");
 
     const payoutToken = await TokenService.get(chainId, contract.payoutToken)
     const purchaseToken = await TokenService.get(chainId, contract.purchaseToken)

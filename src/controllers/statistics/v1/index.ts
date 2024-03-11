@@ -6,7 +6,7 @@ async function getStats(req: Request, res: Response) {
 
     const {type} = req.query
 
-    const cleanType: any = type?.toString() || "";
+    const cleanType: any = type?.toString() ?? "";
 
     const availableTypes = ['general-stats', 'tbv-daily-stats']
     if (!availableTypes.includes(cleanType)) ErrorV1.throw("Invalid type");

@@ -5,7 +5,6 @@ import {getAddress} from "ethers";
 async function getBalance(req: Request, res: Response) {
 
     try {
-        const {chainId} = req.query;
         const addressTmp = req.params.address;
 
         const address = getAddress(addressTmp);
@@ -15,11 +14,11 @@ async function getBalance(req: Request, res: Response) {
             .findOne({
                 _id: address.toLowerCase() as any
             })
-        
+
         return res.json({
             data: balance
         })
-    } catch (error: Error | any) {
+    } catch (error: any) {
         return res.status(400).json({
             message: error.message
         })
