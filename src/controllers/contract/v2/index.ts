@@ -2,7 +2,6 @@ import {Request, Response} from "express";
 import connection from "../../../db/main";
 import {CONTRACT_TYPES, RPCsByChain} from "../../../modules/web3/constants";
 import {
-    ContractBasicFormat,
     ContractEssentialFormat,
     ContractExtendedFormat,
     ContractQuery,
@@ -19,7 +18,6 @@ import ErrorV1 from "../../../routes/error/error";
 import axios from "axios";
 import s3Client from "../../../db/s3-client";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
-import CalculatorController from "./calculator";
 import {getIssuerScore} from "../../../modules/address";
 
 async function getBonds(req: Request, res: Response) {
@@ -103,16 +101,26 @@ async function transformData(contract: ContractRawData, config: TransformDataCon
 async function transformEssentialData(contract: ContractRawData): Promise<ContractEssentialFormat> {
     return {
         _id: contract._id,
+
         issuer: contract.issuer,
+        issuerScore: await getIssuerScore(contract.owner),
+        uniqueHolders: contract.uniqueHolders,
         owner: contract.owner,
+
         totalBonds: Number(contract.totalBonds),
         purchased: Number(contract.purchased),
         redeemed: Number(contract.redeemed),
+
         purchase: await transformFinancialAttribute(contract, contract.purchaseToken, contract.purchaseAmount),
         payout: await transformFinancialAttribute(contract, contract.payoutToken, contract.payoutAmount),
+
         payoutBalance: contract.payoutBalance,
+
         maturityPeriodInBlocks: Number(contract.maturityPeriodInBlocks),
-        issuanceDate: new Date(contract.issuanceDate)
+
+        issuanceDate: new Date(contract.issuanceDate),
+        issuanceBlock: contract.issuanceBlock,
+        isSettled: contract.isSettled,
     }
 }
 
@@ -127,33 +135,14 @@ async function transformFinancialAttribute(contract: ContractRawData, contractAd
     }
 }
 
-async function transformBasicData(contract: ContractRawData): Promise<ContractBasicFormat> {
-    return {
-        ...(await transformEssentialData(contract)),
-        score: await CalculatorController.score(contract),
-        tbv: await CalculatorController.tbv(contract)
-    }
+async function transformBasicData(contract: ContractRawData): Promise<ContractEssentialFormat> {
+    return await transformEssentialData(contract);
 }
 
 async function transformExtendedData(contract: ContractRawData): Promise<ContractExtendedFormat> {
-    const issuerScore = await getIssuerScore(contract.issuer);
-
     return {
-        contractDescription: {
-            ...(await BondDescriptionService.get(contract._id))
-        },
-        contractInfo: {
-            ...(await transformEssentialData(contract)),
-            isSettled: contract.isSettled,
-            issuanceBlock: contract.issuanceBlock,
-        },
-        contractStats: {
-            score: await CalculatorController.score(contract, issuerScore),
-            securedPercentage: await CalculatorController.securedPercentage(contract),
-            tbv: await CalculatorController.tbv(contract),
-            uniqueHolders: contract.uniqueHolders || 0,
-            issuerScore,
-        },
+        contractDescription: await BondDescriptionService.get(contract._id),
+        contractInfo: await transformEssentialData(contract),
         lastUpdated: contract.lastUpdated
     }
 }
