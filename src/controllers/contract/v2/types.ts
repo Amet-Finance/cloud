@@ -32,7 +32,6 @@ type ContractRawData = {
     purchaseAmount: string,
     payoutToken: string,
     payoutAmount: string,
-    payoutBalance: string,
 
     issuanceBlock: number,
     issuanceDate: Date,
