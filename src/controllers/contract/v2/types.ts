@@ -57,7 +57,6 @@ type ContractEssentialFormat = {
 
     purchase: FinancialAttributeInfo,
     payout: FinancialAttributeInfo,
-    payoutBalance: string,
 
     issuer: string,
     issuerScore: number,

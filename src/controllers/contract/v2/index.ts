@@ -114,8 +114,6 @@ async function transformEssentialData(contract: ContractRawData): Promise<Contra
         purchase: await transformFinancialAttribute(contract, contract.purchaseToken, contract.purchaseAmount),
         payout: await transformFinancialAttribute(contract, contract.payoutToken, contract.payoutAmount),
 
-        payoutBalance: contract.payoutBalance,
-
         maturityPeriodInBlocks: Number(contract.maturityPeriodInBlocks),
 
         issuanceDate: new Date(contract.issuanceDate),
