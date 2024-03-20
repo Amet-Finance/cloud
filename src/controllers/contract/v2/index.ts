@@ -107,7 +107,7 @@ async function transformEssentialData(contract: ContractRawData): Promise<Contra
 
         issuer: contract.issuer,
         issuerScore: await getIssuerScore(contract.owner),
-        uniqueHolders: contract.uniqueHolders,
+        uniqueHolders: contract.uniqueHolders ?? 0,
         owner: contract.owner,
 
         totalBonds: Number(contract.totalBonds),
