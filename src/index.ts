@@ -14,7 +14,6 @@ import TokenV1 from './routes/token/v1'
 import InitiateCache from "./modules/cache";
 import SecurityMiddleware from "./routes/middlewares/v1";
 
-
 app.use(cors())
 
 app.use('/v1/token', TokenV1);

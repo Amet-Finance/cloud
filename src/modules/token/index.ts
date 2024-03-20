@@ -2,7 +2,7 @@ import connection from "../../db/main";
 import {TokenCacheByChainAndContract, TokenGetOptions, TokenResponse} from "./types";
 import {nop} from "../utils/functions";
 import {generateTokenResponse, validateAddress} from "./util";
-import {getTokenInfo} from "../web3/token";
+import {Erc20Controller} from "amet-utils";
 
 let tokenCacheByChainAndContract: TokenCacheByChainAndContract = {}
 
@@ -44,6 +44,7 @@ function getTokensByChain(chainId: number|string) {
 
 async function get(chainId: number|string, contractAddress: string, options?: TokenGetOptions): Promise<TokenResponse | null> {
     try {
+        chainId = Number(chainId);
         validateAddress(contractAddress);
         const localToken = getTokensByChain(chainId)?.[contractAddress.toLowerCase()]
         if (localToken) {
@@ -51,7 +52,7 @@ async function get(chainId: number|string, contractAddress: string, options?: To
             return generateTokenResponse(chainId, localToken);
         }
 
-        const tokenFromBlockchain = await getTokenInfo(chainId, contractAddress);
+        const tokenFromBlockchain = await Erc20Controller.getTokenDetails(chainId, contractAddress);
         const tokenResponse = generateTokenResponse(chainId, tokenFromBlockchain);
         updateLocalCache(chainId, tokenResponse);
         updateInDatabase(tokenResponse).catch(nop);

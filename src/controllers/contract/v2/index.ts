@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import connection from "../../../db/main";
-import {CONTRACT_TYPES, RPCsByChain} from "../../../modules/web3/constants";
+// import {CONTRACT_TYPES, RPCsByChain} from "../../../modules/web3/constants";
 import {
     ContractEssentialFormat,
     ContractExtendedFormat,
@@ -19,6 +19,7 @@ import axios from "axios";
 import s3Client from "../../../db/s3-client";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
 import {getIssuerScore} from "../../../modules/address";
+import {CONTRACT_TYPES, RPCsByChain} from "amet-utils";
 
 async function getBonds(req: Request, res: Response) {
     const {
@@ -31,6 +32,8 @@ async function getBonds(req: Request, res: Response) {
         sortByBondScore
     } = req.query;
 
+    // todo add purchaseToken
+    // add payoutToken
     const query: ContractQuery = {
         type: CONTRACT_TYPES.FIXED_FLEX.BOND
     }
