@@ -1,12 +1,12 @@
 import {Request, Response} from "express";
 
 import TokenService from "../../../modules/token";
-import {getBalance} from "../../../modules/web3/token";
-import {RPCsByChain} from "../../../modules/web3/constants";
 import {TokenResponse} from "../../../modules/token/types";
+import {Erc20Controller, RPCsByChain} from "amet-utils";
 
 async function get(req: Request, res: Response) {
     // todo implement here security checks as well
+
     const {chainId, contractAddresses, returnBalance, address, verified} = req.query as any;
     const requestBalance = returnBalance === "true" && address;
     const isVerified = verified === "true";
@@ -28,9 +28,10 @@ async function get(req: Request, res: Response) {
     for (const token of tokens) {
         const [contractAddress] = token._id.toLowerCase().split("_");
 
+
         tokenKeyValue[contractAddress] = {
             ...token,
-            ...(requestBalance ? await getBalance(chainId, contractAddress, address, token.decimals) : {})
+            ...(requestBalance ? await Erc20Controller.getTokenBalanceNormalized(chainId, contractAddress, address, token.decimals) : {})
         }
     }
 

@@ -32,7 +32,6 @@ type ContractRawData = {
     purchaseAmount: string,
     payoutToken: string,
     payoutAmount: string,
-    payoutBalance: string,
 
     issuanceBlock: number,
     issuanceDate: Date,
@@ -57,17 +56,17 @@ type ContractEssentialFormat = {
 
     purchase: FinancialAttributeInfo,
     payout: FinancialAttributeInfo,
-    payoutBalance: string,
 
     issuer: string,
+    issuerScore: number,
+    uniqueHolders: number,
+
     owner: string,
     issuanceDate: Date,
+    isSettled: boolean,
+    issuanceBlock: number,
 }
 
-type ContractBasicFormat = ContractEssentialFormat & {
-    score: number,
-    tbv: number
-}
 
 type ContractDescription = {
     name: string,
@@ -80,23 +79,9 @@ type ContractDescription = {
     }
 }
 
-type ContractStats = {
-    score: number,
-    securedPercentage: number,
-    issuerScore: number,
-    uniqueHolders: number,
-    tbv: number
-}
-
-type ContractExtendedInfoFormat = ContractEssentialFormat & {
-    isSettled: boolean,
-    issuanceBlock: number,
-}
-
 type ContractExtendedFormat = {
     contractDescription: ContractDescription,
-    contractInfo: ContractExtendedInfoFormat,
-    contractStats: ContractStats,
+    contractInfo: ContractEssentialFormat,
     lastUpdated: Date
 }
 
@@ -108,6 +93,5 @@ export type  {
     ContractSortQuery,
     TransformDataConfig,
     ContractRawData,
-    ContractBasicFormat,
     ContractExtendedFormat
 }
