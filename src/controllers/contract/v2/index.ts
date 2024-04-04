@@ -96,7 +96,7 @@ async function transformData(contract: ContractRawData, config: TransformDataCon
             throw Error("Unsupported response format")
         }
     } catch (error: any) {
-        // console.error(error)
+        console.error(error)
     }
 }
 
