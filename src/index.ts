@@ -10,6 +10,7 @@ import AddressV1 from './routes/address/v1'
 import StatisticsV1 from './routes/statistics/v1'
 import TokenV1 from './routes/token/v1'
 import InitiateCache from "./modules/cache";
+import InitJobs from "./jobs";
 
 app.use(cors())
 
@@ -22,5 +23,6 @@ app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with
 connection.connect()
     .then(async () => {
         await InitiateCache();
+        InitJobs();
         app.listen(process.env.PORT, () => console.log(`Amet Cloud is listening at PORT=${process.env.PORT}| ${new Date().toLocaleTimeString()}`))
     })

@@ -21,7 +21,7 @@ const jobs = [
     }
 ]
 
-function init() {
+export default function InitJobs() {
 
     for (const job of jobs) {
         scheduleJob(job.scheduler, async () => {
@@ -37,5 +37,3 @@ function init() {
     }
 
 }
-
-export default init;
