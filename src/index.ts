@@ -7,6 +7,7 @@ import connection from './db/main';
 
 import app from "./server";
 import AddressV1 from './routes/address/v1'
+import DescriptionV1 from './routes/description/v1'
 import StatisticsV1 from './routes/statistics/v1'
 import TokenV1 from './routes/token/v1'
 import InitiateCache from "./modules/cache";
@@ -15,6 +16,7 @@ import InitJobs from "./jobs";
 app.use(cors())
 
 app.use('/v1/token', TokenV1);
+app.use('/v1/description', DescriptionV1);
 app.use('/v1/address', AddressV1);
 app.use('/v1/statistics', StatisticsV1);
 
