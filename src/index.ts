@@ -15,8 +15,6 @@ app.use(cors())
 
 app.use('/v1/token', TokenV1);
 app.use('/v1/address', AddressV1);
-
-
 app.use('/v1/statistics', StatisticsV1);
 
 app.get('/', (_, res: Response) => res.send("Unlock Financial Possibilities with On-Chain Bonds | Amet Finance"))
