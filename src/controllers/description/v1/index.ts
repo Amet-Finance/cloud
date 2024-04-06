@@ -10,11 +10,11 @@ import BigNumber from "bignumber.js";
 async function update(req: Request, res: Response) {
 
     const {contractAddress, chainId, title, description} = req.body;
-    const {address} = req.params
+    const {address} = req.query
 
     const contract = await FixedFlexBondController.getBondDetails(chainId, contractAddress);
 
-    if (contract.owner.toLowerCase() !== address.toLowerCase()) ErrorV1.throw("Invalid Owner");
+    if (contract.owner.toLowerCase() !== `${address}`.toLowerCase()) ErrorV1.throw("Invalid Owner");
     const _id = `${contractAddress}_${chainId}`.toLowerCase();
 
     const purchaseToken = await TokenService.get(chainId, contract.purchaseToken);
