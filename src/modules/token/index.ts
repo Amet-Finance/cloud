@@ -37,6 +37,9 @@ async function cache() {
     }
 }
 
+function getTokens() {
+    return tokenCacheByChainAndContract;
+}
 
 function getTokensByChain(chainId: number|string) {
     return tokenCacheByChainAndContract[chainId] || {}
@@ -74,7 +77,28 @@ async function getMultiple(chainId: number, contractAddresses: string[], options
     return response;
 }
 
-function getVerifiedTokens(chainId: number, limit?: number): TokenResponse[] {
+function getVerifiedTokens(chainId?: number, limit?: number): TokenResponse[] {
+    if (chainId) return getVerifiedTokensByChain(chainId, limit);
+
+    const tokensByChain = getTokens();
+
+    const response = []
+    for (const chainId in tokensByChain) {
+        for (const contractAddress in tokensByChain) {
+            if (tokensByChain[contractAddress].isVerified) {
+                response.push(generateTokenResponse(chainId, tokensByChain[contractAddress]));
+            }
+
+            if (limit && response.length === limit) {
+                break;
+            }
+        }
+    }
+
+    return response;
+}
+
+function getVerifiedTokensByChain(chainId: number, limit?: number): TokenResponse[] {
     const tokensByChain = getTokensByChain(chainId);
 
     const response = []

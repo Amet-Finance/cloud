@@ -1,7 +1,5 @@
 import {Collection, Db, MongoClient, MongoClientOptions} from 'mongodb';
 import {AddressRawData} from "../modules/address/types";
-import {ContractRawData} from "../controllers/contract/v2/types";
-import {BalanceRawData} from "../modules/balance/types";
 import {TokenRawData} from "../modules/token/types";
 
 class Main {
@@ -31,16 +29,8 @@ class Main {
         console.timeEnd('Connecting to MongoDB')
     }
 
-    get contract(): Collection<ContractRawData> {
-        return this.db.collection("Contract")
-    }
-
     get address(): Collection<AddressRawData> {
         return this.db.collection("Address")
-    }
-
-    get balance(): Collection<BalanceRawData> {
-        return this.db.collection("Balance")
     }
 
     get token(): Collection<TokenRawData> {

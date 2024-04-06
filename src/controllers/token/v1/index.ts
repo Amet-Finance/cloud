@@ -12,7 +12,7 @@ async function get(req: Request, res: Response) {
     const isVerified = verified === "true";
     const contractAddressesUpdated = contractAddresses ? JSON.parse(contractAddresses) : [];
 
-    if (!RPCsByChain[chainId]) {
+    if ((requestBalance || contractAddressesUpdated.length) && !RPCsByChain[chainId]) {
         throw Error("Chain is not supported")
     }
 

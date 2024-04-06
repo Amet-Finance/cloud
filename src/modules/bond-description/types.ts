@@ -2,19 +2,25 @@ type BondDescriptionCache = {
     [contractId: string]: BondDescription
 }
 
-type BondDescription = {
+
+type ContractDescription = {
     name: string,
-    description: string;
+    description: string,
     external_url: string,
     image: string,
-    details: {
+    details?: {
         title: string,
         description: string
-    },
+    }
+}
+
+
+type BondDescription = ContractDescription & {
     cacheTime: Date
 }
 
 export type {
     BondDescriptionCache,
-    BondDescription
+    BondDescription,
+    ContractDescription
 }
