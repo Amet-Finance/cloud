@@ -1,6 +1,7 @@
 import {Collection, Db, MongoClient, MongoClientOptions} from 'mongodb';
 import {AddressRawData} from "../modules/address/types";
 import {TokenRawData} from "../modules/token/types";
+import {GeneralStatistics} from "../modules/statistics/types";
 
 class Main {
     constructor() {
@@ -36,6 +37,12 @@ class Main {
     get token(): Collection<TokenRawData> {
         return this.db.collection(`Token`);
     }
+
+    get general(): Collection<GeneralStatistics> {
+        return this.db.collection("General")
+    }
+
+
 
 }
 
