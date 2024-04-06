@@ -80,10 +80,12 @@ async function getMultiple(chainId: number, contractAddresses: string[], options
 function getVerifiedTokens(chainId?: number, limit?: number): TokenResponse[] {
     if (chainId) return getVerifiedTokensByChain(chainId, limit);
 
-    const tokensByChain = getTokens();
+    const tokens = getTokens();
 
     const response = []
-    for (const chainId in tokensByChain) {
+    for (const chainId in tokens) {
+        const tokensByChain = tokens[chainId];
+
         for (const contractAddress in tokensByChain) {
             if (tokensByChain[contractAddress].isVerified) {
                 response.push(generateTokenResponse(chainId, tokensByChain[contractAddress]));
