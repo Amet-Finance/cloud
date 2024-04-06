@@ -29,7 +29,7 @@ async function get(req: Request, res: Response) {
         const [contractAddress] = token._id.toLowerCase().split("_");
 
 
-        tokenKeyValue[contractAddress] = {
+        tokenKeyValue[token._id.toLowerCase()] = {
             ...token,
             ...(requestBalance ? await Erc20Controller.getTokenBalanceNormalized(chainId, contractAddress, address, token.decimals) : {})
         }
