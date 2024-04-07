@@ -6,7 +6,7 @@ import {BondGeneralStatsShort, UserGeneralStatsShort} from "./type";
 
 function getApi(chainId: number) {
     const API: StringKeyedObject<string> = {
-        [CHAINS.Base]: `https://gateway-arbitrum.network.thegraph.com/api/6d563e0becc20d2d52c08ca555d0a735/subgraphs/id/JBBiYxUHriMu5GpUtiuPLzroZbD6aGkaoipdLRn47BMy`
+        [CHAINS.Base]: `https://gateway-arbitrum.network.thegraph.com/api/bfadad3998f2e41d8fc090f895bf3aa7/subgraphs/id/JBBiYxUHriMu5GpUtiuPLzroZbD6aGkaoipdLRn47BMy`
     }
 
     return API[chainId];
