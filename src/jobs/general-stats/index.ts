@@ -34,21 +34,24 @@ export default async function updateGeneralStats() {
             const payoutToken = await TokenService.get(chainId, bond.payoutToken.id);
 
             if (purchaseToken && payoutToken) {
-                const purchaseAmount = BigNumber(bond.purchaseAmount).div(BigNumber(10).pow(BigNumber(purchaseToken.decimals)))
-                const purchaseTotal = purchaseAmount.times(purchaseToken.priceUsd ?? 0).toNumber();
+                const purchaseAmountClean = BigNumber(bond.purchaseAmount).div(BigNumber(10).pow(BigNumber(purchaseToken.decimals)))
+                const purchaseTotal = purchaseAmountClean.times(purchaseToken.priceUsd ?? 0).toNumber();
 
-                const payoutAmount = BigNumber(bond.payoutAmount).div(BigNumber(10).pow(BigNumber(payoutToken.decimals)))
-                const payoutTotal = payoutAmount.times(payoutToken.priceUsd ?? 0).toNumber();
+                const payoutAmountClean = BigNumber(bond.payoutAmount).div(BigNumber(10).pow(BigNumber(payoutToken.decimals)))
+                const payoutTotal = payoutAmountClean.times(payoutToken.priceUsd ?? 0).toNumber();
 
                 const currentReturn = payoutTotal / purchaseTotal || 0
                 if (currentReturn > generalStats.maxReturn) {
                     generalStats.maxReturn = currentReturn;
                 }
+
+
+                if (payoutToken.priceUsd && purchaseToken.priceUsd) {
+                    const gain = (payoutAmountClean.toNumber() * payoutToken.priceUsd) - (purchaseAmountClean.toNumber() * purchaseToken.priceUsd)
+                    generalStats.realisedGains += (Number(bond.redeemed) * gain);
+                }
             }
 
-            if (payoutToken?.priceUsd) {
-                generalStats.realisedGains += Number(bond.redeemed) * payoutToken.priceUsd;
-            }
 
         }
     }
