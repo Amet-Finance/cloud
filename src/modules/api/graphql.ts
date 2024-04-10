@@ -6,7 +6,7 @@ import {BondGeneralStatsShort, UserGeneralStatsShort} from "./type";
 
 function getApi(chainId: number) {
     const API: StringKeyedObject<string> = {
-        [CHAINS.Base]: `https://gateway-arbitrum.network.thegraph.com/api/bfadad3998f2e41d8fc090f895bf3aa7/subgraphs/id/JBBiYxUHriMu5GpUtiuPLzroZbD6aGkaoipdLRn47BMy`
+        [CHAINS.Base]: `https://subgraph.satsuma-prod.com/10c8c7e96744/unconstraineds-team--970943/Amet-Finance-8453/version/0.5.2/api`
     }
 
     return API[chainId];
