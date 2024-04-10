@@ -3,7 +3,6 @@ import {StringKeyedObject} from "../../types";
 import {postAPI} from "./index";
 import {BondGeneralStatsShort, UserGeneralStatsShort} from "./type";
 
-
 function getApi(chainId: number) {
     const API: StringKeyedObject<string> = {
         [CHAINS.Base]: `https://subgraph.satsuma-prod.com/10c8c7e96744/unconstraineds-team--970943/Amet-Finance-8453/version/0.5.2/api`
@@ -11,7 +10,6 @@ function getApi(chainId: number) {
 
     return API[chainId];
 }
-
 
 async function getDataForGeneralStatistics(chainId: number) {
 
