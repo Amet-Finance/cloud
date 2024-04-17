@@ -1,8 +1,7 @@
 type AddressRawData = {
-    _id: string
-    issuedCount?: number,
-    score?: number
-}
+    _id: string;
+    xp?: number;
+};
 
 export type  {
     AddressRawData

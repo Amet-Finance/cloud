@@ -1,25 +1,31 @@
-import {scheduleJob} from "node-schedule"
-import UpdateGeneralStats from "./general-stats";
-import calculatePricesFromCoinMarketCap from "./token/prices-cm";
-import calculateDailyStats from "./general-stats/tbv";
+import { scheduleJob } from 'node-schedule';
+import UpdateGeneralStats from './general-stats';
+import calculatePricesFromCoinMarketCap from './token/prices-cm';
+import calculateDailyStats from './general-stats/tbv';
+import { calculateXP } from './address/xp';
 
 const jobs = [
     {
-        name: "Update General Stats",
-        scheduler: "0 * * * *", // every hour
-        instance: UpdateGeneralStats
+        name: 'Update General Stats',
+        scheduler: '0 * * * *', // every hour
+        instance: UpdateGeneralStats,
     },
     {
-        name: "Calculate Token Prices",
-        scheduler: "0 * * * *", // every hour
-        instance: calculatePricesFromCoinMarketCap
+        name: 'Calculate Token Prices',
+        scheduler: '0 * * * *', // every hour
+        instance: calculatePricesFromCoinMarketCap,
     },
     {
-        name: "Calculate TBV",
-        scheduler: "0 1 * * *", // every day at 1am
-        instance: calculateDailyStats
-    }
-]
+        name: 'Calculate TBV',
+        scheduler: '0 1 * * *', // every day at 1am
+        instance: calculateDailyStats,
+    },
+    {
+        name: 'Calculate XP',
+        scheduler: '0 1 * * *', // every day at 1am
+        instance: calculateXP,
+    },
+];
 
 export default function InitJobs() {
 

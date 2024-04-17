@@ -1,22 +1,38 @@
-type BondGeneralStatsShort = {
-    "id": string,
-    "payoutToken": {
-        "id": string
-    },
-    "purchaseToken": {
-        "id": string
-    },
-    "purchased": string,
-    "redeemed": string,
-    purchaseAmount: string
-    payoutAmount: string
-}
-
 type UserGeneralStatsShort = {
-    id: string
-}
+    id: string;
+};
+
+type BondIssuerDetail = {
+    issuer: UserGeneralStatsShort;
+};
+
+type BondPurchasePayoutDetail = {
+    payoutToken: {
+        id: string;
+    };
+    purchaseToken: {
+        id: string;
+    };
+    purchaseAmount: string;
+    payoutAmount: string;
+};
+
+type BondGeneralStatsShort = BondPurchasePayoutDetail & {
+    id: string;
+    purchased: string;
+    redeemed: string;
+};
+
+type ActionLogForXP = {
+    from: string;
+    to: string;
+    count: string;
+    bond: BondPurchasePayoutDetail;
+};
 
 export type {
     BondGeneralStatsShort,
-    UserGeneralStatsShort
-}
+    UserGeneralStatsShort,
+    ActionLogForXP,
+    BondIssuerDetail,
+};
