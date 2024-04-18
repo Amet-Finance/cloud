@@ -11,6 +11,7 @@ async function calculateXP() {
         Issuance: 10,
         Purchase: 1,
         Redeem: 2,
+        Referral: 2,
     };
 
     const userBalances: StringKeyedObject<number> = {};
