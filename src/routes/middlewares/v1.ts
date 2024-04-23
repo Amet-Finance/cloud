@@ -1,15 +1,17 @@
-import {NextFunction, Request, Response} from "express";
-import {validateSignature} from "../../modules/address/util";
+import { NextFunction, Request, Response } from 'express';
+import { validateSignature } from '../../modules/address/util';
+import { validateAddress } from '../../modules/token/util';
 
 function signature(req: Request, res: Response, next: NextFunction) {
     try {
-        const {address, signature, message} = req.query;
+        const { address, signature, message } = req.query;
+        validateAddress(address?.toString());
         validateSignature(`${address}`, `${signature}`, `${message}`);
-        next();
+        return next();
     } catch (error) {
-        res.status(400).json({
-            message: "Invalid signature"
-        })
+        return res.status(400).json({
+            message: 'Invalid signature',
+        });
     }
 }
 

@@ -1,11 +1,22 @@
-import {TokenResponse} from "./types";
-import {getAddress} from "ethers";
+import { TokenResponse } from './types';
+import { getAddress } from 'ethers';
 
-function generateTokenResponse(chainId: number|string, tokenInfo: any): TokenResponse {
-
-    const {name, symbol, decimals, icon, isVerified, contractAddress, unidentified, priceUsd} = tokenInfo
+function generateTokenResponse(
+    chainId: number | string,
+    tokenInfo: any,
+): TokenResponse {
+    const {
+        name,
+        symbol,
+        decimals,
+        icon,
+        isVerified,
+        contractAddress,
+        unidentified,
+        priceUsd,
+    } = tokenInfo;
     const contractsLowercase = contractAddress.toLowerCase();
-    const _id = `${contractAddress}_${chainId}`.toLowerCase()
+    const _id = `${contractAddress}_${chainId}`.toLowerCase();
 
     const tokenResponse: TokenResponse = {
         _id,
@@ -13,8 +24,8 @@ function generateTokenResponse(chainId: number|string, tokenInfo: any): TokenRes
         chainId: Number(chainId),
         name,
         symbol,
-        decimals
-    }
+        decimals,
+    };
 
     if (isVerified) {
         tokenResponse.icon = getIcon(icon, isVerified);
@@ -29,12 +40,14 @@ function generateTokenResponse(chainId: number|string, tokenInfo: any): TokenRes
         tokenResponse.priceUsd = priceUsd;
     }
 
-    return tokenResponse
+    return tokenResponse;
 }
 
 
-function validateAddress(address: string) {
-    return address && getAddress(address)
+function validateAddress(address: string | undefined) {
+    if (!address || !getAddress(address)) {
+        throw Error('Invalid address');
+    }
 }
 
 function getIcon(icon: string, isVerified: boolean) {

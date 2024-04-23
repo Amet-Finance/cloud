@@ -5,6 +5,7 @@ import { validateAddress } from '../../../modules/token/util';
 async function get(req: Request, res: Response) {
     const { address } = req.query as any;
     validateAddress(address);
+
     const addressInfo = await connection.address.findOne({
         _id: address.toLowerCase(),
     });
