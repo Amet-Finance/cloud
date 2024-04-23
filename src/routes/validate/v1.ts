@@ -4,6 +4,6 @@ import ValidateControllerV1 from '../../controllers/validate/v1';
 
 const router = Router();
 
-router.post('/twitter', HandlerV1.bind(null, ValidateControllerV1.twitter));
+router.get('/twitter', HandlerV1.bind(null, ValidateControllerV1.twitter));
 
 export default router;
