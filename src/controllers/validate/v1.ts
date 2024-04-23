@@ -1,24 +1,22 @@
 import { Request, Response } from 'express';
-import axios from 'axios';
 import qs from 'qs';
+import Requests from '../../modules/utils/requests';
 
 async function twitter(req: Request, res: Response) {
     const { state, code } = req.query;
 
     console.log(req.query);
 
-    const data = qs.stringify({
-        code,
-        grant_type: 'authorization_code',
-        client_id: 'd295SDkyRFFPWV9mZDZMUV95RDg6MTpjaQ',
-        redirect_uri: 'https://api.amet.finance/validate/twitter',
-        code_verifier: 'challenge',
-    });
-
     try {
-        const request = await axios.post(
+        const tokens = await Requests.post(
             'https://api.twitter.com/2/oauth2/token',
-            data,
+            qs.stringify({
+                code,
+                grant_type: 'authorization_code',
+                client_id: 'd295SDkyRFFPWV9mZDZMUV95RDg6MTpjaQ',
+                redirect_uri: 'https://api.amet.finance/validate/twitter',
+                code_verifier: 'challenge',
+            }),
             {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -27,36 +25,20 @@ async function twitter(req: Request, res: Response) {
             },
         );
 
-        const response = request.data;
-
-        const userInfo = await axios.get(`https://api.twitter.com/2/users/me`, {
-            headers: {
-                Authorization: `Bearer ${response.access_token}`,
-            },
-        });
+        const userInfo = await Requests.get(
+            `https://api.twitter.com/2/users/me`,
+            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+        );
 
         console.log(userInfo.data);
 
-        // const ametTwitterId = 1687523571864653825;
-        //
-        // const url = `https://api.twitter.com/2/users/${ametTwitterId}/following`;
-        // await axios.post(url, { target_user_id: ametTwitterId },
-        //     {
-        //         headers: {
-        //             'Authorization': `Bearer ${response.access_token}`,
-        //             'Content-Type': 'application/json',
-        //         },
-        //     });
+        const followStatus = await Requests.post(
+            `https://api.twitter.com/2/users/${userInfo.data.id}/following`,
+            { target_user_id: '1687523571864653825' },
+            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+        );
 
-        // {
-        //  token_type: 'bearer',
-        //    expires_in: 7200,
-        //    access_token: 'enBhOUdhYkExNFk3a2M0azJfVktLaGtKYktqQ2NkenVoM1c1Q25CeXFDOGtsOjE3MTM4NzIyMDg0Mzk6MTowOmF0OjE',
-        //    scope: 'follows.read offline.access users.read tweet.read follows.write',
-        //    refresh_token: 'dDh5czU1NGZ0UW45SWJ1RTZoclJOa1c1Y2VJVGFESGhCMjRxT0xJM2dRWWpEOjE3MTM4NzIyMDg0Mzk6MTowOnJ0OjE'
-        //  }
-
-        // console.log(request.data);
+        console.log(followStatus);
 
         // todo change localhost
         return res.redirect('http://localhost:3000/auth/success');
