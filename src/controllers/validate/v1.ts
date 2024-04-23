@@ -43,7 +43,7 @@ async function twitter(req: Request, res: Response) {
         // todo change localhost
         return res.redirect('http://localhost:3000/auth/success');
     } catch (error: any) {
-        console.log(error.message);
+        console.log(error);
         return res.redirect('http://localhost:3000/auth/failure');
     }
 }
