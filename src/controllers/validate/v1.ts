@@ -27,6 +27,27 @@ async function twitter(req: Request, res: Response) {
             },
         );
 
+        const response = request.data;
+
+        const userInfo = await axios.get(`https://api.twitter.com/2/users/me`, {
+            headers: {
+                Authorization: `Bearer ${response.access_token}`,
+            },
+        });
+
+        console.log(userInfo.data);
+
+        // const ametTwitterId = 1687523571864653825;
+        //
+        // const url = `https://api.twitter.com/2/users/${ametTwitterId}/following`;
+        // await axios.post(url, { target_user_id: ametTwitterId },
+        //     {
+        //         headers: {
+        //             'Authorization': `Bearer ${response.access_token}`,
+        //             'Content-Type': 'application/json',
+        //         },
+        //     });
+
         // {
         //  token_type: 'bearer',
         //    expires_in: 7200,
@@ -37,10 +58,10 @@ async function twitter(req: Request, res: Response) {
 
         // console.log(request.data);
 
-        return res.redirect("http://localhost:3000/auth/success")
+        // todo change localhost
+        return res.redirect('http://localhost:3000/auth/success');
     } catch (error: any) {
-        console.log(error.message);
-        console.log(error);
+        return res.redirect('http://localhost:3000/auth/failure');
     }
 }
 
