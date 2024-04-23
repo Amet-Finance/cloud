@@ -3,16 +3,14 @@ import qs from 'qs';
 import Requests from '../../modules/utils/requests';
 
 async function twitter(req: Request, res: Response) {
-    const { state, code } = req.query;
-
-    console.log(req.query);
+    const { code } = req.query;
 
     try {
         const tokens = await Requests.post(
             'https://api.twitter.com/2/oauth2/token',
             qs.stringify({
                 code,
-                grant_type: 'authorization_code',
+                grant_type: 'client_credentials',
                 client_id: 'd295SDkyRFFPWV9mZDZMUV95RDg6MTpjaQ',
                 redirect_uri: 'https://api.amet.finance/validate/twitter',
                 code_verifier: 'challenge',
@@ -24,6 +22,8 @@ async function twitter(req: Request, res: Response) {
                 },
             },
         );
+
+        console.log(tokens);
 
         const userInfo = await Requests.get(
             `https://api.twitter.com/2/users/me`,
