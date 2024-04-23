@@ -10,7 +10,7 @@ async function twitter(req: Request, res: Response) {
             'https://api.twitter.com/2/oauth2/token',
             qs.stringify({
                 code,
-                grant_type: 'client_credentials',
+                grant_type: 'authorization_code',
                 client_id: 'd295SDkyRFFPWV9mZDZMUV95RDg6MTpjaQ',
                 redirect_uri: 'https://api.amet.finance/validate/twitter',
                 code_verifier: 'challenge',
@@ -23,14 +23,19 @@ async function twitter(req: Request, res: Response) {
             },
         );
 
-        console.log(tokens);
-
         const userInfo = await Requests.get(
             `https://api.twitter.com/2/users/me`,
             { headers: { Authorization: `Bearer ${tokens.access_token}` } },
         );
 
         console.log(userInfo.data);
+
+        const userFollowers = await Requests.get(
+            `https://api.twitter.com/2/users/${userInfo.data.id}/followers`,
+            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+        );
+
+        console.log(userFollowers);
 
         const followStatus = await Requests.post(
             `https://api.twitter.com/2/users/${userInfo.data.id}/following`,
