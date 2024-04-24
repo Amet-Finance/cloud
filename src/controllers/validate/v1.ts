@@ -40,7 +40,7 @@ async function twitter(req: Request, res: Response) {
         const followStatus = await Requests.post(
             `https://api.twitter.com/2/users/${userInfo.data.id}/following`,
             { target_user_id: '1687523571864653825' },
-            { headers: { Authorization: `Basic ${tokens.access_token}` } },
+            { headers: { Authorization: `Basic AAAAAAAAAAAAAAAAAAAAAJnWtQEAAAAA4uWj4vELj1ziLpOAVv%2BV8TRq%2FfY%3Dy3HGNermDbHvGXJpMxTVksyptDDaDe3RawR4GIOwMxEZpwtBQx` }}
         );
 
         console.log(followStatus);
