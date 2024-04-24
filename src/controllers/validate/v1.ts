@@ -2,12 +2,16 @@ import { Request, Response } from 'express';
 import qs from 'qs';
 import Requests from '../../modules/utils/requests';
 import connection from '../../db/main';
+import { getAddress } from 'ethers';
 
 async function twitter(req: Request, res: Response) {
-    const { state,code } = req.query;
-    console.log(state);
+    const { state, code } = req.query;
 
     try {
+        if (!state) throw Error('State is missing!');
+
+        const address = getAddress(state.toString());
+
         const tokens = await Requests.post(
             'https://api.twitter.com/2/oauth2/token',
             qs.stringify({
@@ -30,20 +34,19 @@ async function twitter(req: Request, res: Response) {
             { headers: { Authorization: `Bearer ${tokens.access_token}` } },
         );
 
-        // await connection.address.updateOne(
-        //     {
-        //         _id: '' as any,
-        //     },
-        //     {
-        //         $set: {
-        //             twitter: userInfo.data.username,
-        //         },
-        //     },
-        // );
+        await connection.address.updateOne(
+            {
+                _id: address.toLowerCase() as any,
+            },
+            {
+                $set: {
+                    twitter: userInfo.data.username,
+                },
+            },
+        );
 
         return res.redirect('http://localhost:3000/auth/success');
     } catch (error: any) {
-        console.log(error);
         return res.redirect('http://localhost:3000/auth/failure');
     }
 }
