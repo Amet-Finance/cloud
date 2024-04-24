@@ -30,17 +30,17 @@ async function twitter(req: Request, res: Response) {
 
         console.log(userInfo.data);
 
-        const userFollowers = await Requests.get(
-            `https://api.twitter.com/2/users/${userInfo.data.id}/followers`,
-            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
-        );
+        // const userFollowers = await Requests.get(
+        //     `https://api.twitter.com/2/users/${userInfo.data.id}/followers`,
+        //     { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+        // );
 
-        console.log(userFollowers);
+        // console.log(userFollowers);
 
         const followStatus = await Requests.post(
             `https://api.twitter.com/2/users/${userInfo.data.id}/following`,
             { target_user_id: '1687523571864653825' },
-            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+            { headers: { Authorization: `Basic ${tokens.access_token}` } },
         );
 
         console.log(followStatus);
