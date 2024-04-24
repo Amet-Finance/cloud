@@ -55,7 +55,6 @@ async function discord(req: Request, res: Response) {
 
     const { state, code } = req.query;
 
-    console.log(req.query);
     try {
         if (!state) throw Error('State is missing!');
 
@@ -81,15 +80,7 @@ async function discord(req: Request, res: Response) {
             },
         );
 
-        console.log(tokens);
 
-        // {
-        //     "access_token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG",
-        //     "token_type": "Bearer",
-        //     "expires_in": 604800,
-        //     "refresh_token": "D43f5y0ahjqew82jZ4NViEr2YafMKhue",
-        //     "scope": "identify"
-        // }
         const user = await Requests.get(
             `https://discord.com/api/v10/users/@me`,
             { headers: { Authorization: `Bearer ${tokens.access_token}` } },
@@ -111,6 +102,7 @@ async function discord(req: Request, res: Response) {
         } catch (error: any) {
             const addUser = await Requests.put(
                 `https://discord.com/api/v10/guilds/${ametServerId}/members/${user.id}`,
+                { access_token: tokens.access_token },
                 { headers: { Authorization: `Bearer ${tokens.access_token}` } },
             );
             console.log(`addUser`, addUser);
@@ -129,7 +121,7 @@ async function discord(req: Request, res: Response) {
 
         return res.redirect('http://localhost:3000/auth/success');
     } catch (error: any) {
-        console.log(error.message);
+        console.log(error);
         return res.redirect('http://localhost:3000/auth/failure');
     }
 }
