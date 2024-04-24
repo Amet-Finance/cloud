@@ -10,8 +10,14 @@ async function post(url: string, body?: any, config?: AxiosRequestConfig) {
     return response.data;
 }
 
+async function put(url: string, body?: any, config?: AxiosRequestConfig) {
+    const response = await axios.put(url, body, config);
+    return response.data;
+}
+
 const Requests = {
     get,
-    post
+    post,
+    put
 };
 export default Requests;

@@ -90,15 +90,32 @@ async function discord(req: Request, res: Response) {
         //     "refresh_token": "D43f5y0ahjqew82jZ4NViEr2YafMKhue",
         //     "scope": "identify"
         // }
-
-
-        const useGuilds = await Requests.get(
-            `https://discord.com/api/v10/users/@me/guilds`,
+        const user = await Requests.get(
+            `https://discord.com/api/v10/users/@me`,
             { headers: { Authorization: `Bearer ${tokens.access_token}` } },
         );
+        console.log(user);
+        //
+        // {
+        //     id: string
+        //     username: string
+        // }
 
+        const ametServerId = '1142005217399943250';
+        const userGuild = await Requests.get(
+            `https://discord.com/api/v10/users/@me/guilds/${ametServerId}/member`,
+            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+        );
+        console.log(userGuild);
 
-        console.log(useGuilds);
+        // if (!userGuild) {
+        const addUser = await Requests.put(
+            `https://discord.com/api/v10/guilds/${ametServerId}/members/${user.id}`,
+            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+        );
+        console.log(addUser);
+        // }
+
         // await connection.address.updateOne(
         //     {
         //         _id: address.toLowerCase() as any,
