@@ -3,6 +3,7 @@ import qs from 'qs';
 import Requests from '../../modules/utils/requests';
 import connection from '../../db/main';
 import { getAddress } from 'ethers';
+import { AMET_WEB_URL } from '../../constants';
 
 async function twitter(req: Request, res: Response) {
     const { state, code } = req.query;
@@ -45,9 +46,9 @@ async function twitter(req: Request, res: Response) {
             },
         );
 
-        return res.redirect('http://localhost:3000/auth/success');
+        return res.redirect(`${AMET_WEB_URL}/auth/success`);
     } catch (error: any) {
-        return res.redirect('http://localhost:3000/auth/failure');
+        return res.redirect(`${AMET_WEB_URL}/auth/failure`);
     }
 }
 
@@ -85,29 +86,23 @@ async function discord(req: Request, res: Response) {
             `https://discord.com/api/v10/users/@me`,
             { headers: { Authorization: `Bearer ${tokens.access_token}` } },
         );
-        console.log(user);
-        //
-        // {
-        //     id: string
-        //     username: string
-        // }
 
         const ametServerId = '1142005217399943250';
         try {
-            const userGuild = await Requests.get(
+            await Requests.get(
                 `https://discord.com/api/v10/users/@me/guilds/${ametServerId}/member`,
                 { headers: { Authorization: `Bearer ${tokens.access_token}` } },
             );
-            console.log(`userGuild`, userGuild);
         } catch (error: any) {
-            const addUser = await Requests.put(
+            await Requests.put(
                 `https://discord.com/api/v10/guilds/${ametServerId}/members/${user.id}`,
+                { access_token: tokens.access_token },
                 {
-                    access_token: tokens.access_token,
+                    headers: {
+                        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+                    },
                 },
-                { headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`} },
             );
-            console.log(`addUser`, addUser);
         }
 
         await connection.address.updateOne(
@@ -116,15 +111,15 @@ async function discord(req: Request, res: Response) {
             },
             {
                 $set: {
-                    discord: user.username,
+                    discord: user.id,
                 },
             },
         );
 
-        return res.redirect('http://localhost:3000/auth/success');
+        return res.redirect(`${AMET_WEB_URL}/auth/success`);
     } catch (error: any) {
         console.log(error);
-        return res.redirect('http://localhost:3000/auth/failure');
+        return res.redirect(`${AMET_WEB_URL}/auth/failure`);
     }
 }
 
