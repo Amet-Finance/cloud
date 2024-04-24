@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import qs from 'qs';
 import Requests from '../../modules/utils/requests';
+import connection from '../../db/main';
 
 async function twitter(req: Request, res: Response) {
-    const { code } = req.query;
+    const { state,code } = req.query;
+    console.log(state);
 
     try {
         const tokens = await Requests.post(
@@ -28,24 +30,17 @@ async function twitter(req: Request, res: Response) {
             { headers: { Authorization: `Bearer ${tokens.access_token}` } },
         );
 
-        console.log(userInfo.data);
-
-        // const userFollowers = await Requests.get(
-        //     `https://api.twitter.com/2/users/${userInfo.data.id}/followers`,
-        //     { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+        // await connection.address.updateOne(
+        //     {
+        //         _id: '' as any,
+        //     },
+        //     {
+        //         $set: {
+        //             twitter: userInfo.data.username,
+        //         },
+        //     },
         // );
 
-        // console.log(userFollowers);
-
-        const followStatus = await Requests.post(
-            `https://api.twitter.com/2/users/${userInfo.data.id}/following`,
-            { target_user_id: '1687523571864653825' },
-            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
-        );
-
-        console.log(followStatus);
-
-        // todo change localhost
         return res.redirect('http://localhost:3000/auth/success');
     } catch (error: any) {
         console.log(error);
