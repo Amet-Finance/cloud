@@ -102,15 +102,10 @@ async function discord(req: Request, res: Response) {
         } catch (error: any) {
             const addUser = await Requests.put(
                 `https://discord.com/api/v10/guilds/${ametServerId}/members/${user.id}`,
-                qs.stringify({
-                    access_token: tokens.access_token,
-                }),
                 {
-                    headers: {
-                        Authorization: `Bearer ${process.env.DISCORD_BOT_TOKEN}`,
-                    },
-                    params: { access_token: tokens.access_token },
+                    access_token: tokens.access_token,
                 },
+                { headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`} },
             );
             console.log(`addUser`, addUser);
         }
