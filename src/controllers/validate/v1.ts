@@ -17,14 +17,14 @@ async function twitter(req: Request, res: Response) {
             qs.stringify({
                 code,
                 grant_type: 'authorization_code',
-                client_id: 'd295SDkyRFFPWV9mZDZMUV95RDg6MTpjaQ',
+                client_id: process.env.TWITTER_CLIENT_ID,
                 redirect_uri: 'https://api.amet.finance/validate/twitter',
                 code_verifier: 'challenge',
             }),
             {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    Authorization: `Basic AAAAAAAAAAAAAAAAAAAAAJnWtQEAAAAA4uWj4vELj1ziLpOAVv%2BV8TRq%2FfY%3Dy3HGNermDbHvGXJpMxTVksyptDDaDe3RawR4GIOwMxEZpwtBQx`,
+                    Authorization: `Basic ${process.env.TWITTER_TOKEN}`,
                 },
             },
         );
@@ -51,8 +51,73 @@ async function twitter(req: Request, res: Response) {
     }
 }
 
+async function discord(req: Request, res: Response) {
+
+    const { state, code } = req.query;
+
+    try {
+        if (!state) throw Error('State is missing!');
+
+        const address = getAddress(state.toString());
+
+        const tokens = await Requests.post(
+            'https://discord.com/api/v10/oauth2/token',
+            qs.stringify({
+                code,
+                grant_type: 'authorization_code',
+                client_id: process.env.DISCORD_CLIENT_ID,
+                redirect_uri: 'https://api.amet.finance/validate/discord',
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Authorization: `Basic AAAAAAAAAAAAAAAAAAAAAJnWtQEAAAAA4uWj4vELj1ziLpOAVv%2BV8TRq%2FfY%3Dy3HGNermDbHvGXJpMxTVksyptDDaDe3RawR4GIOwMxEZpwtBQx`,
+                },
+                auth: {
+                    username: process.env.DISCORD_CLIENT_ID as string,
+                    password: process.env.DISCORD_CLIENT_SECRET as string,
+                },
+            },
+        );
+
+        console.log(tokens);
+
+        // {
+        //     "access_token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG",
+        //     "token_type": "Bearer",
+        //     "expires_in": 604800,
+        //     "refresh_token": "D43f5y0ahjqew82jZ4NViEr2YafMKhue",
+        //     "scope": "identify"
+        // }
+
+
+        const useGuilds = await Requests.get(
+            `https://discord.com/api/v10/users/@me/guilds`,
+            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+        );
+
+
+        console.log(useGuilds);
+        // await connection.address.updateOne(
+        //     {
+        //         _id: address.toLowerCase() as any,
+        //     },
+        //     {
+        //         $set: {
+        //             twitter: userInfo.data.username,
+        //         },
+        //     },
+        // );
+
+        return res.redirect('http://localhost:3000/auth/success');
+    } catch (error: any) {
+        return res.redirect('http://localhost:3000/auth/failure');
+    }
+}
+
 const ValidateControllerV1 = {
     twitter,
+    discord,
 };
 
 export default ValidateControllerV1;
