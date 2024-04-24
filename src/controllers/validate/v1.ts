@@ -55,6 +55,7 @@ async function discord(req: Request, res: Response) {
 
     const { state, code } = req.query;
 
+    console.log(req.query);
     try {
         if (!state) throw Error('State is missing!');
 
