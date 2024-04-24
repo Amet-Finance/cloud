@@ -102,33 +102,34 @@ async function discord(req: Request, res: Response) {
         // }
 
         const ametServerId = '1142005217399943250';
-        const userGuild = await Requests.get(
-            `https://discord.com/api/v10/users/@me/guilds/${ametServerId}/member`,
-            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
-        );
-        console.log(userGuild);
+        try {
+            const userGuild = await Requests.get(
+                `https://discord.com/api/v10/users/@me/guilds/${ametServerId}/member`,
+                { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+            );
+            console.log(`userGuild`, userGuild);
+        } catch (error: any) {
+            const addUser = await Requests.put(
+                `https://discord.com/api/v10/guilds/${ametServerId}/members/${user.id}`,
+                { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+            );
+            console.log(`addUser`, addUser);
+        }
 
-        // if (!userGuild) {
-        const addUser = await Requests.put(
-            `https://discord.com/api/v10/guilds/${ametServerId}/members/${user.id}`,
-            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+        await connection.address.updateOne(
+            {
+                _id: address.toLowerCase() as any,
+            },
+            {
+                $set: {
+                    discord: user.username,
+                },
+            },
         );
-        console.log(addUser);
-        // }
-
-        // await connection.address.updateOne(
-        //     {
-        //         _id: address.toLowerCase() as any,
-        //     },
-        //     {
-        //         $set: {
-        //             twitter: userInfo.data.username,
-        //         },
-        //     },
-        // );
 
         return res.redirect('http://localhost:3000/auth/success');
     } catch (error: any) {
+        console.log(error.message);
         return res.redirect('http://localhost:3000/auth/failure');
     }
 }
