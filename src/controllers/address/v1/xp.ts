@@ -1,21 +1,33 @@
 import { Request, Response } from 'express';
 import connection from '../../../db/main';
 import { StringKeyedObject } from '../../../types';
+import ErrorV1 from '../../../routes/error/error';
 
 async function activateAccount(req: Request, res: Response) {
     const { address, ref } = req.query;
     const addressLowercase = `${address}`.toLowerCase();
+    const refCode = ref?.toString();
+
+    const user = await connection.address.findOne({
+        _id: addressLowercase.toString(),
+    });
+
+    if (user) {
+        if (user.active) return ErrorV1.throw('Already activated user');
+        if (refCode && user.code === refCode)
+            return ErrorV1.throw('Referral logic violation');
+    }
 
     const setObject: StringKeyedObject<string | boolean> = {
         active: true,
         code: generateReferralCode(),
     };
 
-    if (ref && Boolean(ref.toString())) {
-        setObject.ref = ref.toString();
+    if (refCode && Boolean(refCode)) {
+        setObject.ref = refCode;
     }
 
-    await connection.address.findOneAndUpdate(
+    await connection.address.updateOne(
         {
             _id: addressLowercase as any,
             active: { $exists: false }, // Only match if 'active' does not exist
