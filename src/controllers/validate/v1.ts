@@ -41,7 +41,10 @@ async function twitter(req: Request, res: Response) {
             },
             {
                 $set: {
-                    twitter: userInfo.data.username,
+                    twitter: {
+                        id: userInfo.data.id,
+                        username: userInfo.data.username,
+                    },
                 },
             },
         );
@@ -111,7 +114,10 @@ async function discord(req: Request, res: Response) {
             },
             {
                 $set: {
-                    discord: user.id,
+                    discord: {
+                        id: user.id,
+                        username: user.username
+                    },
                 },
             },
         );
