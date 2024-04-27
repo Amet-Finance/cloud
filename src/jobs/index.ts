@@ -22,7 +22,7 @@ const jobs = [
     },
     {
         name: 'Calculate XP',
-        scheduler: '0 1 * * *', // every day at 1am
+        scheduler: '0 6 * * *', // every day at 1am
         instance: calculateXP,
     },
 ];
