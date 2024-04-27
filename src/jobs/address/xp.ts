@@ -5,40 +5,79 @@ import { ethers } from 'ethers';
 import { AnyBulkWriteOperation } from 'mongodb';
 import connection from '../../db/main';
 import { AddressRawData } from '../../modules/address/types';
+import BigNumber from 'bignumber.js';
+import TokenService from '../../modules/token';
+import { AMT_CONTRACT_ADDRESS } from '../../constants';
 
 async function calculateXP() {
+    const chain = CHAINS.Base;
     const xpList = {
-        Issuance: 10,
-        Purchase: 1,
-        Redeem: 2,
-        Referral: 2,
+        JoinXP: 50,
+        ReferUser: 10, // percent
+
+        Twitter: 50,
+        Discord: 50,
+
+        IssueBonds: 500,
+        SettleBonds: 20,
+        CompleteRedemption: 8, // per $1 value
+
+        PurchaseBonds: 6, // per $1 value
+        PurchaseAMTBonds: 10, // per $1 value
+        ReferUsersPurchase: 3, // per $1 value
     };
 
-    const userBalances: StringKeyedObject<number> = {};
+    const userXP: StringKeyedObject<number> = {};
 
-    const { bonds, actionLogs } = await GraphqlAPI.getDataForXP(CHAINS.Base);
+    const { bonds, actionLogs } = await GraphqlAPI.getDataForXP(chain);
+    const users = await connection.address.find({ active: true }).toArray();
+
+    for (const user of users) {
+        if (!userXP[user._id]) userXP[user._id] = 0;
+
+        userXP[user._id] += user.active ? xpList.JoinXP : 0;
+        userXP[user._id] += user.twitter ? xpList.Twitter : 0; // todo check later here if user is following or not
+        userXP[user._id] += user.discord ? xpList.Discord : 0;
+    }
 
     for (const bond of bonds) {
-        if (!userBalances[bond.issuer.id]) userBalances[bond.issuer.id] = 0;
-        userBalances[bond.issuer.id] += xpList.Issuance;
+        if (userXP[bond.issuer.id]) {
+            userXP[bond.issuer.id] += xpList.IssueBonds;
+            if (bond.isSettled) userXP[bond.issuer.id] += xpList.SettleBonds;
+        }
     }
 
     for (const log of actionLogs) {
-        if (!userBalances[log.from]) userBalances[log.from] = 0;
-        if (!userBalances[log.to]) userBalances[log.to] = 0;
-
-        if (log.from === ethers.ZeroAddress) {
-            log.to += xpList.Purchase;
-        } else if (log.to === ethers.ZeroAddress) {
-            log.from += xpList.Redeem;
+        const { from, to, bond, count } = log;
+        if (from === ethers.ZeroAddress) {
+            if (userXP[to]) {
+                const token = await TokenService.get(
+                    chain,
+                    bond.purchaseToken.id,
+                    { onlyFromCache: true },
+                );
+                if (token?.priceUsd) {
+                    const priceClean = BigNumber(bond.purchaseAmount)
+                        .div(BigNumber(10).pow(BigNumber(token.decimals)))
+                        .toNumber();
+                    const priceValueUSD: number =
+                        Number(count) * priceClean * token.priceUsd;
+                    const isAMT =
+                        AMT_CONTRACT_ADDRESS[chain].toLowerCase() ===
+                        token.contractAddress.toLowerCase();
+                    userXP[to] +=
+                        Math.floor(priceValueUSD) *
+                        (isAMT
+                            ? xpList.PurchaseAMTBonds
+                            : xpList.PurchaseBonds);
+                }
+            }
         }
     }
 
     const bulkWriteArray: AnyBulkWriteOperation<AddressRawData>[] = [];
 
-    delete userBalances[ethers.ZeroAddress];
-
-    for (const address in userBalances) {
+    for (const address in userXP) {
         bulkWriteArray.push({
             updateOne: {
                 filter: {
@@ -46,10 +85,10 @@ async function calculateXP() {
                 },
                 update: {
                     $set: {
-                        xp: userBalances[address],
+                        xp: userXP[address],
+                        lastUpdated: new Date(),
                     },
                 },
-                upsert: true,
             },
         });
     }

@@ -35,8 +35,9 @@ type TokenCacheByChainAndContract = {
 
 
 type TokenGetOptions = {
-    isVerified?: boolean
-}
+    isVerified?: boolean;
+    onlyFromCache?: boolean;
+};
 
 export type {
     TokenCacheByChainAndContract,

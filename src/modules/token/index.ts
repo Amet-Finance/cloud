@@ -1,10 +1,14 @@
-import connection from "../../db/main";
-import {TokenCacheByChainAndContract, TokenGetOptions, TokenResponse} from "./types";
-import {nop} from "../utils/functions";
-import {generateTokenResponse, validateAddress} from "./util";
-import {Erc20Controller} from "amet-utils";
+import connection from '../../db/main';
+import {
+    TokenCacheByChainAndContract,
+    TokenGetOptions,
+    TokenResponse,
+} from './types';
+import { nop } from '../utils/functions';
+import { generateTokenResponse, validateAddress } from './util';
+import { Erc20Controller } from 'amet-utils';
 
-let tokenCacheByChainAndContract: TokenCacheByChainAndContract = {}
+let tokenCacheByChainAndContract: TokenCacheByChainAndContract = {};
 
 async function cache() {
     try {
@@ -54,6 +58,8 @@ async function get(chainId: number|string, contractAddress: string, options?: To
             if (options?.isVerified && !localToken.isVerified) return null;
             return generateTokenResponse(chainId, localToken);
         }
+
+        if (options?.onlyFromCache) return null;
 
         const tokenFromBlockchain = await Erc20Controller.getTokenDetails(chainId, contractAddress);
         const tokenResponse = generateTokenResponse(chainId, tokenFromBlockchain);

@@ -4,7 +4,7 @@ import { postAPI } from './index';
 import {
     ActionLogForXP,
     BondGeneralStatsShort,
-    BondIssuerDetail,
+    BondIssuerDetail, BondSettledDetails,
     UserGeneralStatsShort,
 } from './type';
 
@@ -74,20 +74,26 @@ async function getDataForTBV(chainId: number) {
 
 async function getDataForXP(chainId: number) {
     const query = `{
-            actionLogs {
-            id
-            from
-            to
-            count
-            bond {
-                purchaseAmount
-                payoutAmount
+           actionLogs {
+                count
+                from
+                to
+                bond {
+                  payoutToken {
+                    id
+                  }
+                  purchaseToken {
+                    id
+                  }
+                  purchaseAmount
+                  payoutAmount
+                }
               }
-            }
             bonds {
                 issuer {
                       id
                 }
+                isSettled
         }
     }`;
 
@@ -95,7 +101,7 @@ async function getDataForXP(chainId: number) {
     const response = await postAPI({ url, body: { query } });
 
     return {
-        bonds: response.data.bonds as BondIssuerDetail[],
+        bonds: response.data.bonds as (BondIssuerDetail & BondSettledDetails)[],
         actionLogs: response.data.actionLogs as ActionLogForXP[],
     };
 }
