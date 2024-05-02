@@ -7,7 +7,24 @@ type AddressRawData = {
     twitter?: Social,
     discord?: Social
     lastUpdated?: Date
+    email?: string
+    emailCode?: string,
+    emailPending?: string,
 };
+
+type AddressResponse = {
+    _id: string;
+    xp?: number;
+    active?: boolean;
+    ref?: string;
+    code?: string;
+    twitter?: Social,
+    discord?: Social
+    lastUpdated?: Date
+    email?: string
+    emailCode?: string,
+    emailPending?: string,
+}
 
 type Social = {
     id: string
@@ -15,5 +32,6 @@ type Social = {
 }
 
 export type  {
-    AddressRawData
+    AddressRawData,
+    AddressResponse
 }

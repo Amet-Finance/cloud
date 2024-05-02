@@ -17,6 +17,7 @@ async function calculateXP() {
 
         Twitter: 50,
         Discord: 50,
+        Email: 50,
 
         IssueBonds: 500,
         SettleBonds: 20,
@@ -32,12 +33,16 @@ async function calculateXP() {
     const { bonds, actionLogs } = await GraphqlAPI.getDataForXP(chain);
     const users = await connection.address.find({ active: true }).toArray();
 
+    const codeToAddress: StringKeyedObject<string> = {};
+
     for (const user of users) {
         if (!userXP[user._id]) userXP[user._id] = 0;
+        if (user.code) codeToAddress[user.code] = user._id;
 
         userXP[user._id] += user.active ? xpList.JoinXP : 0;
         userXP[user._id] += user.twitter ? xpList.Twitter : 0; // todo check later here if user is following or not
         userXP[user._id] += user.discord ? xpList.Discord : 0;
+        userXP[user._id] += user.email ? xpList.Email : 0;
     }
 
     for (const bond of bonds) {
@@ -76,6 +81,16 @@ async function calculateXP() {
     }
 
     const bulkWriteArray: AnyBulkWriteOperation<AddressRawData>[] = [];
+
+    // referral part
+    for (const user of users) {
+        if (user.ref) {
+            const referrer = codeToAddress[user.ref];
+            const points = userXP[user._id];
+
+            userXP[referrer] += (points * xpList.ReferUser) / 100;
+        }
+    }
 
     for (const address in userXP) {
         bulkWriteArray.push({

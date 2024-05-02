@@ -30,10 +30,9 @@ async function twitter(req: Request, res: Response) {
             },
         );
 
-        const userInfo = await Requests.get(
-            `https://api.twitter.com/2/users/me`,
-            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
-        );
+        const userInfo = await Requests.get(`https://api.twitter.com/2/users/me`, {
+            headers: { Authorization: `Bearer ${tokens.access_token}` },
+        });
 
         await connection.address.updateOne(
             {
@@ -129,9 +128,41 @@ async function discord(req: Request, res: Response) {
     }
 }
 
+async function email(req: Request, res: Response) {
+    try {
+        const { code } = req.query;
+
+        const account = await connection.address.findOne({
+            emailCode: code?.toString().toLowerCase() as any,
+        });
+
+        if (!account) throw Error('Address is missing');
+
+        await connection.address.updateOne(
+            {
+                _id: account._id,
+            },
+            {
+                $set: {
+                    email: account.emailPending,
+                },
+                $unset: {
+                    emailCode: 1,
+                    emailPending: 1,
+                },
+            },
+        );
+
+        return res.redirect(`${AMET_WEB_URL}/auth/success`);
+    } catch (error: any) {
+        return res.redirect(`${AMET_WEB_URL}/auth/failure`);
+    }
+}
+
 const ValidateControllerV1 = {
     twitter,
     discord,
+    email,
 };
 
 export default ValidateControllerV1;

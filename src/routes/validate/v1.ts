@@ -6,6 +6,7 @@ const router = Router();
 
 router
     .get('/twitter', HandlerV1.bind(null, ValidateControllerV1.twitter))
-    .get('/discord', HandlerV1.bind(null, ValidateControllerV1.discord));
+    .get('/discord', HandlerV1.bind(null, ValidateControllerV1.discord))
+    .get('/email', HandlerV1.bind(null, ValidateControllerV1.email))
 
 export default router;
