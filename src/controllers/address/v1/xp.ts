@@ -18,10 +18,11 @@ async function activateAccount(req: Request, res: Response) {
         if (refCode && user.code === refCode) return ErrorV1.throw('Referral logic violation');
     }
 
-    const setObject: StringKeyedObject<string | boolean | number> = {
+    const setObject: StringKeyedObject<string | boolean | number | Date> = {
         active: true,
         code: generateReferralCode(),
         xp: XpList.JoinXP,
+        lastUpdated: new Date(),
     };
 
     if (refCode && Boolean(refCode)) {
