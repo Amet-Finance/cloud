@@ -48,7 +48,7 @@ async function twitter(req: Request, res: Response) {
             },
         );
 
-        return res.redirect(`${AMET_WEB_URL}/auth/success`);
+        return res.redirect(`${AMET_WEB_URL}/auth/success?redirectTo=twitter_follow`);
     } catch (error: any) {
         return res.redirect(`${AMET_WEB_URL}/auth/failure`);
     }
