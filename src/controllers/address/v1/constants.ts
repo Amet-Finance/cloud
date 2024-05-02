@@ -5,19 +5,29 @@ const EmailTypes: StringKeyedObject<EmailType> = {
     UpdateEmail: {
         subject: "Confirm Your Email Subscription with Amet Finance",
         body: `<!DOCTYPE html>
-                    <html>
-                    <head>
-                    <title>Confirm Your Subscription</title>
-                    </head>
-                    <body>
-                        <h1>Welcome to Amet Finance!</h1>
-                        <p>Thank you for adding your email to receive updates from Amet Finance. We're excited to keep you informed about the latest developments and opportunities.</p>
-                        <p>Please click the button below to confirm your email address and complete your subscription:</p>
-                        <a href="YOUR_CONFIRMATION_LINK" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 5px;">Confirm Email</a>
-                        <p>If you did not request this subscription, no action is needed.</p>
-                        <p>Thank you,<br/>The Amet Finance Team</p>
-                    </body>
-                    </html>
+                        <html>
+                        <head>
+                            <title>Confirm Your Subscription</title>
+                            <style>
+                                a:hover {
+                                    background-color: rgb(38, 38, 38);
+                                }
+                            </style>
+                        </head>
+                        <body style="display: flex; flex-direction: column; gap: 1rem;">
+                        <h1 style="font-size: xx-large">Welcome to Amet Finance!</h1>
+                        <p style="font-size: 0.9rem; color: #212121">Thank you for adding your email to receive updates from Amet Finance. We're
+                            excited to keep you informed about the latest developments and opportunities.</p>
+                        <p style="font-size: 0.9rem; color: #212121">Please click the button below to confirm your email address and complete
+                            your subscription:</p>
+                        <a href="YOUR_CONFIRMATION_LINK"
+                           style="background-color: rgb(23, 23, 23); color: white; padding: 0.5rem 2rem; text-align: center; text-decoration: none; display: flex; justify-content: center; align-items: center; font-size: 16px; border-radius: 5px;">Confirm
+                            Email</a>
+                        <p style="font-size: 0.9rem; color: #212121">If you did not request this subscription, no action is needed.</p>
+                        <p style="font-size: 0.9rem; color: #212121">Thank you,<br />Amet Finance Team</p>
+                        </body>
+                        </html>
+
                     `
     }
 }
