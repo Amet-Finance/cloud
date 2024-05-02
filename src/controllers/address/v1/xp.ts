@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import connection from '../../../db/main';
 import { StringKeyedObject } from '../../../types';
 import ErrorV1 from '../../../routes/error/error';
+import { XpList } from './constants';
 
 async function activateAccount(req: Request, res: Response) {
     const { address, ref } = req.query;
@@ -14,13 +15,13 @@ async function activateAccount(req: Request, res: Response) {
 
     if (user) {
         if (user.active) return ErrorV1.throw('Already activated user');
-        if (refCode && user.code === refCode)
-            return ErrorV1.throw('Referral logic violation');
+        if (refCode && user.code === refCode) return ErrorV1.throw('Referral logic violation');
     }
 
-    const setObject: StringKeyedObject<string | boolean> = {
+    const setObject: StringKeyedObject<string | boolean | number> = {
         active: true,
         code: generateReferralCode(),
+        xp: XpList.JoinXP,
     };
 
     if (refCode && Boolean(refCode)) {

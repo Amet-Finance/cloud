@@ -1,6 +1,24 @@
 import { StringKeyedObject } from '../../../types';
 import { EmailType } from './type';
 
+const XpList = {
+    JoinXP: 50,
+    ReferUser: 10, // percent
+
+    Twitter: 50,
+    Discord: 50,
+    Email: 50,
+
+    IssueBonds: 500,
+    SettleBonds: 20,
+    CompleteRedemption: 8, // per $1 value
+
+    PurchaseBonds: 6, // per $1 value
+    PurchaseAMTBonds: 10, // per $1 value
+    ReferUsersPurchase: 3, // per $1 value
+};
+
+
 const EmailTypes: StringKeyedObject<EmailType> = {
     UpdateEmail: {
         subject: "Confirm Your Email Subscription with Amet Finance",
@@ -33,5 +51,6 @@ const EmailTypes: StringKeyedObject<EmailType> = {
 }
 
 export {
+    XpList,
     EmailTypes
 }

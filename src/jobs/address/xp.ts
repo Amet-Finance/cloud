@@ -8,26 +8,10 @@ import { AddressRawData } from '../../modules/address/types';
 import BigNumber from 'bignumber.js';
 import TokenService from '../../modules/token';
 import { AMT_CONTRACT_ADDRESS } from '../../constants';
+import { XpList } from '../../controllers/address/v1/constants';
 
 async function calculateXP() {
     const chain = CHAINS.Base;
-    const xpList = {
-        JoinXP: 50,
-        ReferUser: 10, // percent
-
-        Twitter: 50,
-        Discord: 50,
-        Email: 50,
-
-        IssueBonds: 500,
-        SettleBonds: 20,
-        CompleteRedemption: 8, // per $1 value
-
-        PurchaseBonds: 6, // per $1 value
-        PurchaseAMTBonds: 10, // per $1 value
-        ReferUsersPurchase: 3, // per $1 value
-    };
-
     const userXP: StringKeyedObject<number> = {};
 
     const { bonds, actionLogs } = await GraphqlAPI.getDataForXP(chain);
@@ -39,16 +23,16 @@ async function calculateXP() {
         if (!userXP[user._id]) userXP[user._id] = 0;
         if (user.code) codeToAddress[user.code] = user._id;
 
-        userXP[user._id] += user.active ? xpList.JoinXP : 0;
-        userXP[user._id] += user.twitter ? xpList.Twitter : 0; // todo check later here if user is following or not
-        userXP[user._id] += user.discord ? xpList.Discord : 0;
-        userXP[user._id] += user.email ? xpList.Email : 0;
+        userXP[user._id] += user.active ? XpList.JoinXP : 0;
+        userXP[user._id] += user.twitter ? XpList.Twitter : 0; // todo check later here if user is following or not
+        userXP[user._id] += user.discord ? XpList.Discord : 0;
+        userXP[user._id] += user.email ? XpList.Email : 0;
     }
 
     for (const bond of bonds) {
         if (userXP[bond.issuer.id]) {
-            userXP[bond.issuer.id] += xpList.IssueBonds;
-            if (bond.isSettled) userXP[bond.issuer.id] += xpList.SettleBonds;
+            userXP[bond.issuer.id] += XpList.IssueBonds;
+            if (bond.isSettled) userXP[bond.issuer.id] += XpList.SettleBonds;
         }
     }
 
@@ -73,8 +57,8 @@ async function calculateXP() {
                     userXP[to] +=
                         Math.floor(priceValueUSD) *
                         (isAMT
-                            ? xpList.PurchaseAMTBonds
-                            : xpList.PurchaseBonds);
+                            ? XpList.PurchaseAMTBonds
+                            : XpList.PurchaseBonds);
                 }
             }
         }
@@ -88,7 +72,7 @@ async function calculateXP() {
             const referrer = codeToAddress[user.ref];
             const points = userXP[user._id];
 
-            userXP[referrer] += (points * xpList.ReferUser) / 100;
+            userXP[referrer] += (points * XpList.ReferUser) / 100;
         }
     }
 
