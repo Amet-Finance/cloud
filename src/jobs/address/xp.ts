@@ -13,6 +13,7 @@ import { XpList } from '../../controllers/address/v1/constants';
 async function calculateXP() {
     const chain = CHAINS.Base;
     const userXP: StringKeyedObject<number> = {};
+    const bulkWriteArray: AnyBulkWriteOperation<AddressRawData>[] = [];
 
     const { bonds, actionLogs } = await GraphqlAPI.getDataForXP(chain);
     const users = await connection.address.find({ active: true }).toArray();
@@ -36,35 +37,43 @@ async function calculateXP() {
         }
     }
 
+
+    const userPurchaseNativeToken: StringKeyedObject<{ purchaseAMT: number; purchaseCustom: number }> = {};
+
     for (const log of actionLogs) {
         const { from, to, bond, count } = log;
-        if (from === ethers.ZeroAddress) {
-            if (userXP[to]) {
-                const token = await TokenService.get(
-                    chain,
-                    bond.purchaseToken.id,
-                    { onlyFromCache: true },
-                );
-                if (token?.priceUsd) {
-                    const priceClean = BigNumber(bond.purchaseAmount)
-                        .div(BigNumber(10).pow(BigNumber(token.decimals)))
-                        .toNumber();
-                    const priceValueUSD: number =
-                        Number(count) * priceClean * token.priceUsd;
-                    const isAMT =
-                        AMT_CONTRACT_ADDRESS[chain].toLowerCase() ===
-                        token.contractAddress.toLowerCase();
-                    userXP[to] +=
-                        Math.floor(priceValueUSD) *
-                        (isAMT
-                            ? XpList.PurchaseAMTBonds
-                            : XpList.PurchaseBonds);
+        const isPurchase = from === ethers.ZeroAddress;
+
+        if (isPurchase && userXP[to]) {
+            const token = await TokenService.get(chain, bond.purchaseToken.id, { onlyFromCache: true });
+            if (token?.priceUsd) {
+                const priceClean = BigNumber(bond.purchaseAmount)
+                    .div(BigNumber(10).pow(BigNumber(token.decimals)))
+                    .toNumber();
+                const priceValueUSD: number = Number(count) * priceClean * token.priceUsd;
+                const isAMT = AMT_CONTRACT_ADDRESS[chain].toLowerCase() === bond.payoutToken.id.toLowerCase();
+
+                if (!userPurchaseNativeToken[to]) {
+                    userPurchaseNativeToken[to] = {
+                        purchaseAMT: isAMT ? priceValueUSD : 0,
+                        purchaseCustom: !isAMT ? priceValueUSD : 0,
+                    };
+                } else if (isAMT) {
+                    userPurchaseNativeToken[to].purchaseAMT += priceValueUSD;
+                } else {
+                    userPurchaseNativeToken[to].purchaseCustom += priceValueUSD;
                 }
             }
         }
     }
 
-    const bulkWriteArray: AnyBulkWriteOperation<AddressRawData>[] = [];
+    for (const address in userPurchaseNativeToken) {
+        const purchaseList = userPurchaseNativeToken[address];
+
+        userXP[address] += Math.floor(purchaseList.purchaseAMT) * XpList.PurchaseAMTBonds;
+        userXP[address] += Math.floor(purchaseList.purchaseCustom) * XpList.PurchaseBonds;
+    }
+
 
     // referral part
     for (const user of users) {

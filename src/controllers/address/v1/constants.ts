@@ -4,18 +4,25 @@ import { EmailType } from './type';
 const XpList = {
     JoinXP: 50,
     ReferUser: 10, // percent
+    Donate: 20, // per $1 value
 
     Twitter: 50,
     Discord: 50,
     Email: 50,
 
     IssueBonds: 500,
-    SettleBonds: 20,
-    CompleteRedemption: 8, // per $1 value
+    SettleBonds: 100,
 
-    PurchaseBonds: 6, // per $1 value
-    PurchaseAMTBonds: 10, // per $1 value
-    ReferUsersPurchase: 3, // per $1 value
+    PurchaseBonds: 40, // per $1 value
+    PurchaseAMTBonds: 60, // per $1 value
+    ReferUsersPurchase: 5, // per $1 value
+
+
+    CommunityContribution: 0, // up to 500
+    ParticipationInPolls: 20, // per event
+    FeedbackImplementation: 0, // up to 200
+    SpecialChallenges: 0, // up to 500
+    VideTutorial: 0 // up to 1000
 };
 
 
