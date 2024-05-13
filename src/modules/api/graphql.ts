@@ -57,6 +57,7 @@ async function getDataForTBV(chainId: number) {
         redeemed
         purchaseAmount
         payoutAmount
+        payoutBalance
         payoutToken {
           id
         }

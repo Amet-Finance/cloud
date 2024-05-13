@@ -19,6 +19,7 @@ type BondPurchasePayoutDetail = {
     };
     purchaseAmount: string;
     payoutAmount: string;
+    payoutBalance: string;
 };
 
 type BondGeneralStatsShort = BondPurchasePayoutDetail & {

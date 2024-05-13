@@ -16,7 +16,7 @@ const jobs = [
         instance: calculatePricesFromCoinMarketCap,
     },
     {
-        name: 'Calculate TBV',
+        name: 'Calculate TBV and TVL',
         scheduler: '0 1 * * *', // every day at 1am
         instance: calculateDailyStats,
     },
