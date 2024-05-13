@@ -26,6 +26,7 @@ async function getDataForGeneralStatistics(chainId: number) {
     redeemed
     purchaseAmount
     payoutAmount
+    payoutBalance
     payoutToken {
       id
     }
