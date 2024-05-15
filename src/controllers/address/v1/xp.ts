@@ -9,13 +9,17 @@ async function activateAccount(req: Request, res: Response) {
     const addressLowercase = `${address}`.toLowerCase();
     const refCode = ref?.toString();
 
+    console.log(`Activate: ${addressLowercase}`);
+
     const user = await connection.address.findOne({
         _id: addressLowercase.toString(),
     });
 
+    console.log(`User: ${user}`);
+
     if (user) {
-        if (user.active) return ErrorV1.throw('Already activated user');
-        if (refCode && user.code === refCode) return ErrorV1.throw('Referral logic violation');
+        if (user.active) return ErrorV1.throw(`Already activated user: ${addressLowercase}`);
+        if (refCode && user.code === refCode) return ErrorV1.throw(`Referral logic violation: ${addressLowercase}`);
     }
 
     const setObject: StringKeyedObject<string | boolean | number | Date> = {
