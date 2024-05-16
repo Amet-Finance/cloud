@@ -1,12 +1,11 @@
 import { CHAINS } from 'amet-utils';
 import { StringKeyedObject } from '../../types';
 import { postAPI } from './index';
-import {
-    ActionLogForXP,
-    BondGeneralStatsShort,
-    BondIssuerDetail, BondSettledDetails,
-    UserGeneralStatsShort,
-} from './type';
+import { ActionLogForXP, BondGeneralStatsShort, BondIssuerDetail, BondSettledDetails, UserGeneralStatsShort } from './type';
+
+const ChainStartBlock: any = {
+    [CHAINS.Base]: 14022551,
+};
 
 function getApi(chainId: number) {
     const API: StringKeyedObject<string> = {
@@ -17,42 +16,44 @@ function getApi(chainId: number) {
 }
 
 async function getDataForGeneralStatistics(chainId: number) {
-
     const query = `
     {
-  bonds {
-    id
-    purchased
-    redeemed
-    purchaseAmount
-    payoutAmount
-    payoutBalance
-    payoutToken {
-      id
-    }
-    purchaseToken {
-      id
-    }
-  }
-  users {
-    id
-  }
-}`
+          bonds(
+          where: {issuanceBlock_gt: "${ChainStartBlock[chainId]}"}
+          ) {
+            id
+            purchased
+            redeemed
+            purchaseAmount
+            payoutAmount
+            payoutBalance
+            payoutToken {
+              id
+            }
+            purchaseToken {
+              id
+            }
+          }
+          users {
+            id
+          }
+        }`;
 
-    const url = getApi(chainId)
-    const response = await postAPI({url, body: {query}})
+    const url = getApi(chainId);
+    const response = await postAPI({ url, body: { query } });
 
     return {
         bonds: response.data.bonds as BondGeneralStatsShort[],
-        users: response.data.users as UserGeneralStatsShort[]
-    }
+        users: response.data.users as UserGeneralStatsShort[],
+    };
 }
 
 async function getDataForTBV(chainId: number) {
-
     const query = `
     {
-      bonds {
+      bonds(
+      where: {issuanceBlock_gt: "${ChainStartBlock[chainId]}"}
+      ) {
         id
         purchased
         redeemed
@@ -66,12 +67,12 @@ async function getDataForTBV(chainId: number) {
           id
         }
       }
-    }`
+    }`;
 
-    const url = getApi(chainId)
-    const response = await postAPI({url, body: {query}})
+    const url = getApi(chainId);
+    const response = await postAPI({ url, body: { query } });
 
-    return {bonds: response.data.bonds as BondGeneralStatsShort[]}
+    return { bonds: response.data.bonds as BondGeneralStatsShort[] };
 }
 
 async function getDataForXP(chainId: number) {
@@ -91,7 +92,9 @@ async function getDataForXP(chainId: number) {
                   payoutAmount
                 }
               }
-            bonds {
+            bonds(
+            where: {issuanceBlock_gt: "${ChainStartBlock[chainId]}"}
+            ) {
                 issuer {
                       id
                 }
@@ -111,7 +114,7 @@ async function getDataForXP(chainId: number) {
 const GraphqlAPI = {
     getDataForGeneralStatistics,
     getDataForTBV,
-    getDataForXP
-}
+    getDataForXP,
+};
 
 export default GraphqlAPI;
