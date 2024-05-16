@@ -1,20 +1,21 @@
-import connection from "../../db/main";
-import axios from "axios";
-import {AnyBulkWriteOperation} from "mongodb";
+import connection from '../../db/main';
+import axios from 'axios';
+import { AnyBulkWriteOperation } from 'mongodb';
 
 export default async function calculatePricesFromCoinMarketCap() {
+    const tokens = await connection.token
+        .find({
+            cmId: { $exists: true },
+        })
+        .toArray();
 
-    const tokens = await connection.token.find({
-        cmId: {$exists: true}
-    }).toArray();
-
-    const cmIds = tokens.map(item => item.cmId);
+    const cmIds = tokens.map((item) => item.cmId);
     if (!cmIds.length) return;
 
     const result = await axios.get(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest`, {
-        headers: {"X-CMC_PRO_API_KEY": process.env.COINMARKETCAP_KEY},
-        params: {id: cmIds.join(",")}
-    })
+        headers: { 'X-CMC_PRO_API_KEY': process.env.COINMARKETCAP_KEY },
+        params: { id: cmIds.join(',') },
+    });
 
     const tokenQuotes = result.data.data;
     const bulkWrites: AnyBulkWriteOperation[] = [];
@@ -22,21 +23,21 @@ export default async function calculatePricesFromCoinMarketCap() {
     for (const token of tokens) {
         if (!token.cmId) continue;
 
-        const priceUsd = tokenQuotes[token.cmId].quote["USD"].price
+        const priceUsd = tokenQuotes[token.cmId].quote['USD'].price;
         bulkWrites.push({
             updateOne: {
                 filter: {
-                    _id: token._id as any
+                    _id: token._id as any,
                 },
                 update: {
                     $set: {
-                        priceUsd: priceUsd
-                    }
+                        priceUsd: priceUsd,
+                    },
                 },
-                upsert: true
-            }
-        })
+                upsert: true,
+            },
+        });
     }
 
-    if (bulkWrites.length) await connection.token.bulkWrite(bulkWrites as any)
+    if (bulkWrites.length) await connection.token.bulkWrite(bulkWrites as any);
 }

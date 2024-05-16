@@ -5,7 +5,6 @@ import GraphqlAPI from '../../modules/api/graphql';
 import CalculatorController from '../../modules/statistics/calculator';
 import { SUPPORTED_CHAINS } from '../../constants';
 
-
 export default async function updateGeneralStats() {
     const generalStats = {
         issued: 0,

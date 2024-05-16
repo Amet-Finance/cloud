@@ -1,10 +1,10 @@
 import client from 'prom-client';
-import app from "./server";
+import app from './server';
 
 const register = new client.Registry();
 
 // Enable the collection of default metrics
-client.collectDefaultMetrics({register});
+client.collectDefaultMetrics({ register });
 
 // Custom Metrics
 const httpRequestDurationSeconds = new client.Histogram({
@@ -28,7 +28,6 @@ const httpErrorCounter = new client.Counter({
     labelNames: ['method', 'route', 'code'],
     registers: [register],
 });
-
 
 // Middleware to collect HTTP metrics
 app.use((req, res, next) => {

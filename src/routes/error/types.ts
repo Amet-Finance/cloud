@@ -1,8 +1,6 @@
 type ErrorV1 = {
-    code: number,
-    message: string
-}
+    code: number;
+    message: string;
+};
 
-export {
-    ErrorV1
-}
+export { ErrorV1 };

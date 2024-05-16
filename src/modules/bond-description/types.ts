@@ -1,26 +1,20 @@
 type BondDescriptionCache = {
-    [contractId: string]: BondDescription
-}
-
+    [contractId: string]: BondDescription;
+};
 
 type ContractDescription = {
-    name: string,
-    description: string,
-    external_url: string,
-    image: string,
+    name: string;
+    description: string;
+    external_url: string;
+    image: string;
     details?: {
-        title: string,
-        description: string
-    }
-}
-
+        title: string;
+        description: string;
+    };
+};
 
 type BondDescription = ContractDescription & {
-    cacheTime: Date
-}
+    cacheTime: Date;
+};
 
-export type {
-    BondDescriptionCache,
-    BondDescription,
-    ContractDescription
-}
+export type { BondDescriptionCache, BondDescription, ContractDescription };

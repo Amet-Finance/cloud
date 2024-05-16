@@ -4,12 +4,12 @@ type AddressRawData = {
     active?: boolean;
     ref?: string;
     code?: string;
-    twitter?: Social,
-    discord?: Social
-    lastUpdated?: Date
-    email?: string
-    emailCode?: string,
-    emailPending?: string,
+    twitter?: Social;
+    discord?: Social;
+    lastUpdated?: Date;
+    email?: string;
+    emailCode?: string;
+    emailPending?: string;
 };
 
 type AddressResponse = {
@@ -18,20 +18,18 @@ type AddressResponse = {
     active?: boolean;
     ref?: string;
     code?: string;
-    twitter?: Social,
-    discord?: Social
-    lastUpdated?: Date
-    email?: string
-    emailCode?: string,
-    emailPending?: string,
-}
+    twitter?: Social;
+    discord?: Social;
+    lastUpdated?: Date;
+    createdAt?: Date;
+    email?: string;
+    emailCode?: string;
+    emailPending?: string;
+};
 
 type Social = {
-    id: string
-    username: string
-}
+    id: string;
+    username: string;
+};
 
-export type  {
-    AddressRawData,
-    AddressResponse
-}
+export type { AddressRawData, AddressResponse };

@@ -16,7 +16,6 @@ async function get(req: Request, res: Response) {
     return res.json(addressModifier(address, addressInfo));
 }
 
-
 async function post(req: Request, res: Response) {
     // const { address } = req.query as any;
     // const { twitter, telegram, reddit, image } = req.body;
@@ -70,7 +69,6 @@ async function del(req: Request, res: Response) {
         success: true,
     });
 }
-
 
 function addressModifier(address: string, addressRaw: WithId<AddressRawData> | null): AddressResponse {
     return {

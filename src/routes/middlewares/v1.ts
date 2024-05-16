@@ -21,6 +21,6 @@ function outdated(req: Request, res: Response, next: NextFunction) {
 
 const SecurityMiddleware = {
     signature,
-    outdated
-}
+    outdated,
+};
 export default SecurityMiddleware;

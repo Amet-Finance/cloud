@@ -17,18 +17,16 @@ const XpList = {
     PurchaseAMTBonds: 60, // per $1 value
     ReferUsersPurchase: 5, // per $1 value
 
-
     CommunityContribution: 0, // up to 500
     ParticipationInPolls: 20, // per event
     FeedbackImplementation: 0, // up to 200
     SpecialChallenges: 0, // up to 500
-    VideTutorial: 0 // up to 1000
+    VideTutorial: 0, // up to 1000
 };
-
 
 const EmailTypes: StringKeyedObject<EmailType> = {
     UpdateEmail: {
-        subject: "Confirm Your Email Subscription with Amet Finance",
+        subject: 'Confirm Your Email Subscription with Amet Finance',
         body: `<!DOCTYPE html>
                         <html>
                         <head>
@@ -53,11 +51,8 @@ const EmailTypes: StringKeyedObject<EmailType> = {
                         </body>
                         </html>
 
-                    `
-    }
-}
+                    `,
+    },
+};
 
-export {
-    XpList,
-    EmailTypes
-}
+export { XpList, EmailTypes };

@@ -1,6 +1,6 @@
 type EmailType = {
     subject: string;
-    body: string
+    body: string;
 };
 
 export type { EmailType };

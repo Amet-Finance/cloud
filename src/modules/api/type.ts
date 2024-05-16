@@ -7,8 +7,8 @@ type BondIssuerDetail = {
 };
 
 type BondSettledDetails = {
-    isSettled: boolean
-}
+    isSettled: boolean;
+};
 
 type BondPurchasePayoutDetail = {
     payoutToken: {
@@ -35,10 +35,4 @@ type ActionLogForXP = {
     bond: BondPurchasePayoutDetail;
 };
 
-export type {
-    BondGeneralStatsShort,
-    UserGeneralStatsShort,
-    BondSettledDetails,
-    ActionLogForXP,
-    BondIssuerDetail,
-};
+export type { BondGeneralStatsShort, UserGeneralStatsShort, BondSettledDetails, ActionLogForXP, BondIssuerDetail };

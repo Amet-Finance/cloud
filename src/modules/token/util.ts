@@ -1,20 +1,8 @@
 import { TokenResponse } from './types';
 import { getAddress } from 'ethers';
 
-function generateTokenResponse(
-    chainId: number | string,
-    tokenInfo: any,
-): TokenResponse {
-    const {
-        name,
-        symbol,
-        decimals,
-        icon,
-        isVerified,
-        contractAddress,
-        unidentified,
-        priceUsd,
-    } = tokenInfo;
+function generateTokenResponse(chainId: number | string, tokenInfo: any): TokenResponse {
+    const { name, symbol, decimals, icon, isVerified, contractAddress, unidentified, priceUsd } = tokenInfo;
     const contractsLowercase = contractAddress.toLowerCase();
     const _id = `${contractAddress}_${chainId}`.toLowerCase();
 
@@ -43,7 +31,6 @@ function generateTokenResponse(
     return tokenResponse;
 }
 
-
 function validateAddress(address: string | undefined) {
     if (!address || !getAddress(address)) {
         throw Error('Invalid address');
@@ -52,12 +39,8 @@ function validateAddress(address: string | undefined) {
 
 function getIcon(icon: string, isVerified: boolean) {
     if (isVerified) {
-        return `https://storage.amet.finance/icons/${icon}`
+        return `https://storage.amet.finance/icons/${icon}`;
     }
 }
 
-export {
-    validateAddress,
-    generateTokenResponse,
-    getIcon
-}
+export { validateAddress, generateTokenResponse, getIcon };

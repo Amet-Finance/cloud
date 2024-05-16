@@ -27,6 +27,7 @@ async function activateAccount(req: Request, res: Response) {
         code: generateReferralCode(),
         xp: XpList.JoinXP,
         lastUpdated: new Date(),
+        createdAt: new Date(),
     };
 
     if (refCode && Boolean(refCode)) {

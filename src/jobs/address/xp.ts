@@ -37,7 +37,6 @@ async function calculateXP() {
         }
     }
 
-
     const userPurchaseNativeToken: StringKeyedObject<{ purchaseAMT: number; purchaseCustom: number }> = {};
 
     for (const log of actionLogs) {
@@ -73,7 +72,6 @@ async function calculateXP() {
         userXP[address] += Math.floor(purchaseList.purchaseAMT) * XpList.PurchaseAMTBonds;
         userXP[address] += Math.floor(purchaseList.purchaseCustom) * XpList.PurchaseBonds;
     }
-
 
     // referral part
     for (const user of users) {

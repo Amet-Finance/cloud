@@ -55,7 +55,6 @@ async function twitter(req: Request, res: Response) {
 }
 
 async function discord(req: Request, res: Response) {
-
     const { state, code } = req.query;
 
     try {
@@ -83,18 +82,13 @@ async function discord(req: Request, res: Response) {
             },
         );
 
-
-        const user = await Requests.get(
-            `https://discord.com/api/v10/users/@me`,
-            { headers: { Authorization: `Bearer ${tokens.access_token}` } },
-        );
+        const user = await Requests.get(`https://discord.com/api/v10/users/@me`, { headers: { Authorization: `Bearer ${tokens.access_token}` } });
 
         const ametServerId = '1142005217399943250';
         try {
-            await Requests.get(
-                `https://discord.com/api/v10/users/@me/guilds/${ametServerId}/member`,
-                { headers: { Authorization: `Bearer ${tokens.access_token}` } },
-            );
+            await Requests.get(`https://discord.com/api/v10/users/@me/guilds/${ametServerId}/member`, {
+                headers: { Authorization: `Bearer ${tokens.access_token}` },
+            });
         } catch (error: any) {
             await Requests.put(
                 `https://discord.com/api/v10/guilds/${ametServerId}/members/${user.id}`,
@@ -115,7 +109,7 @@ async function discord(req: Request, res: Response) {
                 $set: {
                     discord: {
                         id: user.id,
-                        username: user.username
+                        username: user.username,
                     },
                 },
             },

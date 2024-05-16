@@ -1,47 +1,41 @@
 type TokenResponse = {
-    _id: string,
-    contractAddress: string,
-    chainId: number,
-    name: string,
-    symbol: string,
-    decimals: number,
-    isVerified?: boolean,
-    unidentified?: boolean,
-    icon?: string,
-    priceUsd?: number
-}
+    _id: string;
+    contractAddress: string;
+    chainId: number;
+    name: string;
+    symbol: string;
+    decimals: number;
+    isVerified?: boolean;
+    unidentified?: boolean;
+    icon?: string;
+    priceUsd?: number;
+};
 
 type TokenRawData = {
-    _id: string,
-    contractAddress: string,
-    chainId: number,
+    _id: string;
+    contractAddress: string;
+    chainId: number;
 
-    name: string,
-    symbol: string,
-    decimals: number
-    icon?: string,
+    name: string;
+    symbol: string;
+    decimals: number;
+    icon?: string;
 
-    cmId?: string,
+    cmId?: string;
 
-    isVerified?: boolean,
-    priceUsd?: number,
-}
+    isVerified?: boolean;
+    priceUsd?: number;
+};
 
 type TokenCacheByChainAndContract = {
     [chainId: string]: {
-        [contractAddress: string]: TokenResponse
-    }
-}
-
+        [contractAddress: string]: TokenResponse;
+    };
+};
 
 type TokenGetOptions = {
     isVerified?: boolean;
     onlyFromCache?: boolean;
 };
 
-export type {
-    TokenCacheByChainAndContract,
-    TokenResponse,
-    TokenRawData,
-    TokenGetOptions
-}
+export type { TokenCacheByChainAndContract, TokenResponse, TokenRawData, TokenGetOptions };

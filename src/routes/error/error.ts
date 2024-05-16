@@ -11,12 +11,10 @@ class ErrorV1 {
         this.code = code;
     }
 
-
     static throw(message: string, code: number = 400): Error {
-        const error = new Error(message)
-        throw new ErrorV1(error, code)
+        const error = new Error(message);
+        throw new ErrorV1(error, code);
     }
-
 }
 
-export default ErrorV1
+export default ErrorV1;

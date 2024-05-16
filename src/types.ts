@@ -1,3 +1,3 @@
-type StringKeyedObject<T> = { [key: string]: T }
+type StringKeyedObject<T> = { [key: string]: T };
 
-export type {StringKeyedObject}
+export type { StringKeyedObject };

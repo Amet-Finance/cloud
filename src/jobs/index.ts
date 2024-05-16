@@ -28,18 +28,16 @@ const jobs = [
 ];
 
 export default function InitJobs() {
-
     for (const job of jobs) {
         scheduleJob(job.scheduler, async () => {
-            console.log(`[${job.name}] Starting...`)
+            console.log(`[${job.name}] Starting...`);
             job.instance()
                 .then(() => {
                     console.log(`[${job.name}] Finished...`);
                 })
                 .catch((error: any) => {
                     console.error(`[${job.name}] Failed| ${error.message}`);
-                })
-        })
+                });
+        });
     }
-
 }

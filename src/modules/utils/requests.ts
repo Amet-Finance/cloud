@@ -18,6 +18,6 @@ async function put(url: string, body?: any, config?: AxiosRequestConfig) {
 const Requests = {
     get,
     post,
-    put
+    put,
 };
 export default Requests;

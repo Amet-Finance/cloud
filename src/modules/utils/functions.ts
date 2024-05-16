@@ -1,7 +1,5 @@
 function nop() {
-    return null
+    return null;
 }
 
-export {
-    nop
-}
+export { nop };
