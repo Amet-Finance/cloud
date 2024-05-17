@@ -2,6 +2,7 @@ import { Collection, Db, MongoClient, MongoClientOptions } from 'mongodb';
 import { AddressRawData } from '../modules/address/types';
 import { TokenRawData } from '../modules/token/types';
 import { GeneralStatistics } from '../modules/statistics/types';
+import { CustomReward } from '../jobs/address/types';
 
 class Main {
     constructor() {
@@ -40,6 +41,10 @@ class Main {
 
     get general(): Collection<GeneralStatistics> {
         return this.db.collection('General');
+    }
+
+    get customRewards(): Collection<CustomReward> {
+        return this.db.collection('CustomRewardsHub');
     }
 }
 

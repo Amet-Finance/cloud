@@ -16,6 +16,7 @@ async function calculateXP() {
     const bulkWriteArray: AnyBulkWriteOperation<AddressRawData>[] = [];
 
     const { bonds, actionLogs } = await GraphqlAPI.getDataForXP(chain);
+    const customRewards = await connection.customRewards.find().toArray();
     const users = await connection.address.find({ active: true }).toArray();
 
     const codeToAddress: StringKeyedObject<string> = {};
@@ -71,6 +72,10 @@ async function calculateXP() {
 
         userXP[address] += Math.floor(purchaseList.purchaseAMT) * XpList.PurchaseAMTBonds;
         userXP[address] += Math.floor(purchaseList.purchaseCustom) * XpList.PurchaseBonds;
+    }
+
+    for (const customReward of customRewards) {
+        userXP[customReward.address.toLowerCase()] += customReward.reward;
     }
 
     // referral part
