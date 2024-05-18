@@ -4,6 +4,7 @@ import Requests from '../../modules/utils/requests';
 import connection from '../../db/main';
 import { getAddress } from 'ethers';
 import { AMET_WEB_URL } from '../../constants';
+import { StringKeyedObject } from '../../types';
 
 async function twitter(req: Request, res: Response) {
     const { state, code } = req.query;
@@ -57,10 +58,17 @@ async function twitter(req: Request, res: Response) {
 async function discord(req: Request, res: Response) {
     const { state, code } = req.query;
 
+    const serverIds: StringKeyedObject<string> = {
+        amet: '1142005217399943250',
+        hunt: '1031482609668210718',
+    };
+
     try {
         if (!state) throw Error('State is missing!');
 
-        const address = getAddress(state.toString());
+        // connectionType - amet || hunt
+        const [connectionType, addressResponse] = state.toString().split('_');
+        const address = getAddress(addressResponse);
 
         const tokens = await Requests.post(
             'https://discord.com/api/v10/oauth2/token',
@@ -84,14 +92,15 @@ async function discord(req: Request, res: Response) {
 
         const user = await Requests.get(`https://discord.com/api/v10/users/@me`, { headers: { Authorization: `Bearer ${tokens.access_token}` } });
 
-        const ametServerId = '1142005217399943250';
+        const serverId = serverIds[connectionType];
+
         try {
-            await Requests.get(`https://discord.com/api/v10/users/@me/guilds/${ametServerId}/member`, {
+            await Requests.get(`https://discord.com/api/v10/users/@me/guilds/${serverId}/member`, {
                 headers: { Authorization: `Bearer ${tokens.access_token}` },
             });
         } catch (error: any) {
             await Requests.put(
-                `https://discord.com/api/v10/guilds/${ametServerId}/members/${user.id}`,
+                `https://discord.com/api/v10/guilds/${serverId}/members/${user.id}`,
                 { access_token: tokens.access_token },
                 {
                     headers: {
