@@ -7,7 +7,8 @@ const XpList = {
     Donate: 20, // per $1 value
 
     Twitter: 50,
-    Discord: 50,
+    DiscordAmet: 50,
+    DiscordHunt: 50,
     Email: 50,
 
     IssueBonds: 500,

@@ -27,7 +27,8 @@ async function calculateXP() {
 
         userXP[user._id] += user.active ? XpList.JoinXP : 0;
         userXP[user._id] += user.twitter ? XpList.Twitter : 0; // todo check later here if user is following or not
-        userXP[user._id] += user.discord ? XpList.Discord : 0;
+        userXP[user._id] += user.discord?.ametConnected ? XpList.DiscordAmet : 0;
+        userXP[user._id] += user.discord?.huntConnected ? XpList.DiscordHunt : 0;
         userXP[user._id] += user.email ? XpList.Email : 0;
     }
 
