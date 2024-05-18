@@ -5,6 +5,7 @@ import connection from '../../db/main';
 import { getAddress } from 'ethers';
 import { AMET_WEB_URL } from '../../constants';
 import { StringKeyedObject } from '../../types';
+import { DiscordConnection } from '../../modules/address/types';
 
 async function twitter(req: Request, res: Response) {
     const { state, code } = req.query;
@@ -67,7 +68,7 @@ async function discord(req: Request, res: Response) {
         if (!state) throw Error('State is missing!');
 
         // connectionType - amet || hunt
-        const [connectionType, addressResponse] = state.toString().split('_');
+        const [connectionType, addressResponse] = state.toString().split('_') as ['amet' | 'hunt', string];
         const address = getAddress(addressResponse);
 
         const tokens = await Requests.post(
@@ -110,19 +111,31 @@ async function discord(req: Request, res: Response) {
             );
         }
 
-        await connection.address.updateOne(
-            {
-                _id: address.toLowerCase() as any,
+        const filterQuery = {
+            _id: address.toLowerCase() as any,
+        };
+
+        const userObject = await connection.address.findOne(filterQuery);
+        let updateObject = {
+            discord: {
+                id: user.id,
+                username: user.username,
             },
-            {
-                $set: {
-                    discord: {
-                        id: user.id,
-                        username: user.username,
-                    },
-                },
-            },
-        );
+        } as StringKeyedObject<DiscordConnection>;
+
+        if (connectionType === 'amet') {
+            updateObject.discord.ametConnected = true;
+        } else if (connectionType === 'hunt') {
+            updateObject.discord.huntConnected = true;
+        } else {
+            throw Error('Connection type is missing');
+        }
+
+        if (userObject?.discord) {
+            updateObject.discord = { ...userObject.discord, ...updateObject.discord };
+        }
+
+        await connection.address.updateOne(filterQuery, { $set: updateObject });
 
         return res.redirect(`${AMET_WEB_URL}/auth/success`);
     } catch (error: any) {

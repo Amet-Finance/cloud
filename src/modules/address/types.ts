@@ -4,8 +4,8 @@ type AddressRawData = {
     active?: boolean;
     ref?: string;
     code?: string;
-    twitter?: Social;
-    discord?: Social;
+    twitter?: TwitterConnection;
+    discord?: DiscordConnection;
     lastUpdated?: Date;
     email?: string;
     emailCode?: string;
@@ -18,8 +18,8 @@ type AddressResponse = {
     active?: boolean;
     ref?: string;
     code?: string;
-    twitter?: Social;
-    discord?: Social;
+    twitter?: TwitterConnection;
+    discord?: DiscordConnection;
     lastUpdated?: Date;
     createdAt?: Date;
     email?: string;
@@ -27,9 +27,16 @@ type AddressResponse = {
     emailPending?: string;
 };
 
-type Social = {
+type TwitterConnection = {
     id: string;
     username: string;
 };
 
-export type { AddressRawData, AddressResponse };
+type DiscordConnection = {
+    id: string;
+    username: string;
+    ametConnected?: boolean;
+    huntConnected?: boolean;
+};
+
+export type { AddressRawData, AddressResponse, DiscordConnection, TwitterConnection };
