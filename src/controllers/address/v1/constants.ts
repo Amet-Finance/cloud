@@ -15,8 +15,8 @@ const XpList = {
     SettleBonds: 100,
 
     PurchaseBonds: 40, // per $1 value
-    PurchaseAMTBonds: 60, // per $1 value
-    ReferUsersPurchase: 5, // per $1 value
+    PurchaseAMTBonds: 120, // per $1 value
+    ReferUsersPurchase: 10, // per $1 value
 
     CommunityContribution: 0, // up to 500
     ParticipationInPolls: 20, // per event
