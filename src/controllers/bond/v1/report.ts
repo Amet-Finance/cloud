@@ -23,19 +23,22 @@ async function update(req: Request, res: Response) {
     const preEmail = email?.trim();
     const preDescription = description?.trim();
     const preName = name?.trim();
+    const preContractAddress = contractAddress?.trim();
+    const preChainId = chainId?.toString();
 
     if (!preAddress) throw ErrorV1.throw('Address is missing');
-    if (!contractAddress || !getAddress(contractAddress)) throw ErrorV1.throw('Invalid Contract Address');
-    if (!chainId || !SUPPORTED_CHAINS.includes(chainId)) throw ErrorV1.throw('Invalid Chain');
+    if (!preContractAddress || !getAddress(preContractAddress)) throw ErrorV1.throw('Invalid Contract Address');
+    if (!preChainId || !SUPPORTED_CHAINS.includes(Number(preChainId))) throw ErrorV1.throw('Invalid Chain');
     if (!preTelegram && !preEmail) throw ErrorV1.throw('Contact Details Missing');
     if (preTelegram && preTelegram.length > 50) throw ErrorV1.throw('Invalid Telegram Handle');
-    if (email && email.length > 50) throw ErrorV1.throw('Invalid Email');
+    if (preEmail && preEmail.length > 50) throw ErrorV1.throw('Invalid Email');
+
     if (!preDescription) throw ErrorV1.throw('Description is Required');
     if (preDescription.length > 300) throw ErrorV1.throw('Description Max Length Reached');
 
     const report: ReportRawData = {
-        contractAddress,
-        chainId,
+        contractAddress: preContractAddress,
+        chainId: Number(preChainId),
         address: preAddress,
         telegram: preTelegram,
         email: preEmail,
