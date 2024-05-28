@@ -3,6 +3,8 @@ import { AddressRawData } from '../modules/address/types';
 import { TokenRawData } from '../modules/token/types';
 import { GeneralStatistics } from '../modules/statistics/types';
 import { CustomReward } from '../jobs/address/types';
+import Report from '../controllers/bond/v1/report';
+import { ReportBody, ReportRawData } from '../controllers/bond/v1/types';
 
 class Main {
     constructor() {
@@ -45,6 +47,10 @@ class Main {
 
     get customRewards(): Collection<CustomReward> {
         return this.db.collection('CustomRewardsHub');
+    }
+
+    get reports(): Collection<ReportRawData> {
+        return this.db.collection('Report');
     }
 }
 

@@ -1,6 +1,6 @@
 type CustomReward = {
     address: string;
-    type: 'article' | 'video' | 'tutorial' | 'infographics' | 'other';
+    type: 'article' | 'video' | 'tutorial' | 'infographics' | 'donation' | 'other';
     reward: number;
     link: string;
 };

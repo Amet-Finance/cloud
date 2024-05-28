@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { FixedFlexBondController } from 'amet-utils';
 import ErrorV1 from '../../../routes/error/error';
+import TokenService from '../../../modules/token';
+import BigNumber from 'bignumber.js';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { BUCKET_NAME } from '../../../modules/bond-description/constants';
 import s3Client from '../../../db/s3-client';
-import TokenService from '../../../modules/token';
-import BigNumber from 'bignumber.js';
 
 async function update(req: Request, res: Response) {
     const { contractAddress, chainId, title, description } = req.body;
@@ -43,8 +43,9 @@ async function update(req: Request, res: Response) {
     return res.json(metaInfo);
 }
 
-const DescriptionControllerV1 = {
-    update,
-};
 
-export default DescriptionControllerV1;
+const BondDescriptionControllerV1 = {
+    update
+}
+
+export default BondDescriptionControllerV1;
