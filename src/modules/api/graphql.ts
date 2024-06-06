@@ -1,25 +1,13 @@
-import { CHAINS } from 'amet-utils';
-import { StringKeyedObject } from '../../types';
 import { postAPI } from './index';
 import { ActionLogForXP, BondGeneralStatsShort, BondIssuerDetail, BondSettledDetails, UserGeneralStatsShort } from './type';
-
-const ChainStartBlock: any = {
-    [CHAINS.Base]: 14022551,
-};
-
-function getApi(chainId: number) {
-    const API: StringKeyedObject<string> = {
-        [CHAINS.Base]: `https://subgraph.satsuma-prod.com/10c8c7e96744/unconstraineds-team--970943/Amet-Finance-8453/api`,
-    };
-
-    return API[chainId];
-}
+import { GRAPH_CONFIG } from './constants';
 
 async function getDataForGeneralStatistics(chainId: number) {
+    const { url, startBlock } = GRAPH_CONFIG[chainId];
     const query = `
     {
           bonds(
-          where: {issuanceBlock_gt: "${ChainStartBlock[chainId]}"}
+          where: {issuanceBlock_gt: "${startBlock}"}
           ) {
             id
             purchased
@@ -39,7 +27,6 @@ async function getDataForGeneralStatistics(chainId: number) {
           }
         }`;
 
-    const url = getApi(chainId);
     const response = await postAPI({ url, body: { query } });
 
     return {
@@ -49,10 +36,12 @@ async function getDataForGeneralStatistics(chainId: number) {
 }
 
 async function getDataForTBV(chainId: number) {
+    const { url, startBlock } = GRAPH_CONFIG[chainId];
+
     const query = `
     {
       bonds(
-      where: {issuanceBlock_gt: "${ChainStartBlock[chainId]}"}
+      where: {issuanceBlock_gt: "${startBlock}"}
       ) {
         id
         purchased
@@ -69,13 +58,13 @@ async function getDataForTBV(chainId: number) {
       }
     }`;
 
-    const url = getApi(chainId);
     const response = await postAPI({ url, body: { query } });
 
     return { bonds: response.data.bonds as BondGeneralStatsShort[] };
 }
 
 async function getDataForXP(chainId: number) {
+    const { url, startBlock } = GRAPH_CONFIG[chainId];
     const query = `{
            actionLogs {
                 count
@@ -93,7 +82,7 @@ async function getDataForXP(chainId: number) {
                 }
               }
             bonds(
-            where: {issuanceBlock_gt: "${ChainStartBlock[chainId]}"}
+            where: {issuanceBlock_gt: "${startBlock}"}
             ) {
                 issuer {
                       id
@@ -102,7 +91,6 @@ async function getDataForXP(chainId: number) {
         }
     }`;
 
-    const url = getApi(chainId);
     const response = await postAPI({ url, body: { query } });
 
     return {

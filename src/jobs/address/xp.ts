@@ -1,5 +1,5 @@
 import GraphqlAPI from '../../modules/api/graphql';
-import { CHAINS } from 'amet-utils';
+import { Chains } from 'amet-utils';
 import { StringKeyedObject } from '../../types';
 import { ethers } from 'ethers';
 import { AnyBulkWriteOperation } from 'mongodb';
@@ -11,7 +11,9 @@ import { AMT_CONTRACT_ADDRESS } from '../../constants';
 import { XpList } from '../../controllers/address/v1/constants';
 
 async function calculateXP() {
-    const chain = CHAINS.Base;
+    // todo calculate for Arbitrum as well
+
+    const chain = Chains.Base;
     const userXP: StringKeyedObject<number> = {};
     const bulkWriteArray: AnyBulkWriteOperation<AddressRawData>[] = [];
 
