@@ -25,6 +25,7 @@ type AddressResponse = {
     email?: string;
     emailCode?: string;
     emailPending?: string;
+    gitcoinScore?: number;
 };
 
 type TwitterConnection = {

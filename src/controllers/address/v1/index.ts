@@ -4,44 +4,25 @@ import { validateAddress } from '../../../modules/token/util';
 import AddressEmailController from './email';
 import { AddressRawData, AddressResponse } from '../../../modules/address/types';
 import { WithId } from 'mongodb';
+import GitcoinScoreControllerV1 from './gitcoin-score';
 
 async function get(req: Request, res: Response) {
-    const { address } = req.query as any;
+    const { address, includeGitcoinScore } = req.query as any;
     validateAddress(address);
 
     const addressInfo = await connection.address.findOne({
         _id: address.toLowerCase(),
     });
 
-    return res.json(addressModifier(address, addressInfo));
+    const response = addressModifier(address, addressInfo);
+    if (includeGitcoinScore) {
+        response.gitcoinScore = await GitcoinScoreControllerV1.get(address);
+    }
+
+    return res.json(response);
 }
 
 async function post(req: Request, res: Response) {
-    // const { address } = req.query as any;
-    // const { twitter, telegram, reddit, image } = req.body;
-    //
-    // const addressInfo: any = {};
-    //
-    // if (twitter) addressInfo.twitter = twitter;
-    //
-    // if (telegram) addressInfo.telegram = telegram;
-    //
-    // if (reddit) addressInfo.reddit = reddit;
-    //
-    // if (image) addressInfo.image = image;
-    //
-    // await connection.address.updateOne(
-    //     {
-    //         _id: address.toLowerCase(),
-    //     },
-    //     {
-    //         $set: addressInfo,
-    //     },
-    //     {
-    //         upsert: true,
-    //     },
-    // );
-
     return res.json({
         success: true,
     });

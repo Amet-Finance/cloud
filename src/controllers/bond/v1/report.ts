@@ -3,7 +3,7 @@ import { ReportBody, ReportRawData } from './types';
 import connection from '../../../db/main';
 import ErrorV1 from '../../../routes/error/error';
 import { getAddress, isAddress } from 'ethers';
-import { SUPPORTED_CHAINS } from '../../../constants';
+import { SupportedChains } from '../../../constants';
 
 async function update(req: Request, res: Response) {
     const { name, telegram, email, description, contractAddress, chainId } = req.body as ReportBody;
@@ -28,7 +28,7 @@ async function update(req: Request, res: Response) {
 
     if (!preAddress) throw ErrorV1.throw('Address is missing');
     if (!preContractAddress || !getAddress(preContractAddress)) throw ErrorV1.throw('Invalid Contract Address');
-    if (!preChainId || !SUPPORTED_CHAINS.includes(Number(preChainId))) throw ErrorV1.throw('Invalid Chain');
+    if (!preChainId || !SupportedChains.includes(Number(preChainId))) throw ErrorV1.throw('Invalid Chain');
     if (!preTelegram && !preEmail) throw ErrorV1.throw('Contact Details Missing');
     if (preTelegram && preTelegram.length > 50) throw ErrorV1.throw('Invalid Telegram Handle');
     if (preEmail && preEmail.length > 50) throw ErrorV1.throw('Invalid Email');
