@@ -3,11 +3,7 @@ import axios from 'axios';
 import { AnyBulkWriteOperation } from 'mongodb';
 
 export default async function calculatePricesFromCoinMarketCap() {
-    const tokens = await connection.token
-        .find({
-            cmId: { $exists: true },
-        })
-        .toArray();
+    const tokens = await connection.token.find({ cmId: { $exists: true } }).toArray();
 
     const cmIds = tokens.map((item) => item.cmId);
     if (!cmIds.length) return;

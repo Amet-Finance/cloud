@@ -1,5 +1,4 @@
 import GraphqlAPI from '../../modules/api/graphql';
-import { Chains } from 'amet-utils';
 import { StringKeyedObject } from '../../types';
 import { ethers } from 'ethers';
 import { AnyBulkWriteOperation } from 'mongodb';
@@ -7,19 +6,15 @@ import connection from '../../db/main';
 import { AddressRawData } from '../../modules/address/types';
 import BigNumber from 'bignumber.js';
 import TokenService from '../../modules/token';
-import { AMT_CONTRACT_ADDRESS } from '../../constants';
+import { AMT_CONTRACT_ADDRESS, SupportedChains } from '../../constants';
 import { XpList } from '../../controllers/address/v1/constants';
 
 async function calculateXP() {
-    // todo calculate for Arbitrum as well
-
-    const chain = Chains.Base;
     const userXP: StringKeyedObject<number> = {};
     const bulkWriteArray: AnyBulkWriteOperation<AddressRawData>[] = [];
 
-    const { bonds, actionLogs } = await GraphqlAPI.getDataForXP(chain);
-    const customRewards = await connection.customRewards.find().toArray();
     const users = await connection.address.find({ active: true }).toArray();
+    const customRewards = await connection.customRewards.find().toArray();
 
     const codeToAddress: StringKeyedObject<string> = {};
 
@@ -34,54 +29,57 @@ async function calculateXP() {
         userXP[user._id] += user.email ? XpList.Email : 0;
     }
 
-    for (const bond of bonds) {
-        if (userXP[bond.issuer.id]) {
-            userXP[bond.issuer.id] += XpList.IssueBonds;
-            if (bond.isSettled) userXP[bond.issuer.id] += XpList.SettleBonds;
+    for (const chain of SupportedChains) {
+        const { bonds, actionLogs } = await GraphqlAPI.getDataForXP(chain);
+
+        for (const bond of bonds) {
+            if (userXP[bond.issuer.id]) {
+                userXP[bond.issuer.id] += XpList.IssueBonds;
+                if (bond.isSettled) userXP[bond.issuer.id] += XpList.SettleBonds;
+            }
         }
-    }
 
-    const userPurchaseNativeToken: StringKeyedObject<{ purchaseAMT: number; purchaseCustom: number }> = {};
+        const userPurchaseNativeToken: StringKeyedObject<{ purchaseAMT: number; purchaseCustom: number }> = {};
 
-    for (const log of actionLogs) {
-        const { from, to, bond, count } = log;
-        const isPurchase = from === ethers.ZeroAddress;
+        for (const log of actionLogs) {
+            const { from, to, bond, count } = log;
+            const isPurchase = from === ethers.ZeroAddress;
 
-        if (isPurchase && userXP[to]) {
-            const token = await TokenService.get(chain, bond.purchaseToken.id, { onlyFromCache: true });
-            if (token?.priceUsd) {
-                const priceClean = BigNumber(bond.purchaseAmount)
-                    .div(BigNumber(10).pow(BigNumber(token.decimals)))
-                    .toNumber();
-                const priceValueUSD: number = Number(count) * priceClean * token.priceUsd;
-                const isAMT = AMT_CONTRACT_ADDRESS[chain].toLowerCase() === bond.payoutToken.id.toLowerCase();
+            if (isPurchase && userXP[to]) {
+                const token = await TokenService.get(chain, bond.purchaseToken.id, { onlyFromCache: true });
+                if (token?.priceUsd) {
+                    const priceClean = BigNumber(bond.purchaseAmount)
+                        .div(BigNumber(10).pow(BigNumber(token.decimals)))
+                        .toNumber();
+                    const priceValueUSD: number = Number(count) * priceClean * token.priceUsd;
+                    const isAMT = AMT_CONTRACT_ADDRESS[chain].toLowerCase() === bond.payoutToken.id.toLowerCase();
 
-                if (!userPurchaseNativeToken[to]) {
-                    userPurchaseNativeToken[to] = {
-                        purchaseAMT: isAMT ? priceValueUSD : 0,
-                        purchaseCustom: !isAMT ? priceValueUSD : 0,
-                    };
-                } else if (isAMT) {
-                    userPurchaseNativeToken[to].purchaseAMT += priceValueUSD;
-                } else {
-                    userPurchaseNativeToken[to].purchaseCustom += priceValueUSD;
+                    if (!userPurchaseNativeToken[to]) {
+                        userPurchaseNativeToken[to] = {
+                            purchaseAMT: isAMT ? priceValueUSD : 0,
+                            purchaseCustom: !isAMT ? priceValueUSD : 0,
+                        };
+                    } else if (isAMT) {
+                        userPurchaseNativeToken[to].purchaseAMT += priceValueUSD;
+                    } else {
+                        userPurchaseNativeToken[to].purchaseCustom += priceValueUSD;
+                    }
                 }
             }
         }
-    }
 
-    for (const address in userPurchaseNativeToken) {
-        const purchaseList = userPurchaseNativeToken[address];
+        for (const address in userPurchaseNativeToken) {
+            const purchaseList = userPurchaseNativeToken[address];
 
-        userXP[address] += Math.floor(purchaseList.purchaseAMT) * XpList.PurchaseAMTBonds;
-        userXP[address] += Math.floor(purchaseList.purchaseCustom) * XpList.PurchaseBonds;
+            userXP[address] += Math.floor(purchaseList.purchaseAMT) * XpList.PurchaseAMTBonds;
+            userXP[address] += Math.floor(purchaseList.purchaseCustom) * XpList.PurchaseBonds;
+        }
     }
 
     for (const customReward of customRewards) {
         userXP[customReward.address.toLowerCase()] += customReward.reward;
     }
 
-    // referral part
     for (const user of users) {
         if (user.ref) {
             const referrer = codeToAddress[user.ref];
@@ -107,9 +105,7 @@ async function calculateXP() {
         });
     }
 
-    if (bulkWriteArray.length) {
-        await connection.address.bulkWrite(bulkWriteArray);
-    }
+    if (bulkWriteArray.length) await connection.address.bulkWrite(bulkWriteArray);
 }
 
 export { calculateXP };
