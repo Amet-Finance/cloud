@@ -22,6 +22,7 @@ type TokenRawData = {
     icon?: string;
 
     cmId?: string;
+    uniV3?: string;
 
     isVerified?: boolean;
     priceUsd?: number;

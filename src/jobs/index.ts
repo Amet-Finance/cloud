@@ -3,6 +3,7 @@ import UpdateGeneralStats from './general-stats';
 import calculatePricesFromCoinMarketCap from './token/prices-cm';
 import calculateDailyStats from './general-stats/tbv';
 import { calculateXP } from './address/xp';
+import calculatePricesFromDexs from './token/prices-dex';
 
 const jobs = [
     {
@@ -14,6 +15,11 @@ const jobs = [
         name: 'Calculate Token Prices',
         scheduler: '0 * * * *', // every hour
         instance: calculatePricesFromCoinMarketCap,
+    },
+    {
+        name: 'Calculate Token Prices DEXs',
+        scheduler: '0 * * * *', // every hour
+        instance: calculatePricesFromDexs,
     },
     {
         name: 'Calculate TBV and TVL',
